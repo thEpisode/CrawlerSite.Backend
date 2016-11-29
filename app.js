@@ -50,7 +50,7 @@ console.log(dependencies.colors.green(' Flinger: ') + 'Libs imported');
 // =======================
 // configuration =========
 // =======================
-var port = 3500;
+var port = 3500; 
 
 var isOnline = true;
 
