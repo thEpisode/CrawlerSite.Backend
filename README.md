@@ -1,2 +1,3 @@
-# Dremid.Flinger.Backend
-Backend for Flinger platform
+## Run Server
+
+> npm run start

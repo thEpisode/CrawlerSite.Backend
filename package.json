@@ -1,0 +1,56 @@
+{
+  "name": "coplest.flinger.core",
+  "title": "Flinger",
+  "description": "Web server to get and analyze all insight from Flinger",
+  "version": "0.0.1",
+  "homepage": "http://coplest.com",
+  "author": {
+    "name": "Coplest S.A.S. and other contributors",
+    "url": "https://github.com/Coplest/Coplest.Flinger/blob/master/AUTHORS"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Coplest/Coplest.Flinger.git"
+  },
+  "keywords": [
+    "flinger",
+    "coplest",
+    "heatmaps",
+    "remote",
+    "administration",
+    "tool",
+    "form",
+    "analysis",
+    "insights",
+    "record",
+    "usability",
+    "ux",
+    "user",
+    "experience"
+  ],
+  "bugs": {
+    "url": "https://github.com/Coplest/Coplest.Flinger/issues"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "body-parser": "latest",
+    "colors": "latest",
+    "cors": "latest",
+    "ejs": "latest",
+    "express": "latest",
+    "gridfs-stream": "^1.1.1",
+    "is-online": "latest",
+    "jsonwebtoken": "latest",
+    "mongoose": "latest",
+    "mongoose-gridfs": "latest",
+    "morgan": "latest",
+    "mpromise": "latest",
+    "node-uuid": "latest",
+    "open": "latest",
+    "socket.io": "latest",
+    "socket.io-client": "latest"
+  },
+  "scripts": {
+    "start": "node app.js"
+  }
+}
