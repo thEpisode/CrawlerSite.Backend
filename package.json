@@ -50,6 +50,7 @@
     "socket.io": "latest",
     "socket.io-client": "latest"
   },
+  "engine": "node 4.4.7",
   "scripts": {
     "start": "node app.js"
   }
