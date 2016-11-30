@@ -55,7 +55,7 @@ function Socket(dependencies) {
                         if (result == false) {
                             _fileHandler.CreateScreenshotFile(data.Values.Base64Data, data.Values.Endpoint, function (result) {
                                 // Add new image to entity
-                                _database.Site().AddScreenshotToChild(data.Values.ApiKey, data.result._id + '', data.Values.Endpoint, function () {
+                                _database.Site().AddScreenshotToChild(data.Values.ApiKey, result._id + '', data.Values.Endpoint, function () {
                                     //res.json({ message: 'CreateScreenshotFile', result: true });
                                 })
                             })
