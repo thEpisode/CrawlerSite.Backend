@@ -50,18 +50,18 @@ function Socket(dependencies) {
 
             socket.on('Coplest.Flinger.PushScreenshot', function (data) {
                 if (data.Command != undefined) {
-                    _database.Site().WebCrawling(Values.ApiKey, Values.Endpoint, function (result) {
+                    _database.Site().WebCrawling(data.Values.ApiKey, data.Values.Endpoint, function (result) {
                         // if hasn't a screenshot
                         if (result == false) {
-                            _fileHandler.CreateScreenshotFile(Values.Base64Data, Values.Endpoint, function (result) {
+                            _fileHandler.CreateScreenshotFile(data.Values.Base64Data, data.Values.Endpoint, function (result) {
                                 // Add new image to entity
-                                _database.Site().AddScreenshotToChild(Values.ApiKey, result._id + '', Values.Endpoint, function () {
-                                    res.json({ message: 'CreateScreenshotFile', result: true });
+                                _database.Site().AddScreenshotToChild(data.Values.ApiKey, data.result._id + '', data.Values.Endpoint, function () {
+                                    //res.json({ message: 'CreateScreenshotFile', result: true });
                                 })
                             })
                         }
                         else {
-                            res.json({ message: 'CreateScreenshotFile', result: true });
+                            //res.json({ message: 'CreateScreenshotFile', result: true });
                         }
                     })
                 }
