@@ -17,20 +17,36 @@ function InsightController(dependencies) {
         switch (Type.toLowerCase()) {
             case 'movement':
                 _database.Movement().GetInsight(ApiKey, MinWidth, MaxWidth, MaxTime, Endpoint, function (result) {
-                    data = heatmapDataCalculation(result, 15, 60);
-                    callback(data);
+                    if(result.length > 0){
+                        data = heatmapDataCalculation(result, 15, 60);
+                        callback(data);
+                    }
+                    else{
+                        callback(data);
+                    }
+                    
                 });
                 break;
             case 'click':
                 _database.Click().GetInsight(ApiKey, MinWidth, MaxWidth, MaxTime, Endpoint, function (result) {
-                    data = heatmapDataCalculation(result, 15, 60);
-                    callback(data);
+                    if(result.length > 0){
+                        data = heatmapDataCalculation(result, 15, 60);
+                        callback(data);
+                    }
+                    else{
+                        callback(data);
+                    }
                 });
                 break;
             case 'scroll':
                 _database.Scroll().GetInsight(ApiKey, MinWidth, MaxWidth, MaxTime, Endpoint, function (result) {
-                    data = heatmapDataCalculation(result, 15, 60);
-                    callback(data);
+                    if(result.length > 0){
+                        data = heatmapDataCalculation(result, 15, 60);
+                        callback(data);
+                    }
+                    else{
+                        callback(data);
+                    }
                 });
                 break;
             default:
