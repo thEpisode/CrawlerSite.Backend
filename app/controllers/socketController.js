@@ -38,7 +38,7 @@ function Socket(dependencies) {
                                 console.log(_io.sockets.connected[keys[index]].ApiKey)
                                 if(_io.sockets.connected[keys[index]].ApiKey !== undefined){
                                     if(_io.sockets.connected[keys[index]].ApiKey == data.Values.ApiKey){
-                                        connectedSockets.push(_io.sockets.connected[index].id)
+                                        connectedSockets.push(_io.sockets.connected[keys[index]].id)
                                     }
                                 }
                                 
