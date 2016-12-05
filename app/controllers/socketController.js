@@ -29,7 +29,7 @@ function Socket(dependencies) {
                 if(data.Command != undefined){
                     switch (data.Command) {
                         case 'GetAllConnectedSockets#Request':
-                            console.log(_io.sockets.connected)
+                            
                             socket.emit('GetAllConnectedSockets#Response', {Command: "Response", Values: Object.keys(_io.sockets.connected)});
                             break;
                         case 'GetAllConnectedSocketsByApiKey#Request':
@@ -53,7 +53,9 @@ function Socket(dependencies) {
 
             socket.on('Coplest.Flinger.AddApiKeyToSocket', function(data){
                 if(data.ApiKey != undefined){
-                    socket.ApiKey = data.ApiKey;
+                    //socket.ApiKey = data.ApiKey;
+                    _io.sockets.connected[socket.id].ApiKey = data.ApiKey;
+                    console.log(_io.sockets.connected[socket.id].ApiKey)
                 }
             })
 
