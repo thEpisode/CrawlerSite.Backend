@@ -33,6 +33,7 @@ function Socket(dependencies) {
                             break;
                         case 'GetAllConnectedSocketsByApiKey#Request':
                             var connectedSockets = [];
+                            console.log(_io.sockets.connected)
                             for (var index = 0; index < _io.sockets.connected.length; index++) {
                                 console.log(_io.sockets.connected[index].ApiKey)
                                 if(_io.sockets.connected[index].ApiKey !== undefined){
