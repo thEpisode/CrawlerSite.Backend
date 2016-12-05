@@ -17,6 +17,30 @@ function Socket(dependencies) {
     }
 
     var socketImplementation = function () {
+        var adminClients = _io.of('/admin-clients');
+
+        adminClients.on('connection', function(socket){
+            _console.log('Admin client connected: ' + socket.id, 'socket-message');
+
+            /// Welcome to the new admin client
+            socket.emit('Welcome', { Message: 'Welcome to Coplest.Flinger', SocketId: socket.id });
+
+            socket.on('Coplest.Flinger.RAT', function(data){
+                if(data.Command != undefined){
+                    switch (data.Command) {
+                        case 'GetAllConnectedSockets#Request':
+                            adminClients.sockets.connected[data.Values.SocketId].emit('GetAllConnectedSockets#Response', {data: "This is your personal data"});
+                            break;
+                        case 'GetAllConnectedSocketsByApiKey#Request':
+                            adminClients.sockets.connected[data.Values.SocketId].emit('GetAllConnectedSocketsByApiKey#Response', {data: "This is your personal data"});
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            })
+        })
+
         _io.sockets.on('connection', function (socket) {
             _console.log('Client connected: ' + socket.id, 'socket-message');
 
@@ -25,6 +49,27 @@ function Socket(dependencies) {
 
             /// Request all insights queue
             socket.emit('Coplest.Flinger.ServerEvent', { Command: 'InsightsQueue' });
+
+            socket.on('Coplest.Flinger.AddApiKeyToSocket', function(data){
+                if(data.ApiKey != undefined){
+                    socket.ApiKey = data.ApiKey;
+                }
+            })
+
+            socket.on('Coplest.Flinger.RAT', function(data){
+                if(data.Command != undefined){
+                    switch (data.Command) {
+                        case 'SetMousePosition#Request':
+                            ///
+                            break;
+                        case 'SetRATEngine#Request':
+                            ///
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            })
 
             socket.on('Coplest.Flinger.PushInsight', function (data) {
                 if (data.Command != undefined) {
