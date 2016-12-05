@@ -29,10 +29,10 @@ function Socket(dependencies) {
                 if(data.Command != undefined){
                     switch (data.Command) {
                         case 'GetAllConnectedSockets#Request':
-                            adminClients.sockets.connected[data.Values.SocketId].emit('GetAllConnectedSockets#Response', {data: "This is your personal data"});
+                            socket.emit('GetAllConnectedSockets#Response', {data: "This is your personal data"});
                             break;
                         case 'GetAllConnectedSocketsByApiKey#Request':
-                            adminClients.sockets.connected[data.Values.SocketId].emit('GetAllConnectedSocketsByApiKey#Response', {data: "This is your personal data"});
+                            socket.emit('GetAllConnectedSocketsByApiKey#Response', {data: "This is your personal data"});
                             break;
                         default:
                             break;
