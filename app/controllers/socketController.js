@@ -29,7 +29,7 @@ function Socket(dependencies) {
                 if(data.Command != undefined){
                     switch (data.Command) {
                         case 'GetAllConnectedSockets#Request':
-                            socket.emit('GetAllConnectedSockets#Response', {Command: "Response", Values: Object.keys(_io.sockets.connected)});
+                            socket.emit('Coplest.Flinger.RAT', {Command: "GetAllConnectedSockets#Response", Values: Object.keys(_io.sockets.connected)});
                             break;
                         case 'GetAllConnectedSocketsByApiKey#Request':
                             var connectedSockets = [];
@@ -43,8 +43,10 @@ function Socket(dependencies) {
                                 }
                                 
                             }
-                            socket.emit('GetAllConnectedSocketsByApiKey#Response', {Command: "Response", Values: connectedSockets});
+                            socket.emit('Coplest.Flinger.RAT', {Command: "GetAllConnectedSocketsByApiKey#Response", Values: connectedSockets});
                             break;
+                        case 'SubscribeSocketToApiKey#Request':
+
                         default:
                             break;
                     }
@@ -65,6 +67,8 @@ function Socket(dependencies) {
                 if(data.ApiKey != undefined){
                     //Set Api Key to connected socket
                     _io.sockets.connected[socket.id].ApiKey = data.ApiKey;
+
+                    adminClients.sockets.emit('Coplest.Flinger.RAT', {Command: 'SubscribeSocketToApiKey#Request', Values: {SocketId : socket.id, ApiKey: data.ApiKey}})
                 }
             })
 
