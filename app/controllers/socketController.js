@@ -29,7 +29,7 @@ function Socket(dependencies) {
                 if(data.Command != undefined){
                     switch (data.Command) {
                         case 'GetAllConnectedSockets#Request':
-                            console.log(Object.keys(_io.sockets.connected))
+                            console.log(_io.sockets.connected)
                             socket.emit('GetAllConnectedSockets#Response', {Command: "Response", Values: Object.keys(_io.sockets.connected)});
                             break;
                         case 'GetAllConnectedSocketsByApiKey#Request':
