@@ -68,7 +68,7 @@ function Socket(dependencies) {
                     //Set Api Key to connected socket
                     _io.sockets.connected[socket.id].ApiKey = data.ApiKey;
 
-                    adminClients.sockets.emit('Coplest.Flinger.RAT', {Command: 'SubscribeSocketToApiKey#Request', Values: {SocketId : socket.id, ApiKey: data.ApiKey}})
+                    adminClients.emit('Coplest.Flinger.RAT', {Command: 'SubscribeSocketToApiKey#Request', Values: {SocketId : socket.id, ApiKey: data.ApiKey}})
                 }
             })
 
