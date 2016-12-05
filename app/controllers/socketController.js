@@ -19,31 +19,31 @@ function Socket(dependencies) {
     var socketImplementation = function () {
         var adminClients = _io.of('/admin-clients');
 
-        adminClients.on('connection', function(socket){
+        adminClients.on('connection', function (socket) {
             _console.log('Admin client connected: ' + socket.id, 'socket-message');
 
             /// Welcome to the new admin client
             socket.emit('Welcome', { Message: 'Welcome to Coplest.Flinger', SocketId: socket.id });
 
-            socket.on('Coplest.Flinger.RAT', function(data){
-                if(data.Command != undefined){
+            socket.on('Coplest.Flinger.RAT', function (data) {
+                if (data.Command != undefined) {
                     switch (data.Command) {
                         case 'GetAllConnectedSockets#Request':
-                            socket.emit('Coplest.Flinger.RAT', {Command: "GetAllConnectedSockets#Response", Values: Object.keys(_io.sockets.connected)});
+                            socket.emit('Coplest.Flinger.RAT', { Command: "GetAllConnectedSockets#Response", Values: Object.keys(_io.sockets.connected) });
                             break;
                         case 'GetAllConnectedSocketsByApiKey#Request':
                             var connectedSockets = [];
                             var keys = Object.keys(_io.sockets.connected)
                             for (var index = 0; index < keys.length; index++) {
                                 //console.log(_io.sockets.connected[keys[index]].ApiKey)
-                                if(_io.sockets.connected[keys[index]].ApiKey !== undefined){
-                                    if(_io.sockets.connected[keys[index]].ApiKey == data.Values.ApiKey){
-                                        connectedSockets.push({SocketId: _io.sockets.connected[keys[index]].id, ApiKey: data.Values.ApiKey})
+                                if (_io.sockets.connected[keys[index]].ApiKey !== undefined) {
+                                    if (_io.sockets.connected[keys[index]].ApiKey == data.Values.ApiKey) {
+                                        connectedSockets.push({ SocketId: _io.sockets.connected[keys[index]].id, ApiKey: data.Values.ApiKey })
                                     }
                                 }
-                                
+
                             }
-                            socket.emit('Coplest.Flinger.RAT', {Command: "GetAllConnectedSocketsByApiKey#Response", Values: connectedSockets});
+                            socket.emit('Coplest.Flinger.RAT', { Command: "GetAllConnectedSocketsByApiKey#Response", Values: connectedSockets });
                             break;
                         default:
                             break;
@@ -58,20 +58,26 @@ function Socket(dependencies) {
             /// Welcome to the new client
             socket.emit('Welcome', { Message: 'Welcome to Coplest.Flinger', SocketId: socket.id });
 
+            socket.on('disconnect', function () {
+               _console.log('Client disconnected: ' + socket.id, 'socket-message');
+
+                adminClients.emit('Coplest.Flinger.RAT', { Command: 'UnsubscribeSocketToApiKey#Request', Values: { SocketId: socket.id, ApiKey: data.ApiKey } });
+            });
+
             /// Request all insights queue
             socket.emit('Coplest.Flinger.ServerEvent', { Command: 'InsightsQueue' });
 
-            socket.on('Coplest.Flinger.AddApiKeyToSocket', function(data){
-                if(data.ApiKey != undefined){
+            socket.on('Coplest.Flinger.AddApiKeyToSocket', function (data) {
+                if (data.ApiKey != undefined) {
                     //Set Api Key to connected socket
                     _io.sockets.connected[socket.id].ApiKey = data.ApiKey;
 
-                    adminClients.emit('Coplest.Flinger.RAT', {Command: 'SubscribeSocketToApiKey#Request', Values: {SocketId : socket.id, ApiKey: data.ApiKey}})
+                    adminClients.emit('Coplest.Flinger.RAT', { Command: 'SubscribeSocketToApiKey#Request', Values: { SocketId: socket.id, ApiKey: data.ApiKey } });
                 }
             })
 
-            socket.on('Coplest.Flinger.RAT', function(data){
-                if(data.Command != undefined){
+            socket.on('Coplest.Flinger.RAT', function (data) {
+                if (data.Command != undefined) {
                     switch (data.Command) {
                         case 'SetMousePosition#Request':
                             ///
