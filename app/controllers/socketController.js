@@ -61,7 +61,7 @@ function Socket(dependencies) {
             socket.on('disconnect', function () {
                _console.log('Client disconnected: ' + socket.id, 'socket-message');
 
-                adminClients.emit('Coplest.Flinger.RAT', { Command: 'UnsubscribeSocketToApiKey#Request', Values: { SocketId: socket.id, ApiKey: data.ApiKey } });
+                adminClients.emit('Coplest.Flinger.RAT', { Command: 'UnsubscribeSocketToApiKey#Request', Values: { SocketId: socket.id, ApiKey: socket.ApiKey } });
             });
 
             /// Request all insights queue
