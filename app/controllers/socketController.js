@@ -29,11 +29,19 @@ function Socket(dependencies) {
                 if(data.Command != undefined){
                     switch (data.Command) {
                         case 'GetAllConnectedSockets#Request':
-                            
                             socket.emit('GetAllConnectedSockets#Response', {Command: "Response", Values: Object.keys(_io.sockets.connected)});
                             break;
                         case 'GetAllConnectedSocketsByApiKey#Request':
-                            socket.emit('GetAllConnectedSocketsByApiKey#Response', {data: "This is your personal data"});
+                            var connectedSockets = [];
+                            for (var index = 0; index < _io.sockets.connected.length; index++) {
+                                if(_io.sockets.connected[index].ApiKey !== undefined){
+                                    if(_io.sockets.connected[index].ApiKey == data.Values.ApiKey){
+                                        connectedSockets.push(_io.sockets.connected[index].id)
+                                    }
+                                }
+                                
+                            }
+                            socket.emit('GetAllConnectedSocketsByApiKey#Response', {Command: "Response", Values: connectedSockets});
                             break;
                         default:
                             break;
@@ -53,9 +61,8 @@ function Socket(dependencies) {
 
             socket.on('Coplest.Flinger.AddApiKeyToSocket', function(data){
                 if(data.ApiKey != undefined){
-                    //socket.ApiKey = data.ApiKey;
+                    //Set Api Key to connected socket
                     _io.sockets.connected[socket.id].ApiKey = data.ApiKey;
-                    console.log(_io.sockets.connected[socket.id].ApiKey)
                 }
             })
 
