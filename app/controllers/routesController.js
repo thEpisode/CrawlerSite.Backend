@@ -48,12 +48,7 @@ function Routes(dependencies) {
         // (POST http://localhost:3000/api/User/Create)
         _apiRoutes.post('/User/Create', function (req, res) {
             _database.User().CreateUser(req.body, function (result) {
-                if(success == true){
-                    res.json(result);
-                }
-                else{
-                    res.status(406).send(result);
-                }
+                res.json(result);
             })
         });
 

@@ -25,7 +25,7 @@ function UserController(dependencies) {
             if (err) console.log(err);
 
             if (user != null) {
-                callback({ Success: false, Message: 'This email is already registered.' });
+                callback({ Success: false, Message: 'This email is already registered' });
             }
             else {
                 var user = new _entity.GetModel()(
