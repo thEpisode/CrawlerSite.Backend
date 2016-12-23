@@ -36,6 +36,13 @@ function Routes(dependencies) {
 
     var createAPI = function () {
 
+        // (POST http://localhost:3000/api/User/Create)
+        _apiRoutes.post('/Invite/Create', function (req, res) {
+            _database.Invite().createInvite(req.body, function (result) {
+                res.json(result);
+            })
+        });
+
         /// Authenticate
         /// -------------------------
         //  (POST http://localhost:3000/api/User/GetByCredentials)

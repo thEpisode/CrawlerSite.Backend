@@ -1,4 +1,4 @@
-function Database(dependencies){
+function Database(dependencies) {
 
     /// Dependencies   
     var _mongoose;
@@ -18,34 +18,35 @@ function Database(dependencies){
     var _price;
     var _site;
     var _user;
+    var _invitation;
     var _grid;
     var _gridfs;
 
-    var constructor = function(callback){
+    var constructor = function (callback) {
         _mongoose = dependencies.mongoose;
         _cross = dependencies.cross;
-        _console        = dependencies.console;
+        _console = dependencies.console;
         _grid = dependencies.grid;
         _gridfs = dependencies.gridfs;
 
-        databaseConnect(function(result){
+        databaseConnect(function (result) {
             callback(result);
-        }); 
+        });
     }
 
-    var databaseConnect = function(callback){
+    var databaseConnect = function (callback) {
         _mongoose.Promise = global.Promise;
         _mongoose.connect(_cross.GetMongoConnectionString());
         _db = _mongoose.connection;
 
-        databaseHandler(function(result){
+        databaseHandler(function (result) {
             _console.log('Database module initialized', 'server-success');
             callback(result);
         });
     }
 
-    var databaseHandler = function(callback){
-        _db.on('error', function(){
+    var databaseHandler = function (callback) {
+        _db.on('error', function () {
             _dbConnected = false;
             callback(false);
         });
@@ -56,17 +57,17 @@ function Database(dependencies){
 
             _gridfs = _grid(_db.db, _mongoose.mongo);
 
-            entitiesControllers(function(result){
+            entitiesControllers(function (result) {
                 callback(result);
             });
         });
     }
 
-    var getGridFS = function(){
+    var getGridFS = function () {
         return _gridfs;
     }
 
-    var entitiesControllers = function(callback){
+    var entitiesControllers = function (callback) {
         _click = require('./clickController')(dependencies);
         _click.Initialize();
 
@@ -94,62 +95,70 @@ function Database(dependencies){
         _user = require('./userController')(dependencies);
         _user.Initialize();
 
+        _invitation = require('./invitationController')(dependencies);
+        _invitation.Initialize();
+
         callback(true);
     }
 
-    var isConnected = function(){
+    var isConnected = function () {
         return _dbConnected;
     }
 
-    var getClickController = function(){
+    var getClickController = function () {
         return _click;
     }
 
-    var getMovementController = function(){
+    var getMovementController = function () {
         return _movement;
     }
 
-    var getScrollController = function(){
+    var getScrollController = function () {
         return _scroll;
     }
 
-    var getFormController = function(){
+    var getFormController = function () {
         return _form;
     }
 
-    var getIpController = function(){
+    var getIpController = function () {
         return _ip;
     }
 
-    var getNotificationController = function(){
+    var getNotificationController = function () {
         return _notification;
     }
 
-    var getPriceController = function(){
+    var getPriceController = function () {
         return _price;
     }
 
-    var getSiteController = function(){
+    var getSiteController = function () {
         return _site;
     }
 
-    var getUserController = function(){
+    var getUserController = function () {
         return _user;
     }
 
+    var getInvitationController = function () {
+        return _invitation;
+    }
+
     return {
-        Initialize  : constructor,
-        IsConnected : isConnected,
-        Click       : getClickController,
-        Movement    : getMovementController,
-        Scroll      : getScrollController,
-        Form : getFormController,
+        Initialize: constructor,
+        IsConnected: isConnected,
+        Click: getClickController,
+        Movement: getMovementController,
+        Scroll: getScrollController,
+        Form: getFormController,
         Ip: getIpController,
         Notification: getNotificationController,
-        Price : getPriceController,
-        Site : getSiteController,
-        User : getUserController,
-        GetGridFS : getGridFS
+        Price: getPriceController,
+        Site: getSiteController,
+        User: getUserController,
+        Invite: getInvitationController,
+        GetGridFS: getGridFS
     }
 }
 
