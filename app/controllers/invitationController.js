@@ -20,7 +20,9 @@ function InvitationController(dependencies) {
                 Name: data.Name,
                 Date: data.Date,
                 Hour: data.Hour,
-                Type: data.Type
+                Type: data.Type,
+                Email: data.Email,
+                Tel: data.Tel
             });
 
         invitation.save().then(function (result) {

@@ -38,7 +38,7 @@ function Routes(dependencies) {
 
         // (POST http://localhost:3000/api/User/Create)
         _apiRoutes.post('/Invite/Create', function (req, res) {
-            _database.Invite().createInvite(req.body, function (result) {
+            _database.Invite().CreateInvite(req.body, function (result) {
                 res.json(result);
             })
         });
