@@ -43,6 +43,18 @@ function Cross(dependencies) {
             return index(obj[is[0]], is.slice(1), value);
     }
 
+    /// Find an object into array by Id
+    /// E.g.
+    /// var objectResult = searchObjectByIdOnArray("someId", myArray)
+    var searchObjectByIdOnArray = function (nameKey, _array) {
+        for (var i = 0; i < _array.length; i++) {
+            if (_array[i].Id === nameKey) {
+                return _array[i];
+            }
+        }
+        return null;
+    }
+
     return {
         SetSocket: setSocket,
         GetSocket: getSocket,
@@ -50,7 +62,8 @@ function Cross(dependencies) {
         GetMongoConnectionString: getMongoConnectionString,
         SetFlingerSecretJWT: setFlingerSecretJWT,
         GetFlingerSecretJWT: getFlingerSecretJWT,
-        ObjectReferenceByDotStyle: objectReferenceByDotStyle
+        ObjectReferenceByDotStyle: objectReferenceByDotStyle,
+        SearchObjectByIdOnArray: searchObjectByIdOnArray
     }
 }
 

@@ -5,21 +5,84 @@ function Socket(dependencies) {
     var _io;
     var _database;
     var _fileHandler;
+    var _cross;
+
+    const MAX_CLIENTS = 5;
+
+    var _siteNamespaces = [];
 
     var constructor = function () {
         _io = dependencies.io;
         _database = dependencies.database;
         _console = dependencies.console;
         _fileHandler = dependencies.fileHandler;
+        _cross = dependencies.cross;
 
         socketImplementation();
         _console.log('Socket module initialized', 'server-success');
     }
 
-    var socketImplementation = function () {
-        var adminClients = _io.of('/admin-clients');
+    /// Crete a new namespace with dynamic name
+    function _createNamespace(data) {
+        var ns = {
+            Id: data.name,
+            ConnectedClients: 0,
+        };
 
-        adminClients.on('connection', function (socket) {
+        _siteNamespaces.push(ns);
+
+        return ns;
+    }
+
+    var socketImplementation = function () {
+        var userPoolNamespace = _io.of('/user-pool-namespace');
+        var adminPoolNamespace = _io.of('/admin-pool-namespace');
+        var ratPoolNamespace = _io.of('/rat-pool-namespace');
+
+        /// RAT Service Namespace
+        ///
+        /// 1 to 1 connection between Admin and User, this connect every users and admins in one namespace and separate with private rooms
+        function _ratServiceNamespace(namespace) {
+            if (namespace.ConnectedClients <= MAX_CLIENTS) {
+                var dynamicNamespace = _io.of('/' + namespace.Id);
+
+                dynamicNamespace.on('connection', function (ns_socket) {
+                    /*console.log('user connected to ' + namespace.Id);
+                    dynamicNamespace.emit('hi', 'everyone!');*/
+                });
+
+                namespace.clients++;
+            }
+
+            callback({ namespaces: namespace_queue });
+        }
+
+        /// RAT Pool Namespace
+        ///
+        /// Define merged pool, is a temporary pool to connect Admin and User into their unique namespace
+        ratPoolNamespace.on('connection', function (socket) {
+            _console.log('Socket connected to rat pool: ' + socket.id, 'socket-message');
+
+            /// Welcome to the new admin client
+            socket.emit('Welcome', { Message: 'Welcome to Coplest.Flinger', SocketId: socket.id });
+
+            socket.on('JoinToSiteNamespace', function (data, callback) {
+                var _namespace = _cross.SearchObjectOnArray(data.namespace, _siteNamespaces);
+
+                if (_namespace === null) {
+                    _createNamespace(data);
+                    _ratServiceNamespace(_namespace);
+                }
+                else {
+                    _ratServiceNamespace(_namespace);
+                }
+            })
+        })
+
+        /// Admin Pool Namespace (APN)
+        ///
+        /// This is when all admin will be connected 
+        adminPoolNamespace.on('connection', function (socket) {
             _console.log('Admin client connected: ' + socket.id, 'socket-message');
 
             /// Welcome to the new admin client
@@ -33,6 +96,7 @@ function Socket(dependencies) {
                             break;
                         case 'GetAllConnectedSocketsByApiKey#Request':
                             var connectedSockets = [];
+                            /// Search all connected sockets by ApiKey
                             var keys = Object.keys(_io.sockets.connected)
                             for (var index = 0; index < keys.length; index++) {
                                 //console.log(_io.sockets.connected[keys[index]].ApiKey)
@@ -52,16 +116,20 @@ function Socket(dependencies) {
             })
         })
 
-        _io.sockets.on('connection', function (socket) {
+        /// User Pool Namespace (UPN)
+        ///
+        /// All site Users will be connected in this pool and wait for any request
+        userPoolNamespace.on('connection', function (socket) {
             _console.log('Client connected: ' + socket.id, 'socket-message');
 
-            /// Welcome to the new client
+            /// Emit a welcome message to new connection
             socket.emit('Welcome', { Message: 'Welcome to Coplest.Flinger', SocketId: socket.id });
 
+            /// Catch when this connection is closed
             socket.on('disconnect', function () {
-               _console.log('Client disconnected: ' + socket.id, 'socket-message');
+                _console.log('Client disconnected: ' + socket.id, 'socket-message');
 
-                adminClients.emit('Coplest.Flinger.RAT', { Command: 'UnsubscribeSocketToApiKey#Request', Values: { SocketId: socket.id, ApiKey: socket.ApiKey } });
+                adminPoolNamespace.emit('Coplest.Flinger.RAT', { Command: 'UnsubscribeSocketToApiKey#Request', Values: { SocketId: socket.id, ApiKey: socket.ApiKey } });
             });
 
             /// Request all insights queue
@@ -72,10 +140,11 @@ function Socket(dependencies) {
                     //Set Api Key to connected socket
                     _io.sockets.connected[socket.id].ApiKey = data.ApiKey;
 
-                    adminClients.emit('Coplest.Flinger.RAT', { Command: 'SubscribeSocketToApiKey#Request', Values: { SocketId: socket.id, ApiKey: data.ApiKey } });
+                    adminPoolNamespace.emit('Coplest.Flinger.RAT', { Command: 'SubscribeSocketToApiKey#Request', Values: { SocketId: socket.id, ApiKey: data.ApiKey } });
                 }
             })
 
+            /// Catch all RAT events to this user
             socket.on('Coplest.Flinger.RAT', function (data) {
                 if (data.Command != undefined) {
                     switch (data.Command) {
