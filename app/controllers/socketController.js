@@ -76,7 +76,7 @@ function Socket(dependencies) {
                             }
                         }
                     });
-
+////<<<<----- ???
                     socket.on('Coplest.Flinger.RAT.PrivateRoom#')
                 });
 
@@ -95,7 +95,7 @@ function Socket(dependencies) {
             _console.log('Socket connected to RAT pool: ' + socket.id, 'socket-message');
 
             /// Welcome to the new admin client
-            socket.emit('Coplest.Flinger.RAT', { Message: 'ConnectedToRPN#Response', SocketId: socket.id });
+            socket.emit('Coplest.Flinger.RAT', { Message: 'ConnectedToRPN#Response', Values: {SocketId: socket.id} });
 
             socket.on('Coplest.Flinger.RAT', function (data, callback) {
                 if (data.Command != undefined) {
@@ -111,7 +111,7 @@ function Socket(dependencies) {
                             var guid = _createPrivateRoomGuid();
 
                             socket.emit('Coplest.Flinger.RAT', { Command: "CreatePrivateRoom#Response", Values: { RoomId: guid } });
-
+/////// <<<------- Esto va en Core
                             userPoolNamespace.emit('Coplest.Flinger.RAT', { Command: 'RATPoolConnection#Request', Values: { SocketId: data.Values.UserSocketId, RoomId: guid, RPN: 'rat-pool-namespace', Namespace: data.Values.Namespace } });
                             break;
                         case 'ConnectToRATServiceNamespace#Request':
@@ -128,10 +128,10 @@ function Socket(dependencies) {
 
                 if (_namespace === null) {
                     _createNamespace(data);
-                    _ratServiceNamespace(_namespace);
+                    _ratServiceNamespace(_namespace, callback);
                 }
                 else {
-                    _ratServiceNamespace(_namespace);
+                    _ratServiceNamespace(_namespace, callback);
                 }
             })
         })
@@ -166,8 +166,8 @@ function Socket(dependencies) {
                             }
                             socket.emit('Coplest.Flinger.RAT', { Command: "GetAllConnectedSocketsByApiKey#Response", Values: connectedSockets });
                             break;
-                        case 'GetEnpointRPN#Request':
-                            socket.emit('Coplest.Flinger.RAT', { Command: "GetEnpointRPN#Response", Values: { Endpoint: '/rat-pool-namespace' } });
+                        case 'GetEndpointRPN#Request':
+                            socket.emit('Coplest.Flinger.RAT', { Command: "GetEndpointRPN#Response", Values: { Endpoint: '/rat-pool-namespace' } });
                             break;
                         default:
                             break;
