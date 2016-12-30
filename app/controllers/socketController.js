@@ -123,8 +123,8 @@ function Socket(dependencies) {
                             var guid = _createPrivateRoomGuid();
 
                             socket.emit('Coplest.Flinger.RAT', { Command: "CreatePrivateRoom#Response", Values: { RoomId: guid } });
-                            /////// <<<------- Esto va en Core
-                            userPoolNamespace.emit('Coplest.Flinger.RAT', { Command: 'RATPoolConnection#Request', Values: { SocketId: data.Values.UserSocketId, RoomId: guid, RPN: 'rat-pool-namespace', Namespace: data.Values.Namespace } });
+
+                            userPoolNamespace.emit('Coplest.Flinger.RAT', { Command: 'RATPoolConnection#Request', Values: { SocketId: data.Values.UserSocketId, RoomId: guid, RPN: '/rat-pool-namespace', Namespace: data.Values.Namespace } });
                             break;
                         case 'ConnectToRATServiceNamespace#Request':
                             _ratServiceNamespace(data.Values.Namespace, callback);
