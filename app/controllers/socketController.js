@@ -209,10 +209,11 @@ function Socket(dependencies) {
 
             socket.on('Coplest.Flinger.AddApiKeyToSocket', function (data) {
                 if (data.ApiKey != undefined) {
-                    //Set Api Key to connected socket
-                    _io.sockets.connected[socket.id].ApiKey = data.ApiKey;
+                    //Set Api Key to connected socket                    
+                    var connectedSocket = _io.sockets.connected[socket.id.split('#')[1]];
+                    connectedSocket.ApiKey = data.ApiKey;
 
-                    adminPoolNamespace.emit('Coplest.Flinger.RAT', { Command: 'SubscribeSocketToApiKey#Request', Values: { SocketId: socket.id, ApiKey: data.ApiKey } });
+                    adminPoolNamespace.emit('Coplest.Flinger.RAT', { Command: 'SubscribeSocketToApiKey#Request', Values: { SocketId: socket.id.split('#')[1], ApiKey: data.ApiKey } });
                 }
             })
 ///<<<<-------- IMPORTANT
