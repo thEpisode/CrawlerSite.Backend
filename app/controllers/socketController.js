@@ -56,19 +56,29 @@ function Socket(dependencies) {
                 ratServiceNamespace.on('connection', function (socket) {
                     _console.log('Socket connected to RAT Service Namespace: ' + socket.id, 'socket-message');
 
-                    socket.emit('Coplest.Flinger.RAT', { Command: 'ConnectedToRSN#Response', SocketId: socket.id });
+                    socket.emit('Coplest.Flinger.RAT', { Command: 'ConnectedToRSN#Response', Values: { SocketId: socket.id } });
 
                     socket.on('Coplest.Flinger.RAT', function (data) {
                         if (data.Command != null) {
                             switch (data.Command) {
-                                case 'JoinToPrivateRoom#Request':
+                                case 'UserJoinToPrivateRoom#Request':
+                                    _console.log('_ratServiceNamespace Coplest.Flinger.RAT UserJoinToPrivateRoom#Request', 'socket-message');
                                     socket.join(data.Values.RoomId);
-                                    ratServiceNamespace.emit('Coplest.Flinger.Rat', { Command: 'JoinToPrivateRoom#Response', Values: { UserSocketId: data.Values.SocketId } });
+                                    socket.emit('Coplest.Flinger.RAT', { Command: 'UserJoinToPrivateRoom#Response', Values: { UserSocketId: data.Values.SocketId } });
+                                    break;
+                                case 'AdminJoinToPrivateRoom#Request':
+                                    _console.log('_ratServiceNamespace Coplest.Flinger.RAT AdminJoinToPrivateRoom#Request', 'socket-message');
+                                    socket.join(data.Values.RoomId);
+                                    socket.emit('Coplest.Flinger.RAT', { Command: 'AdminJoinToPrivateRoom#Response', Values: { UserSocketId: data.Values.SocketId } });
+                                    ratServiceNamespace.emit('Coplest.Flinger.RAT', { Command: 'JoinToPrivateRoom#Request', Values: { UserSocketId: data.Values.SocketId } });
+
                                     break;
                                 case 'TakeMyUserSocketId#Request':
+                                    _console.log('_ratServiceNamespace Coplest.Flinger.RAT TakeMyUserSocketId#Request', 'socket-message');
                                     ratServiceNamespace.in(data.Values.RoomId).emit('Coplest.Flinger.Rat', { Command: 'TakeMyUserSocketId#Response', Values: { UserSocketId: data.Values.SocketId } });
                                 case 'SetRATEngine#Request':
-                                    socket.in(data.Values.RoomId).emit('Coplest.Flinger.RAT', { Command: 'PrintCursor#Request', Values: { Size: 'normal' } })
+                                    _console.log('_ratServiceNamespace Coplest.Flinger.RAT SetRATEngine#Request', 'socket-message');
+                                    ratServiceNamespace.emit('Coplest.Flinger.RAT', { Command: 'PrintCursor#Request', Values: { Size: 'normal' } })
                                     socket.in(data.Values.RoomId).emit('Coplest.Flinger.RAT', { Command: 'SetInitialPositionCursor#Request', Values: { X: 0, Y: 0 } })
                                     socket.in(data.Values.RoomId).emit('Coplest.Flinger.RAT', { Command: 'SetScreenshotInterval#Request', Values: { Interval: 500 } })
                                     break;
@@ -80,9 +90,11 @@ function Socket(dependencies) {
 
                     /// Events for Private Room
                     socket.on('Coplest.Flinger.RAT.PrivateRoom', function (data) {
+                        _console.log('_ratServiceNamespace Coplest.Flinger.RAT.PrivateRoom SetMousePosition#Request', 'socket-message');
                         if (data.Command != null) {
                             switch (data.Command) {
                                 case 'SetMousePosition#Request':
+                                    _console.log('_ratServiceNamespace Emit SetMousePosition#Request', 'socket-message');
                                     socket.in(data.Values.RoomId).emit('Coplest.Flinger.RAT.PrivateRoom', { Command: 'SetMousePosition#Response', Values: { X: data.Values.X, Y: data.Values.Y } })
                                     break;
                                 default:
@@ -92,12 +104,12 @@ function Socket(dependencies) {
                     })
                 });
 
-                ratServiceNamespace.to()
+
 
                 namespace.clients++;
             }
 
-            callback({ Namespace: namespace_queue });
+            callback({ Command: 'RATServiceNamespace', Values: { Namespace: _siteNamespaces } });
         }
 
         /// RAT Pool Namespace
@@ -107,26 +119,32 @@ function Socket(dependencies) {
             _console.log('Socket connected to RAT pool: ' + socket.id, 'socket-message');
 
             /// Welcome to the new admin client
-            socket.emit('Coplest.Flinger.RAT', { Message: 'ConnectedToRPN#Response', Values: { SocketId: socket.id } });
+            socket.emit('Coplest.Flinger.RAT', { Command: 'ConnectedToRPN#Response', Values: { SocketId: socket.id.split('#')[1] } });
 
             socket.on('Coplest.Flinger.RAT', function (data, callback) {
                 if (data.Command != undefined) {
                     switch (data.Command) {
                         case 'CheckSiteNamespace#Request':
+                            _console.log('CheckSiteNamespace#Request', 'socket-message');
                             var ns = _cross.SearchObjectByIdOnArray(data.Values.SiteId, _siteNamespaces);
-                            if (namespace == null) {
+                            if (ns == null) {
                                 ns = _createNamespace({ name: data.Values.SiteId })
                             }
                             socket.emit('Coplest.Flinger.RAT', { Command: "CheckSiteNamespace#Response", Values: { Namespace: ns } });
                             break;
                         case 'CreatePrivateRoom#Request':
+                            _console.log('CreatePrivateRoom#Request', 'socket-message');
                             var guid = _createPrivateRoomGuid();
 
+                            _console.log('ratPoolNamespace Emit: CreatePrivateRoom#Request', 'socket-message');
                             socket.emit('Coplest.Flinger.RAT', { Command: "CreatePrivateRoom#Response", Values: { RoomId: guid } });
 
+                            _console.log('userPoolNamespace Emit: RATPoolConnection#Request', 'socket-message');
                             userPoolNamespace.emit('Coplest.Flinger.RAT', { Command: 'RATPoolConnection#Request', Values: { SocketId: data.Values.UserSocketId, RoomId: guid, RPN: '/rat-pool-namespace', Namespace: data.Values.Namespace } });
                             break;
                         case 'ConnectToRATServiceNamespace#Request':
+                            _console.log('ConnectToRATServiceNamespace#Request', 'socket-message');
+
                             _ratServiceNamespace(data.Values.Namespace, callback);
                             break;
                         default:
@@ -136,6 +154,7 @@ function Socket(dependencies) {
             })
 
             socket.on('JoinToSiteNamespace', function (data, callback) {
+                _console.log('JoinToSiteNamespace', 'socket-message');
                 var _namespace = _cross.SearchObjectOnArray(data.namespace, _siteNamespaces);
 
                 if (_namespace === null) {
@@ -216,22 +235,7 @@ function Socket(dependencies) {
                     adminPoolNamespace.emit('Coplest.Flinger.RAT', { Command: 'SubscribeSocketToApiKey#Request', Values: { SocketId: socket.id.split('#')[1], ApiKey: data.ApiKey } });
                 }
             })
-///<<<<-------- IMPORTANT
-            /// Catch all RAT events to this user
-            socket.on('Coplest.Flinger.RAT', function (data) {
-                if (data.Command != undefined) {
-                    switch (data.Command) {
-                        case 'SetMousePosition#Request':
-                            ///
-                            break;
-                        case 'SetRATEngine#Request':
-                            ///
-                            break;
-                        default:
-                            break;
-                    }
-                }
-            })
+
 
             socket.on('Coplest.Flinger.PushInsight', function (data) {
                 if (data.Command != undefined) {
