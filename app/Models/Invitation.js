@@ -16,7 +16,9 @@ function Invitation(dependencies) {
                 Name: String,
                 Date: String,
                 Hour: String,
-                Type: String
+                Type: String,
+                Email: String,
+                Tel: String
             },
             { timestamps: { createdAt: 'created_at' }, minimize: false, collection: 'Invitation' }
         ));
