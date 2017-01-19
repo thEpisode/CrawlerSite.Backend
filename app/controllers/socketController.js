@@ -49,10 +49,14 @@ function Socket(dependencies) {
         /// RAT Service Namespace
         ///
         /// 1 to 1 connection between Admin and User, this connect every users and admins in one namespace and separate with private rooms
-        function _ratServiceNamespace(namespace, callback) {
+        function _ratServiceNamespace(ratPoolNamespaceSocket, namespace, callback) {
             if (namespace.ConnectedClients <= MAX_CLIENTS) {
-                var ratServiceNamespace = _io.of('/' + namespace.Id);
-
+                var ratServiceNamespace;
+                // Search if namespace exist
+                if ((Object.keys(_io.nsps).indexOf('/' + namespace.Id) > -1) == false) {
+                    
+                }
+                ratServiceNamespace = _io.of('/' + namespace.Id);
                 ratServiceNamespace.on('connection', function (socket) {
                     _console.log('Socket connected to RAT Service Namespace: ' + socket.id, 'socket-message');
 
@@ -144,8 +148,17 @@ function Socket(dependencies) {
                             break;
                         case 'ConnectToRATServiceNamespace#Request':
                             _console.log('ConnectToRATServiceNamespace#Request', 'socket-message');
+                            var _namespace = _cross.SearchObjectByIdOnArray(data.Values.Namespace.Id, _siteNamespaces);
 
-                            _ratServiceNamespace(data.Values.Namespace, callback);
+                            if (_namespace === null) {
+                                _namespace = _createNamespace(data);
+                                _ratServiceNamespace(socket, _namespace, callback);
+                            }
+                            else {
+                                _ratServiceNamespace(socket, _namespace, callback);
+                            }
+
+                            //_ratServiceNamespace(data.Values.Namespace, callback);
                             break;
                         default:
                             break;
@@ -153,18 +166,7 @@ function Socket(dependencies) {
                 }
             })
 
-            socket.on('JoinToSiteNamespace', function (data, callback) {
-                _console.log('JoinToSiteNamespace', 'socket-message');
-                var _namespace = _cross.SearchObjectOnArray(data.namespace, _siteNamespaces);
-
-                if (_namespace === null) {
-                    _createNamespace(data);
-                    _ratServiceNamespace(_namespace, callback);
-                }
-                else {
-                    _ratServiceNamespace(_namespace, callback);
-                }
-            })
+            
         })
 
         /// Admin Pool Namespace (APN)

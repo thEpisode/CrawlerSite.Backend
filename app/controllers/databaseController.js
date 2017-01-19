@@ -18,7 +18,6 @@ function Database(dependencies) {
     var _price;
     var _site;
     var _user;
-    var _invitation;
     var _grid;
     var _gridfs;
 
@@ -95,9 +94,6 @@ function Database(dependencies) {
         _user = require('./userController')(dependencies);
         _user.Initialize();
 
-        _invitation = require('./invitationController')(dependencies);
-        _invitation.Initialize();
-
         callback(true);
     }
 
@@ -141,10 +137,6 @@ function Database(dependencies) {
         return _user;
     }
 
-    var getInvitationController = function () {
-        return _invitation;
-    }
-
     return {
         Initialize: constructor,
         IsConnected: isConnected,
@@ -157,7 +149,6 @@ function Database(dependencies) {
         Price: getPriceController,
         Site: getSiteController,
         User: getUserController,
-        Invite: getInvitationController,
         GetGridFS: getGridFS
     }
 }
