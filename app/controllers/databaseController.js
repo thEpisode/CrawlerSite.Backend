@@ -39,16 +39,20 @@ function Database(dependencies) {
         _db = _mongoose.connection;
 
         databaseHandler(function (result) {
-            _console.log('Database module initialized', 'server-success');
+            if (result == true) {
+                _console.log('Database module initialized', 'server-success');
+            }
             callback(result);
         });
     }
 
     var databaseHandler = function (callback) {
-        _db.on('error', function () {
+        _db.on('error', function (err) {
+            _console.log('database failed to initialize' + err, 'error')
             _dbConnected = false;
             callback(false);
         });
+        _db.on('error', console.error.bind(console, 'connection error:'));
 
         _db.once('open', function () {
             _console.log('Database connected at ' + _cross.GetMongoConnectionString(), 'server-success');

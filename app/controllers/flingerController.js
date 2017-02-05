@@ -58,6 +58,9 @@ function FlingerServer(dependencies) {
 
                 _console.log('Server initialized', 'server-success');
             }
+            else {
+                process.exit(0);
+            }
         });
     }
 
