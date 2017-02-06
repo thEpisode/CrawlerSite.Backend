@@ -74,7 +74,7 @@ function ScrollController(dependencies) {
             if(err) console.log(err);
 
             callback(result);
-        })
+        }).limit(15000);
     }
 
     var getEntity = function () {
