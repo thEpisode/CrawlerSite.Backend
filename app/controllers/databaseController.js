@@ -52,7 +52,6 @@ function Database(dependencies) {
             _dbConnected = false;
             callback(false);
         });
-        _db.on('error', console.error.bind(console, 'connection error:'));
 
         _db.once('open', function () {
             _console.log('Database connected at ' + _cross.GetMongoConnectionString(), 'server-success');
