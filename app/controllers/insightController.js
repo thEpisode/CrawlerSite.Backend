@@ -18,7 +18,7 @@ function InsightController(dependencies) {
             case 'movement':
                 _database.Movement().GetInsight(ApiKey, MinWidth, MaxWidth, MaxTime, Endpoint, function (result) {
                     if (result.length > 0) {
-                        data = heatmapDataCalculation(result, 50, 50);
+                        data = heatmapDataCalculation(result, 50, 10);
                         callback(data);
                     }
                     else {
@@ -30,7 +30,7 @@ function InsightController(dependencies) {
             case 'click':
                 _database.Click().GetInsight(ApiKey, MinWidth, MaxWidth, MaxTime, Endpoint, function (result) {
                     if (result.length > 0) {
-                        data = heatmapDataCalculation(result, 50, 50);
+                        data = heatmapDataCalculation(result, 50, 10);
                         callback(data);
                     }
                     else {
@@ -41,7 +41,7 @@ function InsightController(dependencies) {
             case 'scroll':
                 _database.Scroll().GetInsight(ApiKey, MinWidth, MaxWidth, MaxTime, Endpoint, function (result) {
                     if (result.length > 0) {
-                        data = heatmapDataCalculation(result, 50, 50);
+                        data = heatmapDataCalculation(result, 50, 10);
                         callback(data);
                     }
                     else {
@@ -66,9 +66,9 @@ function InsightController(dependencies) {
                 key = keyX + '|' + keyY;
             if (!this[key]) {
                 this[key] = {
-                    x: keyX * intervalX,
+                    x: ((keyX * intervalX) + ((keyX + 1) * intervalX))/2,
                     //toX: (keyX + 1) * intervalX,
-                    y: keyY * intervalY,
+                    y: ((keyY * intervalY) + ((keyY + 1) * intervalY))/2,
                     //toY: (keyY + 1) * intervalY,
                     value: 0
                 },
