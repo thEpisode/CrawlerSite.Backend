@@ -17,20 +17,21 @@ function FrontEndReviewController(dependencies) {
 
         var frontendReview = new _entity.GetModel()(
             {
-                UserId: String,
-                Path: String,
-                Like: Boolean,
-                ScreenshotId: String,
-                Description: String,
-                Logs: String,
-                ReportBug: Boolean,
-                Version: String
+                UserId: data.UserId,
+                Path: data.Path,
+                Like: data.Like,
+                ScreenshotId: data.ScreenshotId,
+                Description: data.Description,
+                Logs: data.Logs,
+                ReportBug: data.ReportBug,
+                Version: data.Version
             });
 
         frontendReview.save().then(function (result) {
+            console.log(result)
             // When database return a result call the return
             callback(result);
-        })
+        });
     }
 
     var deleteFrontEndReview = function (data, callback) {

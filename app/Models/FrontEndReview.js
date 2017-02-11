@@ -28,7 +28,7 @@ function FrontEndReview(dependencies) {
                 ReportBug: Boolean,
                 Version: String
             },
-            { timestamps: { createdAt: 'created_at' }, minimize: false, collection: 'Ip' }
+            { timestamps: { createdAt: 'created_at' }, minimize: false, collection: 'FrontEndReview' }
         ));
     }
 

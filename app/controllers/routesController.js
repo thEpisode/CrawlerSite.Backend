@@ -463,6 +463,12 @@ function Routes(dependencies) {
 
         /// FrontEndReviews api routes
         /// -------------------------
+        //  (POST http://localhost:3000/api/FrontEndReview/Create)
+        _apiRoutes.post('/FrontEndReview/Create', function (req, res) {
+            _database.FrontEndReview().CreateFrontEndReview(req.body, function (result) {
+                res.json({ success: true, message: 'CreateFrontEndReview', result: result });
+            })
+        });
         //  (GET http://localhost:3000/api/FrontEndReview/UserId/:UserId)
         _apiRoutes.get('/FrontEndReview/UserId/:UserId', function (req, res) {
             _database.FrontEndReview().GetFrontEndReviewByUserId(req.params.UserId, function (result) {
