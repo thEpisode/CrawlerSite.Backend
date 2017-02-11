@@ -23,7 +23,8 @@ function FrontEndReviewController(dependencies) {
                 ScreenshotId: String,
                 Description: String,
                 Logs: String,
-                ReportBug: Boolean
+                ReportBug: Boolean,
+                Version: String
             });
 
         frontendReview.save().then(function (result) {
@@ -78,7 +79,6 @@ function FrontEndReviewController(dependencies) {
         GetFrontEndReviewById: getFrontEndReviewById,
         GetFrontEndReviewByUserId: getFrontEndReviewByUserId,
         GetAllFrontEndReview: getAllFrontEndReview,
-        EditFrontEndReview: editFrontEndReview,
         Entity: getEntity
     }
 }

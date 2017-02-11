@@ -461,7 +461,37 @@ function Routes(dependencies) {
             })
         });
 
-        
+        /// FrontEndReviews api routes
+        /// -------------------------
+        //  (GET http://localhost:3000/api/FrontEndReview/UserId/:UserId)
+        _apiRoutes.get('/FrontEndReview/UserId/:UserId', function (req, res) {
+            _database.FrontEndReview().GetFrontEndReviewByUserId(req.params.UserId, function (result) {
+                res.json({ success: true, message: 'GetFrontEndReviewByUserId', result: result });
+            })
+        });
+
+        //  (GET http://localhost:3000/api/FrontEndReview/Id/[ID])
+        _apiRoutes.get('/FrontEndReview/Id/:Id', function (req, res) {
+            _database.FrontEndReview().GetFrontEndReviewById(req.params.Id, function (result) {
+                res.json({ success: true, message: 'GetFrontEndReviewById', result: result });
+            })
+        });
+
+        //  (GET http://localhost:3000/api/FrontEndReview/All)
+        _apiRoutes.get('/FrontEndReview/All', function (req, res) {
+            _database.FrontEndReview().GetAllFrontEndReview(null, function (result) {
+                res.json({ success: true, message: 'GetAllFrontEndReview', result: result });
+            })
+        });
+
+        // (POST http://localhost:3000/api/FrontEndReview/Delete)
+        _apiRoutes.post('/FrontEndReview/Delete', function (req, res) {
+            _database.FrontEndReview().DeleteFrontEndReview(req.body, function (result) {
+                res.json({ success: true, message: 'DeleteFrontEndReview', result: result });
+            })
+        });
+
+
 
         // apply the routes to our application with the prefix /api
         _app.use('/api', _apiRoutes);
