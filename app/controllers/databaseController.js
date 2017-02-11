@@ -18,6 +18,7 @@ function Database(dependencies) {
     var _price;
     var _site;
     var _user;
+    var _frontendReview;
     var _grid;
     var _gridfs;
 
@@ -97,6 +98,9 @@ function Database(dependencies) {
         _user = require('./userController')(dependencies);
         _user.Initialize();
 
+        _frontendReview = require('./frontendReviewController')(dependencies);
+        _frontendReview.Initialize();
+
         callback(true);
     }
 
@@ -140,6 +144,10 @@ function Database(dependencies) {
         return _user;
     }
 
+    var getFrontEndReviewController = function () {
+        return _frontendReview;
+    }
+
     return {
         Initialize: constructor,
         IsConnected: isConnected,
@@ -152,6 +160,7 @@ function Database(dependencies) {
         Price: getPriceController,
         Site: getSiteController,
         User: getUserController,
+        FrontEndReview: getFrontEndReviewController,
         GetGridFS: getGridFS
     }
 }
