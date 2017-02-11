@@ -25,7 +25,8 @@ function FrontEndReview(dependencies) {
                 ScreenshotId: String,
                 Description: String,
                 Logs: String,
-                ReportBug : Boolean
+                ReportBug: Boolean,
+                Version: String
             },
             { timestamps: { createdAt: 'created_at' }, minimize: false, collection: 'Ip' }
         ));
