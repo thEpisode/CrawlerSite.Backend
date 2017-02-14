@@ -69,10 +69,16 @@ function Database(dependencies) {
         });
     }
 
+    /// To improve performance
     var createIndexes = function(){
         _mongoose.connection.db.collection('Movement').createIndex({"ApiKey": 1});
         _mongoose.connection.db.collection('Movement').createIndex({"Pathname": 1});
-        _mongoose.connection.db.collection('Event.TimeStamp').createIndex({"Pathname": 1});
+        
+        _mongoose.connection.db.collection('Click').createIndex({"ApiKey": 1});
+        _mongoose.connection.db.collection('Click').createIndex({"Pathname": 1});
+
+        _mongoose.connection.db.collection('Scroll').createIndex({"ApiKey": 1});
+        _mongoose.connection.db.collection('Scroll').createIndex({"Pathname": 1});
     }
 
     var getGridFS = function () {
