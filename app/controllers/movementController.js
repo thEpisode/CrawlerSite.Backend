@@ -66,16 +66,16 @@ function MovementController(dependencies) {
 
     var getInsight = function (ApiKey, MinWidth, MaxWidth, MaxTime, Endpoint, callback) {
         var startAt = (new Date().getTime() - (parseInt(MaxTime) * 60 * 60 * 1000));
-        _entity.GetModel().find({
+        _mongoose.connection.db.collection('Movement').find({
             "ApiKey": ApiKey,
             "Event.Client.screen.width": { "$gt": parseInt(MinWidth), "$lt": parseInt(MaxWidth)},
             "Event.TimeStamp": {"$gte": startAt},
             "Pathname": {"$regex": Endpoint.toLowerCase() === "index" ? "/" : Endpoint}
-        }, function (err, result){
+        }).toArray(function (err, result){
             if(err) console.log(err);
 
             callback(result);
-        }).limit(15000);
+        });
     }
 
     var getEntity = function () {

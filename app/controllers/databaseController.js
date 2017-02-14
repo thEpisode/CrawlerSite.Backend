@@ -61,9 +61,18 @@ function Database(dependencies) {
             _gridfs = _grid(_db.db, _mongoose.mongo);
 
             entitiesControllers(function (result) {
+                createIndexes();
+
                 callback(result);
             });
+
         });
+    }
+
+    var createIndexes = function(){
+        _mongoose.connection.db.collection('Movement').createIndex({"ApiKey": 1});
+        _mongoose.connection.db.collection('Movement').createIndex({"Pathname": 1});
+        _mongoose.connection.db.collection('Event.TimeStamp').createIndex({"Pathname": 1});
     }
 
     var getGridFS = function () {
