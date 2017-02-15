@@ -12,7 +12,7 @@ function FlingerServer(dependencies) {
     var _fileHandler;
     var _insightController;
 
-    var constructor = function () {
+    var constructor = function (callback) {
         _app = dependencies.app;
 
         /// Own Console declaration
@@ -21,10 +21,7 @@ function FlingerServer(dependencies) {
         dependencies.console = _console;
 
         /// Cross declaration
-        _cross = require('./crossController')({});
-        dependencies.cross = _cross;
-        _cross.SetFlingerSecretJWT("FlingerIsCool");
-        _cross.SetMongoConnectionString("mongodb://127.0.0.1:27017/Flinger");
+        _cross = dependencies.cross;
 
         /// Setting up secret for JWT
         _app.set('FlingerSecretJWT', _cross.GetFlingerSecretJWT());
@@ -54,7 +51,7 @@ function FlingerServer(dependencies) {
                 /// Socket declaration
                 _socketController = require('./socketController')(dependencies);
 
-                initializeControllers();
+                initializeControllers(callback);
 
                 _console.log('Server initialized', 'server-success');
             }
@@ -64,7 +61,7 @@ function FlingerServer(dependencies) {
         });
     }
 
-    var initializeControllers = function () {
+    var initializeControllers = function (callback) {
         _insightController.Initialize();
         _fileHandler.Initialize();
         _routesController.Initialize();
@@ -72,6 +69,7 @@ function FlingerServer(dependencies) {
         _socketController.Initialize();
 
         _console.log('Modules initialized', 'server-success');
+        callback();
     }
 
     return {
