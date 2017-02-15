@@ -76,7 +76,7 @@ app.use(cors());
 // =======================
 // initialize modules =========
 // =======================
-var flingerServer = require('./app/controllers/flingerController')(dependencies);
+var flingerServer = require('./app/Controllers/flingerController')(dependencies);
 
 flingerServer.Initialize(function () {
     // =======================
