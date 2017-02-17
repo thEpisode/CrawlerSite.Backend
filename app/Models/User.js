@@ -29,6 +29,8 @@ function User(dependencies) {
         _model = _mongoose.model('User', new _schema(
             {
                 _id: _schema.Types.ObjectId,
+                CustomerId: String,
+                PlanId: String,
                 FirstName: String,
                 LastName: String,
                 Email: String,
