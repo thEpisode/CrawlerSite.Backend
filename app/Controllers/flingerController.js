@@ -11,6 +11,7 @@ function FlingerServer(dependencies) {
     var _databaseController;
     var _fileHandler;
     var _insightController;
+    var _stripeController;
 
     var constructor = function (callback) {
         _app = dependencies.app;
@@ -33,6 +34,10 @@ function FlingerServer(dependencies) {
         _databaseController.Initialize(function (result) {
             if (result == true) {
                 dependencies.gridfs = _databaseController.GetGridFS();
+
+                /// Stripe controller
+                _stripeController = require('./stripeController')(dependencies);
+                dependencies.stripe = _stripeController;
 
                 /// Insights controller
                 _insightController = require('./insightController')(dependencies);

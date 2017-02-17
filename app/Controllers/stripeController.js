@@ -64,7 +64,7 @@ function StripeController(dependencies) {
         }
     }
 
-    var createSubscription = function (planId, customerData, callback) {
+    var updateSubscription = function (planId, customerData, callback) {
 
         // Find in mongo user by email
         _database.User.GetUserByEmail(customerData.Email, function (userResult) {
@@ -149,7 +149,8 @@ function StripeController(dependencies) {
         GetFreePlan: getFreePlan,
         GetBasicPlan: getBasicPlan,
         GetStandardPlan: getStandardPlan,
-        GetPremiumPlan: getPremiumPlan
+        GetPremiumPlan: getPremiumPlan,
+        UpdateSubscription: updateSubscription
     }
 }
 
