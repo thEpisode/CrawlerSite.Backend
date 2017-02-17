@@ -12,13 +12,13 @@ function StripeController(dependencies) {
         _cross = dependencies.cross;
         _database = dependencies.database;
 
-        stripe_pk = _cross.GetStripePrivateKey();
+        _stripe_pk = _cross.GetStripePrivateKey();
 
         _stripe = new dependencies.stripe(stripe_pk);
     }
 
     var getStandardPlan = function () {
-        stripe.plans.retrieve(
+        _stripe.plans.retrieve(
             "standard",
             function (err, plan) {
                 return plan;
@@ -26,7 +26,7 @@ function StripeController(dependencies) {
     }
 
     var getBasicPlan = function () {
-        stripe.plans.retrieve(
+        _stripe.plans.retrieve(
             "basic",
             function (err, plan) {
                 return plan;
@@ -34,7 +34,7 @@ function StripeController(dependencies) {
     }
 
     var getPremiumPlan = function () {
-        stripe.plans.retrieve(
+        _stripe.plans.retrieve(
             "premium",
             function (err, plan) {
                 return plan;
@@ -42,7 +42,7 @@ function StripeController(dependencies) {
     }
 
     var getFreePlan = function () {
-        stripe.plans.retrieve(
+        _stripe.plans.retrieve(
             "free",
             function (err, plan) {
                 return plan;
@@ -80,7 +80,7 @@ function StripeController(dependencies) {
 
             if (userResult != null) {
                 // if user has not a customer id
-                if (userResult.CustomerId == undefined) {
+                if (userResult.CustomerId == undefined && userResult.CustomerId.length > 0) {
                     /// Create a customer in Stripe
                     _stripe.customers.create({
                         description: customerData.Description,
@@ -94,7 +94,7 @@ function StripeController(dependencies) {
                         //// Create a new subscription
                         var plan = getPlan(customerData.Plan);
                         if (plan != null) {
-                            stripe.subscriptions.create({
+                            _stripe.subscriptions.create({
                                 customer: customer.id,
                                 plan: plan.id
                             }, function (err, subscription) {
@@ -125,7 +125,7 @@ function StripeController(dependencies) {
                     //// Update subscription
                     var plan = getPlan(customerData.Plan);
 
-                    stripe.subscriptions.update(
+                    _stripe.subscriptions.update(
                         userResult.CustomerId,
                         { plan: plan.id },
                         function (err, subscription) {
@@ -153,12 +153,39 @@ function StripeController(dependencies) {
         });
     }
 
+    var cancelSubscription = function (customerData) {
+        _database.User.GetUserByEmail(customerData.Email, function (userResult) {
+            if (userResult != null) {
+                if (userResult.CustomerId != undefined && userResult.CustomerId.length > 0) {
+                    _stripe.subscriptions.del(
+                        customerData.CustomerId,
+                        function (err, confirmation) {
+                            //// Update customer on mongo
+                            userResult.CustomerId = "";
+                            userResult.PlanId = "";
+
+                            _database.User.UpdatePaymentData(userResult, function (result) {
+                                if (result == null) {
+                                    callback({ success: false, message: 'Something went ocurr wrong, try again.', result: result });
+                                }
+                                else {
+                                    callback({ success: true, message: 'Payment saved succesfuly', result: result })
+                                }
+                            })
+                        }
+                    );
+                }
+            }
+        })
+    }
+
     return {
         Initialize: constructor,
         GetFreePlan: getFreePlan,
         GetBasicPlan: getBasicPlan,
         GetStandardPlan: getStandardPlan,
         GetPremiumPlan: getPremiumPlan,
+        CancelSubscription: cancelSubscription,
         UpdateSubscription: updateSubscription,
         GetAllPlans: getAllPlans,
     }
