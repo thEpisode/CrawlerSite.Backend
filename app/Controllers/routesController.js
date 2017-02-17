@@ -508,6 +508,13 @@ function Routes(dependencies) {
             })
         });
 
+        //  (GET http://localhost:3000/api/Plans/All)
+        _apiRoutes.get('/Plans/All', function (req, res) {
+            _stripe.GetAllPlans()(function (result) {
+                res.json({ success: true, message: 'GetAllPlans', result: result });
+            })
+        });
+
         // apply the routes to our application with the prefix /api
         _app.use('/api', _apiRoutes);
     }

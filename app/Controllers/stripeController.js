@@ -49,6 +49,15 @@ function StripeController(dependencies) {
             })
     }
 
+    var getAllPlans = function () {
+        _stripe.plans.list(
+            { limit: 5 },
+            function (err, plans) {
+                return plans;
+            }
+        );
+    }
+
     var getPlan = function (planId) {
         switch (planId) {
             case 'standard':
@@ -150,7 +159,8 @@ function StripeController(dependencies) {
         GetBasicPlan: getBasicPlan,
         GetStandardPlan: getStandardPlan,
         GetPremiumPlan: getPremiumPlan,
-        UpdateSubscription: updateSubscription
+        UpdateSubscription: updateSubscription,
+        GetAllPlans: getAllPlans,
     }
 }
 
