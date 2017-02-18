@@ -14,147 +14,165 @@ function StripeController(dependencies) {
 
         _stripe_pk = _cross.GetStripePrivateKey();
 
-        _stripe = new dependencies.stripe(stripe_pk);
+        _stripe = dependencies.stripe;
     }
 
-    var getStandardPlan = function () {
+    var getStandardPlan = function (callback) {
         _stripe.plans.retrieve(
             "standard",
             function (err, plan) {
-                return plan;
+                callback(plan);
             })
     }
 
-    var getBasicPlan = function () {
+    var getBasicPlan = function (callback) {
         _stripe.plans.retrieve(
             "basic",
             function (err, plan) {
-                return plan;
+                callback(plan);
             })
     }
 
-    var getPremiumPlan = function () {
+    var getPremiumPlan = function (callback) {
         _stripe.plans.retrieve(
             "premium",
             function (err, plan) {
-                return plan;
+                if (err) {
+                    console.log(err);
+                    callback(null);
+                }
+                callback(plan);
             })
     }
 
-    var getFreePlan = function () {
+    var getFreePlan = function (callback) {
         _stripe.plans.retrieve(
             "free",
             function (err, plan) {
-                return plan;
+                callback(plan);
             })
     }
 
-    var getAllPlans = function () {
+    var getAllPlans = function (callback) {
         _stripe.plans.list(
             { limit: 5 },
             function (err, plans) {
-                return plans;
+                callback(plans);
             }
         );
     }
 
-    var getPlan = function (planId) {
+    var getPlan = function (planId, callback) {
         switch (planId) {
             case 'standard':
-                return getStandardPlan();
+                getStandardPlan(function (result) { callback(result) });
+                break;
             case 'basic':
-                return getBasicPlan();
+                getBasicPlan(function (result) { callback(result) });
+                break;
             case 'premium':
-                return getPremiumPlan();
+                getPremiumPlan(function (result) { callback(result) });
+                break;
             case 'free':
-                return getFreePlan();
+                getFreePlan(function (result) { callback(result) });
+                break;
             default:
-                return null;
+                callback(null);
         }
     }
 
-    var updateSubscription = function (planId, customerData, callback) {
+    var updateSubscription = function (customerData, callback) {
 
         // Find in mongo user by email
-        _database.User.GetUserByEmail(customerData.Email, function (userResult) {
-
+        _database.User().GetUserByEmail(customerData.Email, function (userResult) {
             if (userResult != null) {
                 // if user has not a customer id
-                if (userResult.CustomerId == undefined && userResult.CustomerId.length > 0) {
+                if (userResult.CustomerId == undefined) {
                     /// Create a customer in Stripe
                     _stripe.customers.create({
                         description: customerData.Description,
+                        email: customerData.Email,
                         source: customerData.CustomerId // obtained with Stripe.js
                     }, function (err, customer) {
                         if (err) {
                             console.log(err);
                             callback({ success: false, message: err, result: null });
                         }
-
                         //// Create a new subscription
-                        var plan = getPlan(customerData.Plan);
-                        if (plan != null) {
-                            _stripe.subscriptions.create({
-                                customer: customer.id,
-                                plan: plan.id
-                            }, function (err, subscription) {
-                                if (err) {
-                                    console.log(err);
-                                    callback({ success: false, message: err, result: null });
-                                }
-
-                                //// Save customer on mongo
-                                userResult.CustomerId = customerData.CustomerId;
-                                userResult.PlanId = plan.id;
-
-                                _database.User.UpdatePaymentData(userResult, function (result) {
-                                    if (result == null) {
-                                        callback({ success: false, message: 'Something went ocurr wrong, try again.', result: result });
+                        getPlan(customerData.Plan, function (plan) {
+                            if (plan != undefined && plan != null) {
+                                _stripe.subscriptions.create({
+                                    customer: customer.id,
+                                    plan: plan.id
+                                }, function (err, subscription) {
+                                    if (err) {
+                                        console.log(err);
+                                        callback({ success: false, message: err, result: null });
                                     }
-                                    else {
-                                        callback({ success: true, message: 'Payment saved succesfuly', result: result })
-                                    }
-                                })
-                            });
-                        }
+
+                                    //// Save customer on mongo
+                                    userResult.CustomerId = customerData.CustomerId;
+                                    userResult.PlanId = plan.id;
+
+                                    _database.User().UpdatePaymentData(userResult, function (result) {
+                                        if (result == null) {
+                                            callback({ success: false, message: 'Something went ocurr wrong, try again.', result: result });
+                                        }
+                                        else {
+                                            callback({ success: true, message: 'Payment saved succesfuly', result: result })
+                                        }
+                                    })
+                                });
+                            }
+                            else {
+                                callback({ success: false, message: 'Something went ocurr wrong, try again.', result: result });
+                            }
+                        });
 
                     });
                 }
                 // if exist retrieve the customer
                 else {
                     //// Update subscription
-                    var plan = getPlan(customerData.Plan);
+                    getPlan(customerData.Plan, function (plan) {
+                        debugger;
+                        var custID= userResult.CustomerId;
+                        if (plan != undefined && plan != null) {debugger;
+                            _stripe.subscriptions.update(
+                                userResult.CustomerId,
+                                { plan: plan.id },
+                                function (err, subscription) {debugger;
+                                    if (err) {
+                                        console.log(err);
+                                        callback({ success: false, message: err, result: null });
+                                    }
 
-                    _stripe.subscriptions.update(
-                        userResult.CustomerId,
-                        { plan: plan.id },
-                        function (err, subscription) {
-                            if (err) {
-                                console.log(err);
-                                callback({ success: false, message: err, result: null });
-                            }
+                                    //// Update customer on mongo
+                                    userResult.CustomerId = customerData.CustomerId;
+                                    userResult.PlanId = plan.id;
 
-                            //// Update customer on mongo
-                            userResult.CustomerId = customerData.CustomerId;
-                            userResult.PlanId = plan.id;
-
-                            _database.User.UpdatePaymentData(userResult, function (result) {
-                                if (result == null) {
-                                    callback({ success: false, message: 'Something went ocurr wrong, try again.', result: result });
+                                    _database.User().UpdatePaymentData(userResult, function (result) {debugger;
+                                        if (result == null) {
+                                            callback({ success: false, message: 'Something went ocurr wrong, try again.', result: result });
+                                        }
+                                        else {
+                                            callback({ success: true, message: 'Payment saved succesfuly', result: result })
+                                        }
+                                    })
                                 }
-                                else {
-                                    callback({ success: true, message: 'Payment saved succesfuly', result: result })
-                                }
-                            })
+                            );
                         }
-                    );
+                        else {debugger;
+                            callback({ success: false, message: 'Something went ocurr wrong, try again.', result: result });
+                        }
+                    });
                 }
             }
         });
     }
 
     var cancelSubscription = function (customerData) {
-        _database.User.GetUserByEmail(customerData.Email, function (userResult) {
+        _database.User().GetUserByEmail(customerData.Email, function (userResult) {
             if (userResult != null) {
                 if (userResult.CustomerId != undefined && userResult.CustomerId.length > 0) {
                     _stripe.subscriptions.del(
@@ -164,7 +182,7 @@ function StripeController(dependencies) {
                             userResult.CustomerId = "";
                             userResult.PlanId = "";
 
-                            _database.User.UpdatePaymentData(userResult, function (result) {
+                            _database.User().UpdatePaymentData(userResult, function (result) {
                                 if (result == null) {
                                     callback({ success: false, message: 'Something went ocurr wrong, try again.', result: result });
                                 }

@@ -25,7 +25,7 @@ var uuid = require('node-uuid');
 var fs = require('fs');
 var grid = require('gridfs-stream');
 var mailgun = require('mailgun-js');
-var stripe = require('stripe');
+var stripe = require('stripe')('sk_test_yQpMkXfn1OM6GUwXcFjFFDKX');
 var config = require('config');
 
 var cross = require('./app/Controllers/crossController')({ config: config });

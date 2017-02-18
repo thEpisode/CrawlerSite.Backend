@@ -29,7 +29,7 @@ function Routes(dependencies) {
         _jwt = dependencies.jwt;
         _fileHandler = dependencies.fileHandler;
         _insights = dependencies.insights;
-        _stripe = dependencies.stripe;
+        _stripe = dependencies.stripeController;
 
         createAPI();
 
@@ -503,7 +503,7 @@ function Routes(dependencies) {
         /// -------------------------
         //  (POST http://localhost:3000/api/Payment/Subscription/Update)
         _apiRoutes.post('/Payment/Subscription/Update', function (req, res) {
-            _stripe.UpdateSubscription()(req.body.planId, req.body.customerData, function (result) {
+            _stripe.UpdateSubscription(req.body, function (result) {console.log(result);
                 res.json(result);
             })
         });
