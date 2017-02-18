@@ -113,6 +113,7 @@ function StripeController(dependencies) {
                                     //// Save customer on mongo
                                     userResult.CustomerId = customerData.CustomerId;
                                     userResult.PlanId = plan.id;
+                                    userResult.SubscriptionId = subscription.id;
 
                                     _database.User().UpdatePaymentData(userResult, function (result) {
                                         if (result == null) {
@@ -135,13 +136,11 @@ function StripeController(dependencies) {
                 else {
                     //// Update subscription
                     getPlan(customerData.Plan, function (plan) {
-                        debugger;
-                        var custID= userResult.CustomerId;
-                        if (plan != undefined && plan != null) {debugger;
+                        if (plan != undefined && plan != null) {
                             _stripe.subscriptions.update(
-                                userResult.CustomerId,
+                                userResult.SubscriptionId,
                                 { plan: plan.id },
-                                function (err, subscription) {debugger;
+                                function (err, subscription) {
                                     if (err) {
                                         console.log(err);
                                         callback({ success: false, message: err, result: null });
@@ -150,8 +149,9 @@ function StripeController(dependencies) {
                                     //// Update customer on mongo
                                     userResult.CustomerId = customerData.CustomerId;
                                     userResult.PlanId = plan.id;
+                                    userResult.SubscriptionId = subscription.id;
 
-                                    _database.User().UpdatePaymentData(userResult, function (result) {debugger;
+                                    _database.User().UpdatePaymentData(userResult, function (result) {
                                         if (result == null) {
                                             callback({ success: false, message: 'Something went ocurr wrong, try again.', result: result });
                                         }
@@ -162,8 +162,8 @@ function StripeController(dependencies) {
                                 }
                             );
                         }
-                        else {debugger;
-                            callback({ success: false, message: 'Something went ocurr wrong, try again.', result: result });
+                        else {
+                            callback({ success: false, message: 'Something went ocurr wrong, try again.', result: null });
                         }
                     });
                 }

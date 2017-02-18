@@ -33,6 +33,7 @@ function UserController(dependencies) {
                         _id: _mongoose.Types.ObjectId(),
                         CustomerId: undefined,
                         PlanId: undefined,
+                        SubscriptionId: undefined,
                         FirstName: data.FirstName,
                         LastName: data.LastName,
                         Email: data.Email,
@@ -140,7 +141,7 @@ function UserController(dependencies) {
     }
 
     var updatePaymentData = function(data, callback){
-        _entity.GetModel().findOneAndUpdate({ "_id": data._id }, { $set: { CustomerId: data.CustomerId, PlanId: data.PlanId } }, { upsert: false }, function (err, result) {
+        _entity.GetModel().findOneAndUpdate({ "_id": data._id }, { $set: { CustomerId: data.CustomerId, PlanId: data.PlanId, SubscriptionId: data.SubscriptionId } }, { upsert: false }, function (err, result) {
             if (err) {
                 console.log(err);
                 callback(null);

@@ -31,6 +31,7 @@ function User(dependencies) {
                 _id: _schema.Types.ObjectId,
                 CustomerId: String,
                 PlanId: String,
+                SubscriptionId: String,
                 FirstName: String,
                 LastName: String,
                 Email: String,
