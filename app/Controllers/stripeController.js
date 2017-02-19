@@ -87,7 +87,7 @@ function StripeController(dependencies) {
         _database.User().GetUserByEmail(customerData.Email, function (userResult) {
             if (userResult != null) {
                 // if user has not a customer id
-                if (userResult.CustomerId == undefined) {
+                if (userResult.CustomerId.length == 0) {
                     /// Create a customer in Stripe
                     _stripe.customers.create({
                         description: customerData.Description,
@@ -114,6 +114,8 @@ function StripeController(dependencies) {
                                     userResult.CustomerId = customerData.CustomerId;
                                     userResult.PlanId = plan.id;
                                     userResult.SubscriptionId = subscription.id;
+                                    userResult.FirstNameCard = customerData.Firstname;
+                                    userResult.LastNameCard = customerData.Lastname;
 
                                     _database.User().UpdatePaymentData(userResult, function (result) {
                                         if (result == null) {
@@ -150,6 +152,8 @@ function StripeController(dependencies) {
                                     userResult.CustomerId = customerData.CustomerId;
                                     userResult.PlanId = plan.id;
                                     userResult.SubscriptionId = subscription.id;
+                                    userResult.FirstNameCard = customerData.Firstname;
+                                    userResult.LastNameCard = customerData.Lastname;
 
                                     _database.User().UpdatePaymentData(userResult, function (result) {
                                         if (result == null) {
@@ -181,6 +185,9 @@ function StripeController(dependencies) {
                             //// Update customer on mongo
                             userResult.CustomerId = "";
                             userResult.PlanId = "";
+                            userResult.SubscriptionId = '';
+                            userResult.FirstNameCard = '';
+                            userResult.LastNameCard = '';
 
                             _database.User().UpdatePaymentData(userResult, function (result) {
                                 if (result == null) {

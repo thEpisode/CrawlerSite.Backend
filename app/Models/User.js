@@ -32,6 +32,8 @@ function User(dependencies) {
                 CustomerId: String,
                 PlanId: String,
                 SubscriptionId: String,
+                FirstNameCard: String,
+                LastNameCard: String,
                 FirstName: String,
                 LastName: String,
                 Email: String,

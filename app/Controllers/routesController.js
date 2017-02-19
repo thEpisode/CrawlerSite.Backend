@@ -503,7 +503,7 @@ function Routes(dependencies) {
         /// -------------------------
         //  (POST http://localhost:3000/api/Payment/Subscription/Update)
         _apiRoutes.post('/Payment/Subscription/Update', function (req, res) {
-            _stripe.UpdateSubscription(req.body, function (result) {console.log(result);
+            _stripe.UpdateSubscription(req.body, function (result) {
                 res.json(result);
             })
         });
