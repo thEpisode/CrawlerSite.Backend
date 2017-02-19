@@ -14,6 +14,7 @@ function Routes(dependencies) {
     var _cross;
     var _fileHandler;
     var _insights;
+    var _stripe;
 
     var _apiRoutes;
 
@@ -28,6 +29,7 @@ function Routes(dependencies) {
         _jwt = dependencies.jwt;
         _fileHandler = dependencies.fileHandler;
         _insights = dependencies.insights;
+        _stripe = dependencies.stripeController;
 
         createAPI();
 
@@ -83,20 +85,20 @@ function Routes(dependencies) {
         /// -------------------------
         //  (GET http://localhost:3000/api/Insights/Heatmap/MinWidth/:MinWidth/MaxWidth/:MaxWidth/Type/:Type)
         _apiRoutes.get('/Insights/HeatmapData/ApiKey/:ApiKey/MinWidth/:MinWidth/MaxWidth/:MaxWidth/Type/:Type/MaxTime/:MaxTime/Endpoint/:Endpoint', function (req, res) {
-            _insights.HeatmapData(req.params.ApiKey, req.params.MinWidth, req.params.MaxWidth, req.params.Type, req.params.MaxTime, req.params.Endpoint, function(result){
-                res.json({ success: true, message: 'HeatmapData', result: result})
+            _insights.HeatmapData(req.params.ApiKey, req.params.MinWidth, req.params.MaxWidth, req.params.Type, req.params.MaxTime, req.params.Endpoint, function (result) {
+                res.json({ success: true, message: 'HeatmapData', result: result })
             })
         });
 
-        _apiRoutes.get('/Insights/HeatmapScreenshot/ApiKey/:ApiKey/Pathname/:Pathname', function(req, res){
-            _insights.HeatmapScreenshot(req.params.ApiKey, req.params.Pathname, function(file){
+        _apiRoutes.get('/Insights/HeatmapScreenshot/ApiKey/:ApiKey/Pathname/:Pathname', function (req, res) {
+            _insights.HeatmapScreenshot(req.params.ApiKey, req.params.Pathname, function (file) {
                 file.pipe(res);
-               //res.json({ message: 'HeatmapData', result: result})
+                //res.json({ message: 'HeatmapData', result: result})
             })
         });
 
-        _apiRoutes.get('/Insights/HeatmapScreenshotById/:Id', function(req, res){
-            _insights.HeatmapScreenshotById(req.params.Id, function(file){
+        _apiRoutes.get('/Insights/HeatmapScreenshotById/:Id', function (req, res) {
+            _insights.HeatmapScreenshotById(req.params.Id, function (file) {
                 file.pipe(res);
             })
         })
@@ -497,7 +499,28 @@ function Routes(dependencies) {
             })
         });
 
+        /// Stripe api routes
+        /// -------------------------
+        //  (POST http://localhost:3000/api/Payment/Subscription/Update)
+        _apiRoutes.post('/Payment/Subscription/Update', function (req, res) {
+            _stripe.UpdateSubscription(req.body, function (result) {
+                res.json(result);
+            })
+        });
 
+        //  (POST http://localhost:3000/api/Payment/Subscription/Cancel)
+        _apiRoutes.post('/Payment/Subscription/Cancel', function (req, res) {
+            _stripe.CancelSubscription()(req.body, function (result) {
+                res.json(result);
+            })
+        });
+
+        //  (GET http://localhost:3000/api/Plans/All)
+        _apiRoutes.get('/Plans/All', function (req, res) {
+            _stripe.GetAllPlans()(function (result) {
+                res.json({ success: true, message: 'GetAllPlans', result: result });
+            })
+        });
 
         // apply the routes to our application with the prefix /api
         _app.use('/api', _apiRoutes);

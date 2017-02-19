@@ -31,6 +31,11 @@ function UserController(dependencies) {
                 var user = new _entity.GetModel()(
                     {
                         _id: _mongoose.Types.ObjectId(),
+                        CustomerId: '',
+                        PlanId: '',
+                        SubscriptionId: '',
+                        FirstNameCard: '',
+                        LastNameCard: '',
                         FirstName: data.FirstName,
                         LastName: data.LastName,
                         Email: data.Email,
@@ -133,7 +138,18 @@ function UserController(dependencies) {
                 callback(false);
             }
 
-            callback(true);
+            callback(result);
+        })
+    }
+
+    var updatePaymentData = function (data, callback) {
+        _entity.GetModel().findOneAndUpdate({ "_id": data._id }, { $set: { CustomerId: data.CustomerId, PlanId: data.PlanId, SubscriptionId: data.SubscriptionId, FirstNameCard: data.FirstNameCard, LastNameCard: data.LastNameCard } }, { upsert: false }, function (err, result) {
+            if (err) {
+                console.log(err);
+                callback(null);
+            }
+
+            callback(result);
         })
     }
 
@@ -146,6 +162,7 @@ function UserController(dependencies) {
         GetUserByCredentials: getUserByCredentials,
         GetAllUser: getAllUser,
         EditUser: editUser,
+        UpdatePaymentData: updatePaymentData,
         Entity: getEntity
     }
 }

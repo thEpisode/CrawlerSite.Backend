@@ -1,4 +1,4 @@
-function ClickController(dependencies) {
+function MovementController(dependencies) {
 
     /// Dependencies   
     var _mongoose;
@@ -9,13 +9,13 @@ function ClickController(dependencies) {
     var constructor = function () {
         _mongoose = dependencies.mongoose;
 
-        _entity = require('../Models/Click')(dependencies);
+        _entity = require('../Models/Movement')(dependencies);
         _entity.Initialize();
     }
 
-    var createClick = function (data, callback) {
+    var createMovement = function (data, callback) {
 
-        var click = new _entity.GetModel()(
+        var movement = new _entity.GetModel()(
             {
                 ApiKey: data.ApiKey,
                 Event: {
@@ -28,19 +28,19 @@ function ClickController(dependencies) {
                 Pathname: data.Pathname,
             });
 
-        click.save().then(function (result) {
+        movement.save().then(function (result) {
             // When database return a result call the return
             callback();
         })
     }
 
-    var deleteClick = function (data, callback) {
+    var deleteMovement = function (data, callback) {
         _entity.GetModel().findOneAndRemove(data, function (err, result) {
             callback(result);
         })
     }
 
-    var getClickById = function (data, callback) {
+    var getMovementById = function (data, callback) {
         _entity.GetModel().findOne({ "_id": data }, function (err, result) {
             if (err) console.log(err);
 
@@ -48,7 +48,7 @@ function ClickController(dependencies) {
         })
     }
 
-    var getClickByApiKey = function (data, callback) {
+    var getMovementByApiKey = function (data, callback) {
         _entity.GetModel().findOne({ "ApiKey": data }, function (err, result) {
             if (err) console.log(err);
 
@@ -56,7 +56,7 @@ function ClickController(dependencies) {
         })
     }
 
-    var getAllClick = function (data, callback) {
+    var getAllMovement = function (data, callback) {
         _entity.GetModel().find({}, function (err, result) {
             if (err) console.log(err);
 
@@ -66,16 +66,16 @@ function ClickController(dependencies) {
 
     var getInsight = function (ApiKey, MinWidth, MaxWidth, MaxTime, Endpoint, callback) {
         var startAt = (new Date().getTime() - (parseInt(MaxTime) * 60 * 60 * 1000));
-        _entity.GetModel().find({
+        _mongoose.connection.db.collection('Movement').find({
             "ApiKey": ApiKey,
             "Event.Client.screen.width": { "$gt": parseInt(MinWidth), "$lt": parseInt(MaxWidth)},
             "Event.TimeStamp": {"$gte": startAt},
             "Pathname": {"$regex": Endpoint.toLowerCase() === "index" ? "/" : Endpoint}
-        }, function (err, result){
+        }).toArray(function (err, result){
             if(err) console.log(err);
 
             callback(result);
-        }).limit(15000);
+        });
     }
 
     var getEntity = function () {
@@ -84,14 +84,14 @@ function ClickController(dependencies) {
 
     return {
         Initialize: constructor,
-        CreateClick: createClick,
-        DeleteClick: deleteClick,
-        GetClickById: getClickById,
-        GetClickByApiKey: getClickByApiKey,
-        GetAllClick: getAllClick,
+        CreateMovement: createMovement,
+        DeleteMovement: deleteMovement,
+        GetMovementById: getMovementById,
+        GetMovementByApiKey: getMovementByApiKey,
+        GetAllMovement: getAllMovement,
         GetInsight: getInsight,
         Entity: getEntity
     }
 }
 
-module.exports = ClickController;
+module.exports = MovementController;

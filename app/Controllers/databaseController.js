@@ -61,9 +61,24 @@ function Database(dependencies) {
             _gridfs = _grid(_db.db, _mongoose.mongo);
 
             entitiesControllers(function (result) {
+                createIndexes();
+
                 callback(result);
             });
+
         });
+    }
+
+    /// To improve performance
+    var createIndexes = function(){
+        _mongoose.connection.db.collection('Movement').createIndex({"ApiKey": 1});
+        _mongoose.connection.db.collection('Movement').createIndex({"Pathname": 1});
+        
+        _mongoose.connection.db.collection('Click').createIndex({"ApiKey": 1});
+        _mongoose.connection.db.collection('Click').createIndex({"Pathname": 1});
+
+        _mongoose.connection.db.collection('Scroll').createIndex({"ApiKey": 1});
+        _mongoose.connection.db.collection('Scroll').createIndex({"Pathname": 1});
     }
 
     var getGridFS = function () {

@@ -1,0 +1,7 @@
+{
+    "FlingerSecretJWT": "DremindIsCool",
+    "MongoConnectionString": "mongodb://127.0.0.1:27017/Flinger",
+    "MailgunApiKey": "key-d226b5454d46e08bd0e87cd90e90d686",
+    "MailgunDomain": "MailgunDomain",
+    "stripe_sk": "sk_test_yQpMkXfn1OM6GUwXcFjFFDKX"
+}

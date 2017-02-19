@@ -1,11 +1,16 @@
 function Cross(dependencies) {
-
-    var _socket;
     var _mongoConnectionString;
     var _flingerSecretJWT;
+    var _mailgunApiKey = '';
+    var _mailgunDomain = '';
+    var _stripePK = '';
 
-    var getSocket = function () {
-        return _socket;
+    var setSettings = function(){
+        setFlingerSecretJWT(dependencies.config.FlingerSecretJWT);
+        setMongoConnectionString(dependencies.config.MongoConnectionString);
+        setMailgunApiKey(dependencies.config.MailgunApiKey);
+        setMailgunDomain(dependencies.config.MailgunDomain);
+        setStripePrivateKey(dependencies.config.StripePrivateKey);
     }
 
     var getMongoConnectionString = function () {
@@ -14,10 +19,6 @@ function Cross(dependencies) {
 
     var setMongoConnectionString = function (connectionString) {
         _mongoConnectionString = connectionString;
-    }
-
-    var setSocket = function (socket) {
-        _socket = socket;
     }
 
     var getFlingerSecretJWT = function () {
@@ -55,15 +56,56 @@ function Cross(dependencies) {
         return null;
     }
 
+    var normalizePort = function (val) {
+        var port = parseInt(val, 10);
+
+        if (isNaN(port)) {
+            // named pipe
+            return val;
+        }
+
+        if (port >= 0) {
+            // port number
+            return port;
+        }
+
+        return false;
+    }
+
+    var setMailgunApiKey = function (apiKey) {
+        _mailgunApiKey = apiKey;
+    }
+
+    var getMailgunApiKey = function () {
+        return _mailgunApiKey;
+    }
+
+    var setMailgunDomain = function (domain) {
+        _mailgunDomain = domain;
+    }
+
+    var getMailgunDomain = function () {
+        return _mailgunDomain;
+    }
+
+    var setStripePrivateKey = function(privateKey){
+        _stripePK = privateKey;
+    }
+
+    var getStripePrivateKey = function(){
+        return _stripePK;
+    }
+
     return {
-        SetSocket: setSocket,
-        GetSocket: getSocket,
-        SetMongoConnectionString: setMongoConnectionString,
+        SetSettings: setSettings,
         GetMongoConnectionString: getMongoConnectionString,
-        SetFlingerSecretJWT: setFlingerSecretJWT,
         GetFlingerSecretJWT: getFlingerSecretJWT,
         ObjectReferenceByDotStyle: objectReferenceByDotStyle,
-        SearchObjectByIdOnArray: searchObjectByIdOnArray
+        SearchObjectByIdOnArray: searchObjectByIdOnArray,
+        NormalizePort: normalizePort,
+        GetMailgunApiKey: getMailgunApiKey,
+        GetMailgunDomain: getMailgunDomain,
+        GetStripePrivateKey: getStripePrivateKey,
     }
 }
 
