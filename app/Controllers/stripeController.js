@@ -19,8 +19,13 @@ function StripeController(dependencies) {
 
     var getAllPlans = function (callback) {
         _stripe.plans.list(
-            { limit: 5 },
+            { limit: 12 },
             function (err, plans) {
+                if (err) {
+                    console.log(err);
+                    callback({ success: false, message: 'Something went wrong when retrieving all plans, try again.', result: null });
+                }
+
                 callback(plans);
             }
         );
@@ -30,6 +35,11 @@ function StripeController(dependencies) {
         _stripe.plans.retrieve(
             planId,
             function (err, plan) {
+                if (err) {
+                    console.log(err);
+                    callback({ success: false, message: 'Something went wrong when retrieving plans, try again.', result: null });
+                }
+
                 callback(plan);
             })
     }
@@ -49,7 +59,7 @@ function StripeController(dependencies) {
                     }, function (err, customer) {
                         if (err) {
                             console.log(err);
-                            callback({ success: false, message: err, result: null });
+                            callback({ success: false, message: 'Something went error occurred when creating customer', result: null });
                         }
                         //// Create a new subscription
                         getPlan(customerData.Plan, function (plan) {
@@ -60,7 +70,7 @@ function StripeController(dependencies) {
                                 }, function (err, subscription) {
                                     if (err) {
                                         console.log(err);
-                                        callback({ success: false, message: err, result: null });
+                                        callback({ success: false, message: 'Something went error occurred when subscribing customer in plan', result: null });
                                     }
 
                                     //// Save customer on mongo
@@ -72,7 +82,7 @@ function StripeController(dependencies) {
 
                                     _database.User().UpdatePaymentData(userResult, function (result) {
                                         if (result == null) {
-                                            callback({ success: false, message: 'Something went ocurr wrong, try again.', result: result });
+                                            callback({ success: false, message: 'Something went occurred wrong when update payment method, try again.', result: result });
                                         }
                                         else {
                                             callback({ success: true, message: 'Payment saved succesfuly', result: result })
@@ -81,7 +91,7 @@ function StripeController(dependencies) {
                                 });
                             }
                             else {
-                                callback({ success: false, message: 'Something went ocurr wrong, try again.', result: result });
+                                callback({ success: false, message: 'Something went occurred wrong, try again.', result: result });
                             }
                         });
 
@@ -110,7 +120,7 @@ function StripeController(dependencies) {
 
                                     _database.User().UpdatePaymentData(userResult, function (result) {
                                         if (result == null) {
-                                            callback({ success: false, message: 'Something went ocurr wrong, try again.', result: result });
+                                            callback({ success: false, message: 'Something went occurred wrong, try again.', result: result });
                                         }
                                         else {
                                             callback({ success: true, message: 'Payment saved succesfuly', result: result })
@@ -120,7 +130,7 @@ function StripeController(dependencies) {
                             );
                         }
                         else {
-                            callback({ success: false, message: 'Something went ocurr wrong, try again.', result: null });
+                            callback({ success: false, message: 'Something went occurred wrong, try again.', result: null });
                         }
                     });
                 }
@@ -147,7 +157,7 @@ function StripeController(dependencies) {
 
                             _database.User().UpdatePaymentData(userResult, function (result) {
                                 if (result == null) {
-                                    callback({ success: false, message: 'Something went ocurr wrong, try again.', result: result });
+                                    callback({ success: false, message: 'Something went occurred wrong when update payment data, try again.', result: result });
                                 }
                                 else {
                                     callback({ success: true, message: 'Payment saved succesfuly', result: result })
@@ -176,7 +186,7 @@ function StripeController(dependencies) {
                             userResult.PlanId = plan.id;
                             _database.User().UpdatePaymentData(userResult, function (result) {
                                 if (result == null) {
-                                    callback({ success: false, message: 'Something went ocurr wrong, try again.', result: result });
+                                    callback({ success: false, message: 'Something went occurred wrong when updating data, try again.', result: result });
                                 }
                                 else {
                                     callback({ success: true, message: 'Plan changed succesfuly', result: result })
@@ -192,20 +202,49 @@ function StripeController(dependencies) {
         });
     }
 
-    var getCustomerById = function (userId, callback) {
+    var getCustomerByUserId = function (userId, callback) {
         _database.User().GetUserById(userId, function (userResult) {
             if (userResult != null) {
                 _stripe.customers.retrieve(
                     userResult.CustomerId,
                     function (err, customer) {
-                        callback({ success: false, message: 'User not found, try again.', result: customer });
+                        if (err) {
+                            console.log(err);
+                            callback({ success: false, message: 'Something went wrong when retrieving customer, try again.', result: null });
+                        }
+
+                        callback({ success: true, message: 'GetCustomerByUserId', result: customer });
                     }
                 );
             }
             else {
                 callback({ success: false, message: 'User not found, try again.', result: null });
             }
-        })
+        });
+    }
+
+    var getChargesByUserId = function (userId, callback) {
+        _database.User().GetUserById(userId, function (userResult) {
+            if (userResult != null) {
+                stripe.charges.list(
+                    {
+                        limit: 12,
+                        customer: userResult.CustomerId,
+                    },
+                    function (err, charges) {
+                        if (err) {
+                            console.log(err);
+                            callback({ success: false, message: 'Something went wrong when retrieving customer, try again.', result: null });
+                        }
+
+                        callback({ success: true, message: 'GetChargesByUserId', result: customer });
+                    }
+                );
+            }
+            else {
+                callback({ success: false, message: 'User not found, try again.', result: null });
+            }
+        });
     }
 
     return {
@@ -218,7 +257,8 @@ function StripeController(dependencies) {
         UpdateSubscription: updateSubscription,
         GetAllPlans: getAllPlans,
         ChangePlan: changePlan,
-        GetCustomerById: getCustomerById,
+        GetCustomerByUserId: getCustomerByUserId,
+        GetChargesByUserId: GetChargesByUserId,
     }
 }
 

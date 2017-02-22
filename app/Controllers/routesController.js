@@ -515,9 +515,16 @@ function Routes(dependencies) {
             })
         });
 
-        //  (POST http://localhost:3000/api/Payment/Subscription/GetCustomer)
-        _apiRoutes.post('/Payment/Subscription/GetCustomer', function (req, res) {
-            _stripe.GetCustomerById(req.body, function (result) {
+        //  (POST http://localhost:3000/api/Payment/Subscription/GetCustomerByUserId)
+        _apiRoutes.post('/Payment/Subscription/GetCustomerByUserId', function (req, res) {
+            _stripe.GetCustomerByUserId(req.body, function (result) {
+                res.json(result);
+            })
+        });
+
+        //  (POST http://localhost:3000/api/Payment/Subscription/GetChargesByUserId)
+        _apiRoutes.post('/Payment/Subscription/GetChargesByUserId', function (req, res) {
+            _stripe.GetChargesByUserId(req.body, function (result) {
                 res.json(result);
             })
         });
