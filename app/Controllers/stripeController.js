@@ -247,6 +247,97 @@ function StripeController(dependencies) {
         });
     }
 
+    var processWebhook = function (webHookData, callback) {
+        _stripe.events.retrieve(webHookData.id, function (err, event) {
+            switch (webHookData.type) {
+                case 'account.updated':
+                case 'account.application.deauthorized':
+                case 'account.external_account.created':
+                case 'account.external_account.deleted':
+                case 'account.external_account.updated':
+                case 'application_fee.created':
+                case 'application_fee.refunded':
+                case 'application_fee.refund.updated':
+                case 'balance.available':
+                case 'bitcoin.receiver.created':
+                case 'bitcoin.receiver.filled':
+                case 'bitcoin.receiver.updated':
+                case 'bitcoin.receiver.transaction.created':
+                case 'charge.captured':
+                case 'charge.failed':
+                case 'charge.pending':
+                case 'charge.refunded':
+                case 'charge.succeeded':
+                case 'charge.updated':
+                case 'charge.dispute.closed':
+                case 'charge.dispute.created':
+                case 'charge.dispute.funds_reinstated':
+                case 'charge.dispute.funds_withdrawn':
+                case 'charge.dispute.updated':
+                case 'coupon.created':
+                case 'coupon.deleted':
+                case 'coupon.updated':
+                case 'customer.created':
+                case 'customer.deleted':
+                case 'customer.updated':
+                case 'customer.discount.created':
+                case 'customer.discount.deleted':
+                case 'customer.discount.updated':
+                case 'customer.source.created':
+                case 'customer.source.deleted':
+                case 'customer.source.updated':
+                case 'customer.subscription.created':
+                case 'customer.subscription.deleted':
+                case 'customer.subscription.trial_will_end':
+                case 'customer.subscription.updated':
+                case 'invoice.created':
+                case 'invoice.payment_failed':
+                case 'invoice.payment_succeeded':
+                case 'invoice.sent':
+                case 'invoice.updated':
+                case 'invoiceitem.created':
+                case 'invoiceitem.deleted':
+                case 'invoiceitem.updated':
+                case 'order.created':
+                case 'order.payment_failed':
+                case 'order.payment_succeeded':
+                case 'order.updated':
+                case 'order_return.created':
+                case 'plan.created':
+                case 'plan.created':
+                case 'plan.updated':
+                case 'product.created':
+                case 'product.deleted':
+                case 'product.updated':
+                case 'recipient.created':
+                case 'recipient.deleted':
+                case 'recipient.updated':
+                case 'review.closed':
+                case 'review.opened':
+                case 'sku.created':
+                case 'sku.deleted':
+                case 'sku.updated':
+                case 'source.canceled':
+                case 'source.chargeable':
+                case 'source.failed':
+                case 'source.transaction.created':
+                case 'transfer.created':
+                case 'transfer.failed':
+                case 'transfer.paid':
+                case 'transfer.reversed':
+                case 'transfer.updated':
+                case 'ping':
+                /// Send notification or do Something
+                    break;
+            
+                default:
+                    break;
+            }
+
+            callback(true);
+        });
+    }
+
     return {
         Initialize: constructor,
         GetFreePlan: getFreePlan,
@@ -259,6 +350,7 @@ function StripeController(dependencies) {
         ChangePlan: changePlan,
         GetCustomerByUserId: getCustomerByUserId,
         GetChargesByUserId: GetChargesByUserId,
+        ProcessWebhook: processWebhook,
     }
 }
 
