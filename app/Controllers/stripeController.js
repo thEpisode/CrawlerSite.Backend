@@ -17,42 +17,6 @@ function StripeController(dependencies) {
         _stripe = dependencies.stripe;
     }
 
-    var getStandardPlan = function (callback) {
-        _stripe.plans.retrieve(
-            "standard",
-            function (err, plan) {
-                callback(plan);
-            })
-    }
-
-    var getBasicPlan = function (callback) {
-        _stripe.plans.retrieve(
-            "basic",
-            function (err, plan) {
-                callback(plan);
-            })
-    }
-
-    var getPremiumPlan = function (callback) {
-        _stripe.plans.retrieve(
-            "premium",
-            function (err, plan) {
-                if (err) {
-                    console.log(err);
-                    callback(null);
-                }
-                callback(plan);
-            })
-    }
-
-    var getFreePlan = function (callback) {
-        _stripe.plans.retrieve(
-            "free",
-            function (err, plan) {
-                callback(plan);
-            })
-    }
-
     var getAllPlans = function (callback) {
         _stripe.plans.list(
             { limit: 5 },
@@ -63,22 +27,11 @@ function StripeController(dependencies) {
     }
 
     var getPlan = function (planId, callback) {
-        switch (planId) {
-            case 'standard':
-                getStandardPlan(function (result) { callback(result) });
-                break;
-            case 'basic':
-                getBasicPlan(function (result) { callback(result) });
-                break;
-            case 'premium':
-                getPremiumPlan(function (result) { callback(result) });
-                break;
-            case 'free':
-                getFreePlan(function (result) { callback(result) });
-                break;
-            default:
-                callback(null);
-        }
+         _stripe.plans.retrieve(
+            planId,
+            function (err, plan) {
+                callback(plan);
+            })
     }
 
     var updateSubscription = function (customerData, callback) {
@@ -162,7 +115,7 @@ function StripeController(dependencies) {
                                         else {
                                             callback({ success: true, message: 'Payment saved succesfuly', result: result })
                                         }
-                                    })
+                                    });
                                 }
                             );
                         }
@@ -175,7 +128,7 @@ function StripeController(dependencies) {
         });
     }
 
-    var cancelSubscription = function (customerData) {
+    var cancelSubscription = function (customerData, callback) {
         _database.User().GetUserByEmail(customerData.Email, function (userResult) {
             if (userResult != null) {
                 if (userResult.CustomerId != undefined && userResult.CustomerId.length > 0) {
@@ -204,6 +157,38 @@ function StripeController(dependencies) {
         })
     }
 
+    var changePlan = function (customerData, callback) {
+        _database.User().GetUserByEmail(customerData.Email, function (userResult) {
+            if (userResult != null) {
+                if (userResult.CustomerId.length != 0) {
+                    _stripe.subscriptions.update(
+                        userResult.SubscriptionId,
+                        { plan: customerData.planId },
+                        function (err, subscription) {
+                            if (err) {
+                                console.log(err);
+                                callback({ success: false, message: err, result: null });
+                            }
+
+                            userResult.PlanId = plan.id;
+                            _database.User().UpdatePaymentData(userResult, function (result) {
+                                if (result == null) {
+                                    callback({ success: false, message: 'Something went ocurr wrong, try again.', result: result });
+                                }
+                                else {
+                                    callback({ success: true, message: 'Plan changed succesfuly', result: result })
+                                }
+                            });
+                        }
+                    );
+                }
+                else{
+                    callback({ success: false, message: 'User has not any plan active, please first update payment method to change plan.', result: result });
+                }
+            }
+        });
+    }
+
     return {
         Initialize: constructor,
         GetFreePlan: getFreePlan,
@@ -213,6 +198,7 @@ function StripeController(dependencies) {
         CancelSubscription: cancelSubscription,
         UpdateSubscription: updateSubscription,
         GetAllPlans: getAllPlans,
+        ChangePlan: changePlan,
     }
 }
 
