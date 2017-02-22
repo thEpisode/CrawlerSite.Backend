@@ -27,7 +27,7 @@ function StripeController(dependencies) {
     }
 
     var getPlan = function (planId, callback) {
-         _stripe.plans.retrieve(
+        _stripe.plans.retrieve(
             planId,
             function (err, plan) {
                 callback(plan);
@@ -125,6 +125,9 @@ function StripeController(dependencies) {
                     });
                 }
             }
+            else {
+                callback({ success: false, message: 'User not found, try again.', result: null });
+            }
         });
     }
 
@@ -182,11 +185,27 @@ function StripeController(dependencies) {
                         }
                     );
                 }
-                else{
+                else {
                     callback({ success: false, message: 'User has not any plan active, please first update payment method to change plan.', result: result });
                 }
             }
         });
+    }
+
+    var getCustomerById = function (userId, callback) {
+        _database.User().GetUserById(userId, function (userResult) {
+            if (userResult != null) {
+                _stripe.customers.retrieve(
+                    userResult.CustomerId,
+                    function (err, customer) {
+                        callback({ success: false, message: 'User not found, try again.', result: customer });
+                    }
+                );
+            }
+            else {
+                callback({ success: false, message: 'User not found, try again.', result: null });
+            }
+        })
     }
 
     return {
@@ -199,6 +218,7 @@ function StripeController(dependencies) {
         UpdateSubscription: updateSubscription,
         GetAllPlans: getAllPlans,
         ChangePlan: changePlan,
+        GetCustomerById: getCustomerById,
     }
 }
 

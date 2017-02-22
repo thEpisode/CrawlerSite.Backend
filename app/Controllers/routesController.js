@@ -515,6 +515,13 @@ function Routes(dependencies) {
             })
         });
 
+        //  (POST http://localhost:3000/api/Payment/Subscription/GetCustomer)
+        _apiRoutes.post('/Payment/Subscription/GetCustomer', function (req, res) {
+            _stripe.GetCustomerById(req.body, function (result) {
+                res.json(result);
+            })
+        });
+
         //  (POST http://localhost:3000/api/Payment/Subscription/Cancel)
         _apiRoutes.post('/Payment/Subscription/Cancel', function (req, res) {
             _stripe.CancelSubscription()(req.body, function (result) {
