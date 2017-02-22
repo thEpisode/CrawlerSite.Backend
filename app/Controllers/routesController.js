@@ -501,9 +501,40 @@ function Routes(dependencies) {
 
         /// Stripe api routes
         /// -------------------------
-        //  (POST http://localhost:3000/api/Payment/Subscription/Update)
-        _apiRoutes.post('/Payment/Subscription/Update', function (req, res) {
+        //  (POST http://localhost:3000/api/Payment/Subscription/UpdatePaymentMethod)
+        _apiRoutes.post('/Stripe/Webhooks/', function (req, res) {
+            _stripe.ProcessWebhook(JSON.parse(req.body), function (result) {
+                if(result == true){
+                    res.send(200);
+                }
+                res.send(409);
+            })
+        });
+
+        //  (POST http://localhost:3000/api/Payment/Subscription/UpdatePaymentMethod)
+        _apiRoutes.post('/Payment/Subscription/UpdatePaymentMethod', function (req, res) {
             _stripe.UpdateSubscription(req.body, function (result) {
+                res.json(result);
+            })
+        });
+
+        //  (POST http://localhost:3000/api/Payment/Subscription/ChangePlan)
+        _apiRoutes.post('/Payment/Subscription/ChangePlan', function (req, res) {
+            _stripe.ChangePlan(req.body, function (result) {
+                res.json(result);
+            })
+        });
+
+        //  (POST http://localhost:3000/api/Payment/GetCustomerByUserId)
+        _apiRoutes.post('/Payment/GetCustomerByUserId', function (req, res) {
+            _stripe.GetCustomerByUserId(req.body, function (result) {
+                res.json(result);
+            })
+        });
+
+        //  (POST http://localhost:3000/api/Payment/GetChargesByUserId)
+        _apiRoutes.post('/Payment/GetChargesByUserId', function (req, res) {
+            _stripe.GetChargesByUserId(req.body, function (result) {
                 res.json(result);
             })
         });
