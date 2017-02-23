@@ -171,19 +171,19 @@ function StripeController(dependencies) {
     }
 
     var changePlan = function (customerData, callback) {
-        _database.User().GetUserByEmail(customerData.Email, function (userResult) {
+        _database.User().GetUserById(customerData.UserId, function (userResult) {
             if (userResult != null) {
                 if (userResult.CustomerId.length != 0) {
                     _stripe.subscriptions.update(
                         userResult.SubscriptionId,
-                        { plan: customerData.planId },
+                        { plan: customerData.PlanId },
                         function (err, subscription) {
                             if (err) {
                                 console.log(err);
                                 callback({ success: false, message: err, result: null });
                             }
 
-                            userResult.PlanId = plan.id;
+                            userResult.PlanId = customerData.PlanId;
                             _database.User().UpdatePaymentData(userResult, function (result) {
                                 if (result == null) {
                                     callback({ success: false, message: 'Something went occurred wrong when updating data, try again.', result: result });
@@ -340,16 +340,13 @@ function StripeController(dependencies) {
 
     return {
         Initialize: constructor,
-        GetFreePlan: getFreePlan,
-        GetBasicPlan: getBasicPlan,
-        GetStandardPlan: getStandardPlan,
-        GetPremiumPlan: getPremiumPlan,
+        GetPlan: getPlan,
         CancelSubscription: cancelSubscription,
         UpdateSubscription: updateSubscription,
         GetAllPlans: getAllPlans,
         ChangePlan: changePlan,
         GetCustomerByUserId: getCustomerByUserId,
-        GetChargesByUserId: GetChargesByUserId,
+        GetChargesByUserId: getChargesByUserId,
         ProcessWebhook: processWebhook,
     }
 }
