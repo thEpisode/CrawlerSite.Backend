@@ -225,10 +225,10 @@ function StripeController(dependencies) {
         });
     }
 
-    var getChargesByUserId = function (userId, callback) {
-        _database.User().GetUserById(userId, function (userResult) {
+    var getChargesByUserId = function (customerData, callback) {
+        _database.User().GetUserById(customerData.UserId, function (userResult) {
             if (userResult != null) {
-                stripe.charges.list(
+                _stripe.charges.list(
                     {
                         limit: 12,
                         customer: userResult.CustomerId,
@@ -239,7 +239,7 @@ function StripeController(dependencies) {
                             callback({ success: false, message: 'Something went wrong when retrieving customer, try again.', result: null });
                         }
 
-                        callback({ success: true, message: 'GetChargesByUserId', result: customer });
+                        callback({ success: true, message: 'GetChargesByUserId', result: charges });
                     }
                 );
             }
