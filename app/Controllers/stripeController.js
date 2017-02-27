@@ -55,7 +55,7 @@ function StripeController(dependencies) {
                     _stripe.customers.create({
                         description: customerData.Description,
                         email: customerData.Email,
-                        source: customerData.CustomerId // obtained with Stripe.js
+                        source: customerData.StripeToken // obtained with Stripe.js
                     }, function (err, customer) {
                         if (err) {
                             console.log(err);
@@ -74,7 +74,8 @@ function StripeController(dependencies) {
                                     }
 
                                     //// Save customer on mongo
-                                    userResult.CustomerId = customerData.CustomerId;
+                                    userResult.CustomerId = customer.id;
+                                    userResult.StripeToken = customerData.StripeToken;
                                     userResult.PlanId = plan.id;
                                     userResult.SubscriptionId = subscription.id;
                                     userResult.FirstNameCard = customerData.Firstname;
@@ -113,6 +114,7 @@ function StripeController(dependencies) {
 
                                     //// Update customer on mongo
                                     userResult.CustomerId = customerData.CustomerId;
+                                    userResult.StripeToken = customerData.StripeToken;
                                     userResult.PlanId = plan.id;
                                     userResult.SubscriptionId = subscription.id;
                                     userResult.FirstNameCard = customerData.Firstname;
@@ -202,8 +204,8 @@ function StripeController(dependencies) {
         });
     }
 
-    var getCustomerByUserId = function (userId, callback) {
-        _database.User().GetUserById(userId, function (userResult) {
+    var getCustomerByUserId = function (customerData, callback) {
+        _database.User().GetUserById(customerData.UserId, function (userResult) {
             if (userResult != null) {
                 _stripe.customers.retrieve(
                     userResult.CustomerId,

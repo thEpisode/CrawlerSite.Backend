@@ -31,6 +31,7 @@ function UserController(dependencies) {
                 var user = new _entity.GetModel()(
                     {
                         _id: _mongoose.Types.ObjectId(),
+                        StripeToken: '',
                         CustomerId: '',
                         PlanId: '',
                         SubscriptionId: '',
@@ -75,6 +76,8 @@ function UserController(dependencies) {
     var getUserById = function (data, callback) {
         _entity.GetModel().findOne({ "_id": data }, function (err, result) {
             if (err) console.log(err);
+
+            result.StripeToken = '';
 
             callback(result);
         })
@@ -143,7 +146,7 @@ function UserController(dependencies) {
     }
 
     var updatePaymentData = function (data, callback) {
-        _entity.GetModel().findOneAndUpdate({ "_id": data._id }, { $set: { CustomerId: data.CustomerId, PlanId: data.PlanId, SubscriptionId: data.SubscriptionId, FirstNameCard: data.FirstNameCard, LastNameCard: data.LastNameCard } }, { upsert: false }, function (err, result) {
+        _entity.GetModel().findOneAndUpdate({ "_id": data._id }, { $set: {StripeToken: data.StripeToken, CustomerId: data.CustomerId, PlanId: data.PlanId, SubscriptionId: data.SubscriptionId, FirstNameCard: data.FirstNameCard, LastNameCard: data.LastNameCard } }, { upsert: false }, function (err, result) {
             if (err) {
                 console.log(err);
                 callback(null);
