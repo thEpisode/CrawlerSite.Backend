@@ -198,7 +198,7 @@ function StripeController(dependencies) {
                     );
                 }
                 else {
-                    callback({ success: false, message: 'User has not any plan active, please first update payment method to change plan.', result: result });
+                    callback({ success: false, message: 'User has not any plan active, please first update payment method to change plan.', result: null });
                 }
             }
         });
