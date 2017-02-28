@@ -13,6 +13,7 @@ function FlingerServer(dependencies) {
     var _insightController;
     var _stripeController;
     var _mailController;
+    var _notificationHubController;
 
     var constructor = function (callback) {
         _app = dependencies.app;
@@ -42,6 +43,9 @@ function FlingerServer(dependencies) {
                 /// Stripe controller
                 _stripeController = require('./stripeController')(dependencies);
                 dependencies.stripeController = _stripeController;
+
+                _notificationHubController = require('./notificationHubController')(dependencies);
+                dependencies.notificationHub = _notificationHubController;
 
                 /// Insights controller
                 _insightController = require('./insightController')(dependencies);
@@ -78,6 +82,7 @@ function FlingerServer(dependencies) {
         _socketController.Initialize();
         _stripeController.Initialize();
         _mailController.Initialize();
+        _notificationHubController.Initialize();
 
         _console.log('Modules initialized', 'server-success');
         callback();
