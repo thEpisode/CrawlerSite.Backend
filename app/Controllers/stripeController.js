@@ -55,7 +55,7 @@ function StripeController(dependencies) {
                     _stripe.customers.create({
                         description: customerData.Description,
                         email: customerData.Email,
-                        source: customerData.CustomerId // obtained with Stripe.js
+                        source: customerData.StripeToken // obtained with Stripe.js
                     }, function (err, customer) {
                         if (err) {
                             console.log(err);
@@ -74,7 +74,8 @@ function StripeController(dependencies) {
                                     }
 
                                     //// Save customer on mongo
-                                    userResult.CustomerId = customerData.CustomerId;
+                                    userResult.CustomerId = customer.id;
+                                    userResult.StripeToken = customerData.StripeToken;
                                     userResult.PlanId = plan.id;
                                     userResult.SubscriptionId = subscription.id;
                                     userResult.FirstNameCard = customerData.Firstname;
@@ -113,6 +114,7 @@ function StripeController(dependencies) {
 
                                     //// Update customer on mongo
                                     userResult.CustomerId = customerData.CustomerId;
+                                    userResult.StripeToken = customerData.StripeToken;
                                     userResult.PlanId = plan.id;
                                     userResult.SubscriptionId = subscription.id;
                                     userResult.FirstNameCard = customerData.Firstname;
@@ -171,19 +173,19 @@ function StripeController(dependencies) {
     }
 
     var changePlan = function (customerData, callback) {
-        _database.User().GetUserByEmail(customerData.Email, function (userResult) {
+        _database.User().GetUserById(customerData.UserId, function (userResult) {
             if (userResult != null) {
                 if (userResult.CustomerId.length != 0) {
                     _stripe.subscriptions.update(
                         userResult.SubscriptionId,
-                        { plan: customerData.planId },
+                        { plan: customerData.PlanId },
                         function (err, subscription) {
                             if (err) {
                                 console.log(err);
                                 callback({ success: false, message: err, result: null });
                             }
 
-                            userResult.PlanId = plan.id;
+                            userResult.PlanId = customerData.PlanId;
                             _database.User().UpdatePaymentData(userResult, function (result) {
                                 if (result == null) {
                                     callback({ success: false, message: 'Something went occurred wrong when updating data, try again.', result: result });
@@ -196,14 +198,14 @@ function StripeController(dependencies) {
                     );
                 }
                 else {
-                    callback({ success: false, message: 'User has not any plan active, please first update payment method to change plan.', result: result });
+                    callback({ success: false, message: 'User has not any plan active, please first update payment method to change plan.', result: null });
                 }
             }
         });
     }
 
-    var getCustomerByUserId = function (userId, callback) {
-        _database.User().GetUserById(userId, function (userResult) {
+    var getCustomerByUserId = function (customerData, callback) {
+        _database.User().GetUserById(customerData.UserId, function (userResult) {
             if (userResult != null) {
                 _stripe.customers.retrieve(
                     userResult.CustomerId,
@@ -223,10 +225,10 @@ function StripeController(dependencies) {
         });
     }
 
-    var getChargesByUserId = function (userId, callback) {
-        _database.User().GetUserById(userId, function (userResult) {
+    var getChargesByUserId = function (customerData, callback) {
+        _database.User().GetUserById(customerData.UserId, function (userResult) {
             if (userResult != null) {
-                stripe.charges.list(
+                _stripe.charges.list(
                     {
                         limit: 12,
                         customer: userResult.CustomerId,
@@ -237,7 +239,7 @@ function StripeController(dependencies) {
                             callback({ success: false, message: 'Something went wrong when retrieving customer, try again.', result: null });
                         }
 
-                        callback({ success: true, message: 'GetChargesByUserId', result: customer });
+                        callback({ success: true, message: 'GetChargesByUserId', result: charges });
                     }
                 );
             }
@@ -340,16 +342,13 @@ function StripeController(dependencies) {
 
     return {
         Initialize: constructor,
-        GetFreePlan: getFreePlan,
-        GetBasicPlan: getBasicPlan,
-        GetStandardPlan: getStandardPlan,
-        GetPremiumPlan: getPremiumPlan,
+        GetPlan: getPlan,
         CancelSubscription: cancelSubscription,
         UpdateSubscription: updateSubscription,
         GetAllPlans: getAllPlans,
         ChangePlan: changePlan,
         GetCustomerByUserId: getCustomerByUserId,
-        GetChargesByUserId: GetChargesByUserId,
+        GetChargesByUserId: getChargesByUserId,
         ProcessWebhook: processWebhook,
     }
 }

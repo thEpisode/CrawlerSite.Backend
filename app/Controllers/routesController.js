@@ -548,8 +548,8 @@ function Routes(dependencies) {
 
         //  (GET http://localhost:3000/api/Plans/All)
         _apiRoutes.get('/Plans/All', function (req, res) {
-            _stripe.GetAllPlans()(function (result) {
-                res.json({ success: true, message: 'GetAllPlans', result: result });
+            _stripe.GetAllPlans(function (result) {
+                res.json(result);
             })
         });
 
