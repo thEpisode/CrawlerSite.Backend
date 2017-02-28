@@ -48,7 +48,7 @@
     "open": "latest",
     "socket.io": "latest",
     "socket.io-client": "latest",
-    "mailgun-js": "latest",
+    "emailjs": "latest",
     "config": "^1.20.4",
     "stripe": "^4.15.0",
     "uuid": "^3.0.1"

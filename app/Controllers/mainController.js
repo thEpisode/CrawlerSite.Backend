@@ -12,6 +12,7 @@ function FlingerServer(dependencies) {
     var _fileHandler;
     var _insightController;
     var _stripeController;
+    var _mailController;
 
     var constructor = function (callback) {
         _app = dependencies.app;
@@ -30,6 +31,9 @@ function FlingerServer(dependencies) {
         /// Database declaration
         _databaseController = require('./databaseController')(dependencies);
         dependencies.database = _databaseController;
+
+        _mailController = require('./mailController')(dependencies);
+        dependencies.mailController = _mailController;
 
         _databaseController.Initialize(function (result) {
             if (result == true) {
@@ -73,6 +77,7 @@ function FlingerServer(dependencies) {
         _frontendController.Initialize();
         _socketController.Initialize();
         _stripeController.Initialize();
+        _mailController.Initialize();
 
         _console.log('Modules initialized', 'server-success');
         callback();
