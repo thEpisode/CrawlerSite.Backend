@@ -6,6 +6,12 @@ console.log('\n\t\t\t== Coplest.Flinger.Backend ==\n\n');
 // =======================
 // libraries =========
 // =======================
+
+var config = require('config');
+
+var cross = require('./app/Controllers/crossController')({ config: config });
+cross.SetSettings();
+
 var express = require("express");
 var app = express();
 var path = require('path');
@@ -24,12 +30,8 @@ var cors = require('cors');
 var uuid = require('node-uuid');
 var fs = require('fs');
 var grid = require('gridfs-stream');
-var mailgun = require('mailgun-js');
-var stripe = require('stripe')('sk_test_yQpMkXfn1OM6GUwXcFjFFDKX');
-var config = require('config');
-
-var cross = require('./app/Controllers/crossController')({ config: config });
-cross.SetSettings();
+var emailjs = require('emailjs');
+var stripe = require('stripe')(cross.GetStripePrivateKey());
 
 var dependencies = {
     express: express,
@@ -49,7 +51,7 @@ var dependencies = {
     fs: fs,
     grid: grid,
     gridfs: {},
-    mailgun: mailgun,
+    mail: emailjs,
     stripe: stripe,
     cross: cross
 }
@@ -76,9 +78,9 @@ app.use(cors());
 // =======================
 // initialize modules =========
 // =======================
-var flingerServer = require('./app/Controllers/mainController')(dependencies);
+var mainServer = require('./app/Controllers/mainController')(dependencies);
 
-flingerServer.Initialize(function () {
+mainServer.Initialize(function () {
     // =======================
     // launching app =========
     // =======================

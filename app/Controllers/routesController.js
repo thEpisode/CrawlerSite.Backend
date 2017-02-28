@@ -15,6 +15,8 @@ function Routes(dependencies) {
     var _fileHandler;
     var _insights;
     var _stripe;
+    var _mail;
+    var _notificationHub;
 
     var _apiRoutes;
 
@@ -30,6 +32,8 @@ function Routes(dependencies) {
         _fileHandler = dependencies.fileHandler;
         _insights = dependencies.insights;
         _stripe = dependencies.stripeController;
+        _mail = dependencies.mailController;
+        _notificationHub = dependencies.notificationHub
 
         createAPI();
 
@@ -80,28 +84,23 @@ function Routes(dependencies) {
 
         });
 
-
-        /// Heatmap insights api routes
+        /// Public Email api routes
         /// -------------------------
-        //  (GET http://localhost:3000/api/Insights/Heatmap/MinWidth/:MinWidth/MaxWidth/:MaxWidth/Type/:Type)
-        _apiRoutes.get('/Insights/HeatmapData/ApiKey/:ApiKey/MinWidth/:MinWidth/MaxWidth/:MaxWidth/Type/:Type/MaxTime/:MaxTime/Endpoint/:Endpoint', function (req, res) {
-            _insights.HeatmapData(req.params.ApiKey, req.params.MinWidth, req.params.MaxWidth, req.params.Type, req.params.MaxTime, req.params.Endpoint, function (result) {
-                res.json({ success: true, message: 'HeatmapData', result: result })
+        //  (POST http://localhost:3000/api/ContactUs/Send/)
+        _apiRoutes.post('/ContactUs/Send/', function (req, res) {
+            _mail.SenBasic(req.body, function (result) {
+                res.json(result);
             })
         });
 
-        _apiRoutes.get('/Insights/HeatmapScreenshot/ApiKey/:ApiKey/Pathname/:Pathname', function (req, res) {
-            _insights.HeatmapScreenshot(req.params.ApiKey, req.params.Pathname, function (file) {
-                file.pipe(res);
-                //res.json({ message: 'HeatmapData', result: result})
+        /// Public Notifications api routes
+        /// -------------------------
+        //  (POST http://localhost:3000/api/Notification/Send/)
+        _apiRoutes.post('/Notification/Send/', function (req, res) {
+            _notificationHub.Send(req.body, function (result) {
+                res.json(result);
             })
         });
-
-        _apiRoutes.get('/Insights/HeatmapScreenshotById/:Id', function (req, res) {
-            _insights.HeatmapScreenshotById(req.params.Id, function (file) {
-                file.pipe(res);
-            })
-        })
 
         /// Middleware
         /// -------------------------
@@ -549,6 +548,44 @@ function Routes(dependencies) {
         //  (GET http://localhost:3000/api/Plans/All)
         _apiRoutes.get('/Plans/All', function (req, res) {
             _stripe.GetAllPlans(function (result) {
+                res.json(result);
+            })
+        });
+
+        /// Heatmap insights api routes
+        /// -------------------------
+        //  (GET http://localhost:3000/api/Insights/Heatmap/MinWidth/:MinWidth/MaxWidth/:MaxWidth/Type/:Type)
+        _apiRoutes.get('/Insights/HeatmapData/ApiKey/:ApiKey/MinWidth/:MinWidth/MaxWidth/:MaxWidth/Type/:Type/MaxTime/:MaxTime/Endpoint/:Endpoint', function (req, res) {
+            _insights.HeatmapData(req.params.ApiKey, req.params.MinWidth, req.params.MaxWidth, req.params.Type, req.params.MaxTime, req.params.Endpoint, function (result) {
+                res.json({ success: true, message: 'HeatmapData', result: result })
+            })
+        });
+
+        _apiRoutes.get('/Insights/HeatmapScreenshot/ApiKey/:ApiKey/Pathname/:Pathname', function (req, res) {
+            _insights.HeatmapScreenshot(req.params.ApiKey, req.params.Pathname, function (file) {
+                file.pipe(res);
+                //res.json({ message: 'HeatmapData', result: result})
+            })
+        });
+
+        _apiRoutes.get('/Insights/HeatmapScreenshotById/:Id', function (req, res) {
+            _insights.HeatmapScreenshotById(req.params.Id, function (file) {
+                file.pipe(res);
+            })
+        })
+
+        /// Email api routes
+        /// -------------------------
+        //  (POST http://localhost:3000/api/Mail/SenBasic/)
+        _apiRoutes.post('/Mail/SenBasic/', function (req, res) {
+            _mail.SenBasic(JSON.parse(req.body), function (result) {
+                res.json(result);
+            })
+        });
+
+        //  (POST http://localhost:3000/api/Mail/SenComposed/)
+        _apiRoutes.post('/Mail/SenComposed/', function (req, res) {
+            _mail.SenComposed(JSON.parse(req.body), function (result) {
                 res.json(result);
             })
         });

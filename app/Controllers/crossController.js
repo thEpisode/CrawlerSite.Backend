@@ -8,8 +8,11 @@ function Cross(dependencies) {
     var setSettings = function(){
         setFlingerSecretJWT(dependencies.config.FlingerSecretJWT);
         setMongoConnectionString(dependencies.config.MongoConnectionString);
-        setMailgunApiKey(dependencies.config.MailgunApiKey);
-        setMailgunDomain(dependencies.config.MailgunDomain);
+        setMailUser(dependencies.config.MailUser);
+        setMailPassword(dependencies.config.MailPassword);
+        setMailDomain(dependencies.config.MailDomain);
+        setMailPort(dependencies.config.MailPort);
+        setMailEncryption(dependencies.config.MailEncryption);
         setStripePrivateKey(dependencies.config.StripePrivateKey);
     }
 
@@ -72,20 +75,44 @@ function Cross(dependencies) {
         return false;
     }
 
-    var setMailgunApiKey = function (apiKey) {
-        _mailgunApiKey = apiKey;
+    var setMailUser = function (user) {
+        _mailUser = user;
     }
 
-    var getMailgunApiKey = function () {
-        return _mailgunApiKey;
+    var getMailUser = function () {
+        return _mailUser;
     }
 
-    var setMailgunDomain = function (domain) {
-        _mailgunDomain = domain;
+    var setMailPassword = function(password){
+        _mailPassword = password;
     }
 
-    var getMailgunDomain = function () {
-        return _mailgunDomain;
+    var getMailPassword = function(){
+        return _mailPassword;
+    }
+
+    var setMailDomain = function (domain) {
+        _mailDomain = domain;
+    }
+
+    var getMailDomain = function () {
+        return _mailDomain;
+    }
+
+    var setMailPort = function(port){
+        _mailPort = port;
+    }
+
+    var getMailPort = function(port){
+        return _mailPort;
+    }
+
+    var setMailEncryption = function(encryption){
+        _mailEncription = encryption
+    }
+
+    var getMailEncryption = function(){
+        return _mailEncription;
     }
 
     var setStripePrivateKey = function(privateKey){
@@ -103,8 +130,11 @@ function Cross(dependencies) {
         ObjectReferenceByDotStyle: objectReferenceByDotStyle,
         SearchObjectByIdOnArray: searchObjectByIdOnArray,
         NormalizePort: normalizePort,
-        GetMailgunApiKey: getMailgunApiKey,
-        GetMailgunDomain: getMailgunDomain,
+        GetMailUser: getMailUser,
+        GetMailPassword: getMailPassword,
+        GetMailDomain: getMailDomain,
+        GetMailPort: getMailPort,
+        GetMailEncryption: getMailEncryption,
         GetStripePrivateKey: getStripePrivateKey,
     }
 }
