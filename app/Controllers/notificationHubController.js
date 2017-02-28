@@ -29,7 +29,7 @@ function NotificationHubController(dependencies) {
 
     return {
         Initialize: constructor,
-        SendNotification: sendNotification
+        Send: sendNotification
     }
 }
 

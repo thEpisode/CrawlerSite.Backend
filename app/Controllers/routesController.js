@@ -16,6 +16,7 @@ function Routes(dependencies) {
     var _insights;
     var _stripe;
     var _mail;
+    var _notificationHub;
 
     var _apiRoutes;
 
@@ -32,6 +33,7 @@ function Routes(dependencies) {
         _insights = dependencies.insights;
         _stripe = dependencies.stripeController;
         _mail = dependencies.mailController;
+        _notificationHub = dependencies.notificationHub
 
         createAPI();
 
@@ -87,6 +89,15 @@ function Routes(dependencies) {
         //  (POST http://localhost:3000/api/Mail/SenBasic/)
         _apiRoutes.post('/ContactUs/Send/', function (req, res) {
             _mail.SenBasic(JSON.parse(req.body), function (result) {
+                res.json(result);
+            })
+        });
+
+        /// Public Notifications api routes
+        /// -------------------------
+        //  (POST http://localhost:3000/api/Mail/SenBasic/)
+        _apiRoutes.post('/Notification/Send/', function (req, res) {
+            _notificationHub.Send(JSON.parse(req.body), function (result) {
                 res.json(result);
             })
         });
