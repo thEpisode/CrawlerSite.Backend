@@ -46,7 +46,7 @@ function NotificationController(dependencies) {
     }
 
     var getNotificationByUserId = function (data, callback) {
-        _entity.GetModel().findOne({ "UserId": data }, function (err, result) {
+        _entity.GetModel().find({ "UserId": data }, function (err, result) {
             if (err) console.log(err);
 
             callback(result);

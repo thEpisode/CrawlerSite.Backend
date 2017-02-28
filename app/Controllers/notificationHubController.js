@@ -24,7 +24,7 @@ function NotificationHubController(dependencies) {
             // Do something
         }
 
-        callback({ success: true, message: 'SendComposed', result: message });
+        callback({ success: true, message: 'SendComposed', result: true });
     }
 
     return {

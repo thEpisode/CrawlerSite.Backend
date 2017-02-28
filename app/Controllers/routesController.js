@@ -88,7 +88,7 @@ function Routes(dependencies) {
         /// -------------------------
         //  (POST http://localhost:3000/api/ContactUs/Send/)
         _apiRoutes.post('/ContactUs/Send/', function (req, res) {
-            _mail.SenBasic(JSON.parse(req.body), function (result) {
+            _mail.SenBasic(req.body, function (result) {
                 res.json(result);
             })
         });
@@ -97,7 +97,7 @@ function Routes(dependencies) {
         /// -------------------------
         //  (POST http://localhost:3000/api/Notification/Send/)
         _apiRoutes.post('/Notification/Send/', function (req, res) {
-            _notificationHub.Send(JSON.parse(req.body), function (result) {
+            _notificationHub.Send(req.body, function (result) {
                 res.json(result);
             })
         });
