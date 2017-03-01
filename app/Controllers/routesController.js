@@ -102,6 +102,13 @@ function Routes(dependencies) {
             })
         });
 
+        //  (POST http://localhost:3000/api/Notification/Send/)
+        _apiRoutes.post('/Notification/SendToAll/', function (req, res) {
+            _notificationHub.SendToAll(req.body, function (result) {
+                res.json(result);
+            })
+        });
+
         /// Middleware
         /// -------------------------
         //  To verify a token
