@@ -23,6 +23,12 @@ function NotificationHubController(dependencies) {
         _database.User().GetAllUser(null, function(data){
             if(data.success == true){
                 data.result.forEach(function(item, index){
+                    if(notificationData.InAppData != undefined){
+                        notificationData.InAppData.UserId = item._id;
+                    }
+                    if(notificationData.EmailData != undefined){
+                        notificationData.EmailData.UserId = item._id;
+                    }
                     send(notificationData);
                 })
                 callback({ success: true, message: 'SendToAll', result: true });
