@@ -139,7 +139,7 @@ function Routes(dependencies) {
         /// Middleware
         /// -------------------------
         //  To verify a token
-        _apiRoutes.use(function (req, res, next) {
+        /*_apiRoutes.use(function (req, res, next) {
             // check header or url parameters or post parameters for token
             var token = req.body.token || req.query.token || req.headers['x-access-token'];
 
@@ -168,7 +168,7 @@ function Routes(dependencies) {
                 });
 
             }
-        });
+        });*/
 
         
         /// Welcome
@@ -324,7 +324,7 @@ function Routes(dependencies) {
         //  (GET http://localhost:3000/api/Notification/UserId/[KEY])
         _apiRoutes.get('/Notification/UserId/:UserId', function (req, res) {
             _database.Notification().GetNotificationByUserId(req.params.UserId, function (result) {
-                res.json({ success: true, message: 'GetNotificationByUserId', result: result });
+                res.json(result);
             })
         });
 
