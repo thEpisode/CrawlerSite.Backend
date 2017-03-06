@@ -109,6 +109,18 @@ function Routes(dependencies) {
             })
         });
 
+
+        /// Email api routes
+        /// -------------------------
+        //  (POST http://localhost:3000/api/Mail/SendBasic/)
+        _apiRoutes.post('/Mail/SendBasic/', function (req, res) {
+            _mail.SendBasic(JSON.parse(req.body), function (result) {
+
+                res.json(result);
+            })
+        });
+
+
         /// Heatmap insights api routes
         /// -------------------------
         _apiRoutes.get('/Insights/HeatmapScreenshotById/:Id', function (req, res) {
@@ -117,11 +129,11 @@ function Routes(dependencies) {
             })
         })
 
-        /// Welcome
-        /// -------------------------
-        // route to show message (GET http://localhost:3000/api/Welcome)
-        _apiRoutes.get('/Welcome', function (req, res) {
-            res.json({ success: true, message: 'Welcome to the coolest API on earth!' });
+        //  (POST http://localhost:3000/api/Mail/SendComposed/)
+        _apiRoutes.post('/Mail/SendComposed/', function (req, res) {
+            _mail.SendComposed(JSON.parse(req.body), function (result) {
+                res.json(result);
+            })
         });
 
         /// Middleware
@@ -159,6 +171,12 @@ function Routes(dependencies) {
         });
 
         
+        /// Welcome
+        /// -------------------------
+        // route to show message (GET http://localhost:3000/api/Welcome)
+        _apiRoutes.get('/Welcome', function (req, res) {
+            res.json({ success: true, message: 'Welcome to the coolest API on earth!' });
+        });
 
         /// Click api routes
         /// -------------------------
@@ -520,7 +538,7 @@ function Routes(dependencies) {
         //  (POST http://localhost:3000/api/Payment/Subscription/UpdatePaymentMethod)
         _apiRoutes.post('/Stripe/Webhooks/', function (req, res) {
             _stripe.ProcessWebhook(JSON.parse(req.body), function (result) {
-                if(result == true){
+                if (result == true) {
                     res.send(200);
                 }
                 res.send(409);
@@ -582,24 +600,6 @@ function Routes(dependencies) {
             _insights.HeatmapScreenshot(req.params.ApiKey, req.params.Pathname, function (file) {
                 file.pipe(res);
                 //res.json({ message: 'HeatmapData', result: result})
-            })
-        });
-
-        
-
-        /// Email api routes
-        /// -------------------------
-        //  (POST http://localhost:3000/api/Mail/SenBasic/)
-        _apiRoutes.post('/Mail/SenBasic/', function (req, res) {
-            _mail.SenBasic(JSON.parse(req.body), function (result) {
-                res.json(result);
-            })
-        });
-
-        //  (POST http://localhost:3000/api/Mail/SenComposed/)
-        _apiRoutes.post('/Mail/SenComposed/', function (req, res) {
-            _mail.SenComposed(JSON.parse(req.body), function (result) {
-                res.json(result);
             })
         });
 
