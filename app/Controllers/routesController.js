@@ -109,6 +109,21 @@ function Routes(dependencies) {
             })
         });
 
+        /// Heatmap insights api routes
+        /// -------------------------
+        _apiRoutes.get('/Insights/HeatmapScreenshotById/:Id', function (req, res) {
+            _insights.HeatmapScreenshotById(req.params.Id, function (file) {
+                file.pipe(res);
+            })
+        })
+
+        /// Welcome
+        /// -------------------------
+        // route to show message (GET http://localhost:3000/api/Welcome)
+        _apiRoutes.get('/Welcome', function (req, res) {
+            res.json({ success: true, message: 'Welcome to the coolest API on earth!' });
+        });
+
         /// Middleware
         /// -------------------------
         //  To verify a token
@@ -143,12 +158,7 @@ function Routes(dependencies) {
             }
         });
 
-        /// Welcome
-        /// -------------------------
-        // route to show message (GET http://localhost:3000/api/Welcome)
-        _apiRoutes.get('/Welcome', function (req, res) {
-            res.json({ success: true, message: 'Welcome to the coolest API on earth!' });
-        });
+        
 
         /// Click api routes
         /// -------------------------
@@ -575,11 +585,7 @@ function Routes(dependencies) {
             })
         });
 
-        _apiRoutes.get('/Insights/HeatmapScreenshotById/:Id', function (req, res) {
-            _insights.HeatmapScreenshotById(req.params.Id, function (file) {
-                file.pipe(res);
-            })
-        })
+        
 
         /// Email api routes
         /// -------------------------
