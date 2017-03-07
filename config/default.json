@@ -6,5 +6,5 @@
     "MailDomain": "smtp.office365.com",
     "MailPort": "587",
     "MailEncryption": "STARTTLS",
-    "stripe_sk": "sk_test_yQpMkXfn1OM6GUwXcFjFFDKX"
+    "StripePrivateKey": "sk_test_yQpMkXfn1OM6GUwXcFjFFDKX"
 }

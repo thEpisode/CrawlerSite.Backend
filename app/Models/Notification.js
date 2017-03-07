@@ -14,10 +14,11 @@ function Notification(dependencies) {
         _schema = _mongoose.Schema;
 
         _states = {
-            unread: 0,
-            Seen: 1,
-            Hidden: 2,
-            Deleted: 3,
+            Unread: 0,
+            Read: 1,
+            Seen: 2,
+            Hidden: 3,
+            Deleted: 4,
         }
 
         _type = {
@@ -34,7 +35,9 @@ function Notification(dependencies) {
                 LongMessage: String,
                 Uri: String,
                 Type: Number,
-                State: Number
+                State: Number,
+                ItWasRead: Number,
+                Unread: Number,
             },
             { timestamps: { createdAt: 'created_at' }, minimize: false, collection: 'Notification' }
         ));

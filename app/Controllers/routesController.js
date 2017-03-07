@@ -102,14 +102,32 @@ function Routes(dependencies) {
             })
         });
 
+        //  (POST http://localhost:3000/api/Notification/Send/)
+        _apiRoutes.post('/Notification/SendToAll/', function (req, res) {
+            _notificationHub.SendToAll(req.body, function (result) {
+                res.json(result);
+            })
+        });
+
+
         /// Email api routes
         /// -------------------------
         //  (POST http://localhost:3000/api/Mail/SendBasic/)
         _apiRoutes.post('/Mail/SendBasic/', function (req, res) {
             _mail.SendBasic(JSON.parse(req.body), function (result) {
+
                 res.json(result);
             })
         });
+
+
+        /// Heatmap insights api routes
+        /// -------------------------
+        _apiRoutes.get('/Insights/HeatmapScreenshotById/:Id', function (req, res) {
+            _insights.HeatmapScreenshotById(req.params.Id, function (file) {
+                file.pipe(res);
+            })
+        })
 
         //  (POST http://localhost:3000/api/Mail/SendComposed/)
         _apiRoutes.post('/Mail/SendComposed/', function (req, res) {
@@ -118,11 +136,10 @@ function Routes(dependencies) {
             })
         });
 
-
         /// Middleware
         /// -------------------------
         //  To verify a token
-        _apiRoutes.use(function (req, res, next) {
+        /*_apiRoutes.use(function (req, res, next) {
             // check header or url parameters or post parameters for token
             var token = req.body.token || req.query.token || req.headers['x-access-token'];
 
@@ -151,8 +168,9 @@ function Routes(dependencies) {
                 });
 
             }
-        });
+        });*/
 
+        
         /// Welcome
         /// -------------------------
         // route to show message (GET http://localhost:3000/api/Welcome)
@@ -306,7 +324,7 @@ function Routes(dependencies) {
         //  (GET http://localhost:3000/api/Notification/UserId/[KEY])
         _apiRoutes.get('/Notification/UserId/:UserId', function (req, res) {
             _database.Notification().GetNotificationByUserId(req.params.UserId, function (result) {
-                res.json({ success: true, message: 'GetNotificationByUserId', result: result });
+                res.json(result);
             })
         });
 
@@ -572,8 +590,8 @@ function Routes(dependencies) {
         /// Heatmap insights api routes
         /// -------------------------
         //  (GET http://localhost:3000/api/Insights/Heatmap/MinWidth/:MinWidth/MaxWidth/:MaxWidth/Type/:Type)
-        _apiRoutes.get('/Insights/HeatmapData/ApiKey/:ApiKey/MinWidth/:MinWidth/MaxWidth/:MaxWidth/Type/:Type/MaxTime/:MaxTime/Endpoint/:Endpoint', function (req, res) {
-            _insights.HeatmapData(req.params.ApiKey, req.params.MinWidth, req.params.MaxWidth, req.params.Type, req.params.MaxTime, req.params.Endpoint, function (result) {
+        _apiRoutes.get('/Insights/HeatmapData/ApiKey/:ApiKey/MinWidth/:MinWidth/MaxWidth/:MaxWidth/Type/:Type/MaxTime/:MaxTime/Flash/:Flash/Browser/:Browser/OperatingSystem/:OperatingSystem/Cookies/:Cookies/Location/:Location/Endpoint/:Endpoint', function (req, res) {
+            _insights.HeatmapData(req.params, function (result) {
                 res.json({ success: true, message: 'HeatmapData', result: result })
             })
         });
@@ -584,13 +602,6 @@ function Routes(dependencies) {
                 //res.json({ message: 'HeatmapData', result: result})
             })
         });
-
-        _apiRoutes.get('/Insights/HeatmapScreenshotById/:Id', function (req, res) {
-            _insights.HeatmapScreenshotById(req.params.Id, function (file) {
-                file.pipe(res);
-            })
-        })
-
 
         // apply the routes to our application with the prefix /api
         _app.use('/api', _apiRoutes);

@@ -22,7 +22,9 @@ function NotificationController(dependencies) {
                 LongMessage: data.LongMessage,
                 Uri: data.Uri,
                 Type: data.Type,
-                State: data.State
+                State: data.State,
+                ItWasRead: _entity.GetStates().Unread,
+                Unread: _entity.GetStates().Unread,
             });
 
         notification.save().then(function (result) {
@@ -38,7 +40,7 @@ function NotificationController(dependencies) {
     }
 
     var getNotificationById = function (data, callback) {
-        _entity.GetModel().findOne({ "_id": data }, function (err, result) {
+        _entity.GetModel().findOneAndUpdate({ "_id": data }, { $set: { Unread: _entity.GetStates().Read } }, { upsert: false }, function (err, result) {
             if (err) console.log(err);
 
             callback(result);
@@ -46,10 +48,43 @@ function NotificationController(dependencies) {
     }
 
     var getNotificationByUserId = function (data, callback) {
-        _entity.GetModel().find({ "UserId": data }, function (err, result) {
-            if (err) console.log(err);
+        _entity.GetModel().find({ "UserId": data }, function (err, notificationsResult) {
+            if (err) { console.log(err) };
 
-            callback(result);
+            if (notificationsResult != undefined && notificationsResult != null) {
+                if (notificationsResult.length > 0) {
+                    var notificationsRemaining = notificationsResult.length;
+                    var result = [];
+
+                    notificationsResult.forEach(function (item) {
+                        if (item.ItWasRead == _entity.GetStates().Unread) {
+
+                            _entity.GetModel().findOneAndUpdate({ "_id": item._id }, { $set: { ItWasRead: _entity.GetStates().Seen } }, { upsert: false }, function (err, notificationResult) {
+
+                                --notificationsRemaining;
+                                notificationResult.ItWasRead = _entity.GetStates().Seen;
+                                result.push(notificationResult);
+                                if (notificationsRemaining <= 0) {
+                                    callback({ success: true, message: 'GetNotificationByUserId', result: result });
+                                }
+                            })
+                        }
+                        else {
+                            --notificationsRemaining;
+                            result.push(item);
+                            if (notificationsRemaining <= 0) {
+                                callback({ success: true, message: 'GetNotificationByUserId', result: result });
+                            }
+                        }
+                    })
+                }
+                else {
+                    callback({ success: false, message: 'User has no notifications', result: null });
+                }
+            }
+            else {
+                callback({ success: false, message: 'User has no notifications', result: null });
+            }
         })
     }
 

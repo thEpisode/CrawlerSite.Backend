@@ -123,9 +123,12 @@ function UserController(dependencies) {
 
     var getAllUser = function (data, callback) {
         _entity.GetModel().find({}, function (err, result) {
-            if (err) console.log(err);
+            if (err){
+                console.log(err);
+                callback({ success: false, message: 'GetAllUser', result: null });
+            }
 
-            callback(result);
+            callback({ success: true, message: 'GetAllUser', result: result });
         })
     }
 

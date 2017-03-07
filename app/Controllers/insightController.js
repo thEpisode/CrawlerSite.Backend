@@ -12,46 +12,76 @@ function InsightController(dependencies) {
         _fileHandler = dependencies.fileHandler;
     }
 
-    var heatmapData = function (ApiKey, MinWidth, MaxWidth, Type, MaxTime, Endpoint, callback) {
-        var data = []
-        switch (Type.toLowerCase()) {
+    var heatmapData = function (data, callback) {
+        var result = []
+        switch (data.Type.toLowerCase()) {
             case 'movement':
-                _database.Movement().GetInsight(ApiKey, MinWidth, MaxWidth, MaxTime, Endpoint, function (result) {
+                _database.Movement().GetInsight(
+                    data.ApiKey, 
+                    data.MinWidth, 
+                    data.MaxWidth, 
+                    data.MaxTime,
+                    data.Flash, 
+                    data.Browser, 
+                    data.OperatingSystem, 
+                    data.Cookies, 
+                    data.Location,
+                    data.Endpoint, function (result) {
                     if (result.length > 0) {
-                        data = heatmapDataCalculation(result, 50, 10);
-                        callback(data);
+                        result = heatmapDataCalculation(result, 50, 10);
+                        callback(result);
                     }
                     else {
-                        callback(data);
+                        callback(result);
                     }
 
                 });
                 break;
             case 'click':
-                _database.Click().GetInsight(ApiKey, MinWidth, MaxWidth, MaxTime, Endpoint, function (result) {
+                _database.Click().GetInsight(
+                    data.ApiKey, 
+                    data.MinWidth, 
+                    data.MaxWidth, 
+                    data.MaxTime,
+                    data.Flash, 
+                    data.Browser, 
+                    data.OperatingSystem, 
+                    data.Cookies, 
+                    data.Location,
+                    data.Endpoint, function (result) {
                     if (result.length > 0) {
-                        data = heatmapDataCalculation(result, 50, 10);
-                        callback(data);
+                        result = heatmapDataCalculation(result, 50, 10);
+                        callback(result);
                     }
                     else {
-                        callback(data);
+                        callback(result);
                     }
                 });
                 break;
             case 'scroll':
-                _database.Scroll().GetInsight(ApiKey, MinWidth, MaxWidth, MaxTime, Endpoint, function (result) {
+                _database.Scroll().GetInsight(
+                    data.ApiKey, 
+                    data.MinWidth, 
+                    data.MaxWidth, 
+                    data.MaxTime,
+                    data.Flash, 
+                    data.Browser, 
+                    data.OperatingSystem, 
+                    data.Cookies, 
+                    data.Location,
+                    data.Endpoint, function (result) {
                     if (result.length > 0) {
-                        data = heatmapDataCalculation(result, 50, 10);
-                        callback(data);
+                        result = heatmapDataCalculation(result, 50, 10);
+                        callback(result);
                     }
                     else {
-                        callback(data);
+                        callback(result);
                     }
                 });
                 break;
             default:
-                data = null;
-                callback(data);
+                result = null;
+                callback(result);
                 break;
         }
     }

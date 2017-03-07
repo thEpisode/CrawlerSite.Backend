@@ -64,13 +64,21 @@ function ClickController(dependencies) {
         })
     }
 
-    var getInsight = function (ApiKey, MinWidth, MaxWidth, MaxTime, Endpoint, callback) {
-        var startAt = (new Date().getTime() - (parseInt(MaxTime) * 60 * 60 * 1000));
+    var getInsight = function (ApiKey, MinWidth, MaxWidth, MaxTime,Flash, Browser, OperatingSystem, Cookies, Location, Endpoint, callback) {
+        var query = {};
+
+        if (ApiKey != 'null') { query['ApiKey'] = ApiKey; }
+        if (MinWidth != 'null' && MaxWidth != 'null') { query['Event.Client.screen.width'] = { "$gt": parseInt(MinWidth), "$lt": parseInt(MaxWidth) } }
+        if (MaxTime != 'null') { query['Event.TimeStamp'] = { "$gte": (new Date().getTime() - (parseInt(MaxTime) * 60 * 60 * 1000)) } }
+        if (Flash != 'null') { query['Event.Client.flashVersion'] = (Flash.toLowerCase() === 'false' ? 'no check' : { $ne: 'no check' }) };
+        if (Browser != 'null') { query['Event.Client.browser'] = Browser }
+        if (OperatingSystem != 'null') { query['Event.Client.os'] = OperatingSystem }
+        if (Cookies != 'null') { query['Event.Client.cookies'] = Cookies }
+        if (Location != 'null') { /* Do something*/ }
+        if (Endpoint != 'null') { query['Pathname'] = { "$regex": Endpoint.toLowerCase() === "index" ? "/" : Endpoint } }
+
         _mongoose.connection.db.collection('Click').find({
-            "ApiKey": ApiKey,
-            "Event.Client.screen.width": { "$gt": parseInt(MinWidth), "$lt": parseInt(MaxWidth)},
-            "Event.TimeStamp": {"$gte": startAt},
-            "Pathname": {"$regex": Endpoint.toLowerCase() === "index" ? "/" : Endpoint}
+            query
         }).toArray(function (err, result){
             if(err) console.log(err);
 

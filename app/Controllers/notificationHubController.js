@@ -14,6 +14,32 @@ function NotificationHubController(dependencies) {
     }
 
     var sendNotification = function(notificationData, callback){
+        send(notificationData);
+
+        callback({ success: true, message: 'SendNotification', result: true });
+    }
+
+    var sendToAll = function(notificationData, callback){
+        _database.User().GetAllUser(null, function(data){
+            if(data.success == true){
+                data.result.forEach(function(item, index){
+                    if(notificationData.InAppData != undefined){
+                        notificationData.InAppData.UserId = item._id;
+                    }
+                    if(notificationData.EmailData != undefined){
+                        notificationData.EmailData.UserId = item._id;
+                    }
+                    send(notificationData);
+                })
+                callback({ success: true, message: 'SendToAll', result: true });
+            }
+            else{
+                callback({ success: false, message: 'No users found', result: true });
+            }
+        })
+    }
+
+    var send = function(notificationData){
         if(notificationData.IsEmail == true){
             _mail.SendComposed(notificationData.EmailData, function(data){});
         }
@@ -23,13 +49,12 @@ function NotificationHubController(dependencies) {
         if(notificationData.IsSMS == true){
             // Do something
         }
-
-        callback({ success: true, message: 'SendComposed', result: true });
     }
 
     return {
         Initialize: constructor,
-        Send: sendNotification
+        Send: sendNotification,
+        SendToAll: sendToAll,
     }
 }
 
