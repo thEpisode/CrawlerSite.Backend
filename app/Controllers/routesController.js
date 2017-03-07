@@ -590,8 +590,8 @@ function Routes(dependencies) {
         /// Heatmap insights api routes
         /// -------------------------
         //  (GET http://localhost:3000/api/Insights/Heatmap/MinWidth/:MinWidth/MaxWidth/:MaxWidth/Type/:Type)
-        _apiRoutes.get('/Insights/HeatmapData/ApiKey/:ApiKey/MinWidth/:MinWidth/MaxWidth/:MaxWidth/Type/:Type/MaxTime/:MaxTime/Endpoint/:Endpoint', function (req, res) {
-            _insights.HeatmapData(req.params.ApiKey, req.params.MinWidth, req.params.MaxWidth, req.params.Type, req.params.MaxTime, req.params.Endpoint, function (result) {
+        _apiRoutes.get('/Insights/HeatmapData/ApiKey/:ApiKey/MinWidth/:MinWidth/MaxWidth/:MaxWidth/Type/:Type/MaxTime/:MaxTime/Flash/:Flash/Browser/:Browser/OperatingSystem/:OperatingSystem/Cookies/:Cookies/Location/:Location/Endpoint/:Endpoint', function (req, res) {
+            _insights.HeatmapData(req.params, function (result) {
                 res.json({ success: true, message: 'HeatmapData', result: result })
             })
         });
