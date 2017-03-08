@@ -44,17 +44,59 @@ function StripeController(dependencies) {
             })
     }
 
+    var createInitialCustomer = function (customerData, callback) {
+        _stripe.customers.create({
+            email: customerData.Email,
+        }, function (err, customer) {
+            if (err) {
+                console.log(err);
+                callback({ success: false, message: 'Something went error occurred when creating customer', result: null });
+            }
+
+            getPlan('free', function (plan) {
+                if (plan != undefined && plan != null) {
+                    _stripe.subscriptions.create({
+                        customer: customer.id,
+                        plan: plan.id
+                    }, function (err, subscription) {
+                        if (err) {
+                            console.log(err);
+                            callback({ success: false, message: 'Something went error occurred when subscribing customer in plan', result: null });
+                        }
+
+                        //// Save customer on mongo
+                        customerData.CustomerId = customer.id;
+                        customerData.StripeToken = null;
+                        customerData.PlanId = plan.id;
+                        customerData.SubscriptionId = subscription.id;
+                        customerData.FirstNameCard = null;
+                        customerData.LastNameCard = null;
+
+                        _database.User().UpdatePaymentData(customerData, function (result) {
+                            if (result == null) {
+                                callback({ success: false, message: 'Something went occurred wrong when update payment method, try again.', result: result });
+                            }
+                            else {
+                                callback({ success: true, message: 'User saved succesfuly', result: result })
+                            }
+                        })
+                    });
+                }
+            });
+        });
+    }
+
     var updateSubscription = function (customerData, callback) {
 
         // Find in mongo user by email
         _database.User().GetUserByEmail(customerData.Email, function (userResult) {
             if (userResult != null) {
                 // if user has not a customer id
-                if (userResult.CustomerId.length == 0) {
+                if (userResult.StripeToken == null) {
                     /// Create a customer in Stripe
-                    _stripe.customers.create({
+                    _stripe.customers.update(userResult.CustomerId,
+                    {
                         description: customerData.Description,
-                        email: customerData.Email,
                         source: customerData.StripeToken // obtained with Stripe.js
                     }, function (err, customer) {
                         if (err) {
@@ -329,9 +371,9 @@ function StripeController(dependencies) {
                 case 'transfer.reversed':
                 case 'transfer.updated':
                 case 'ping':
-                /// Send notification or do Something
+                    /// Send notification or do Something
                     break;
-            
+
                 default:
                     break;
             }
@@ -350,6 +392,7 @@ function StripeController(dependencies) {
         GetCustomerByUserId: getCustomerByUserId,
         GetChargesByUserId: getChargesByUserId,
         ProcessWebhook: processWebhook,
+        CreateInitialCustomer: createInitialCustomer,
     }
 }
 
