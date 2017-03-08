@@ -36,13 +36,13 @@ function FlingerServer(dependencies) {
         _mailController = require('./mailController')(dependencies);
         dependencies.mailController = _mailController;
 
+        /// Stripe controller
+        _stripeController = require('./stripeController')(dependencies);
+        dependencies.stripeController = _stripeController;
+
         _databaseController.Initialize(function (result) {
             if (result == true) {
                 dependencies.gridfs = _databaseController.GetGridFS();
-
-                /// Stripe controller
-                _stripeController = require('./stripeController')(dependencies);
-                dependencies.stripeController = _stripeController;
 
                 _notificationHubController = require('./notificationHubController')(dependencies);
                 dependencies.notificationHub = _notificationHubController;

@@ -4,6 +4,7 @@ function UserController(dependencies) {
     var _mongoose;
     var _app;
     var _jwt;
+    var _stripeController;
 
     /// Properties
     var _entity;
@@ -14,6 +15,7 @@ function UserController(dependencies) {
         _schema = _mongoose.Schema;
         _app = dependencies.app;
         _jwt = dependencies.jwt;
+        _stripeController = dependencies.stripeController;
 
         _entity = require('../Models/User')(dependencies);
         _entity.Initialize();
@@ -50,8 +52,10 @@ function UserController(dependencies) {
                     });
 
                 user.save().then(function (result) {
-                    // When database return a result call the return
-                    callback({ success: true, message: 'CreateUser', result: result });
+                    // When database return any result call the "return" named callback
+                    _stripeController.CreateInitialCustomer(result, function(stripeResult){
+                        callback(stripeResult);
+                    });                    
                 }, function (err) {
                     console.log('Error while saving:')
                     console.log(err)
