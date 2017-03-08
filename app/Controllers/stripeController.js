@@ -94,9 +94,9 @@ function StripeController(dependencies) {
                 // if user has not a customer id
                 if (userResult.StripeToken.length == 0) {
                     /// Create a customer in Stripe
-                    _stripe.customers.create({
+                    _stripe.customers.update(userResult.CustomerId,
+                    {
                         description: customerData.Description,
-                        email: customerData.Email,
                         source: customerData.StripeToken // obtained with Stripe.js
                     }, function (err, customer) {
                         if (err) {
