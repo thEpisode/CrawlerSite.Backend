@@ -92,7 +92,7 @@ function StripeController(dependencies) {
         _database.User().GetUserByEmail(customerData.Email, function (userResult) {
             if (userResult != null) {
                 // if user has not a customer id
-                if (userResult.StripeToken.length == 0) {
+                if (userResult.StripeToken == null) {
                     /// Create a customer in Stripe
                     _stripe.customers.update(userResult.CustomerId,
                     {
