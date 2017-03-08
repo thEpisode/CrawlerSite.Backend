@@ -33,7 +33,7 @@ function StripeController(dependencies) {
 
     var getPlan = function (planId, callback) {
         _stripe.plans.retrieve(
-            planId,
+            (planId == null ? 'free' : planId),
             function (err, plan) {
                 if (err) {
                     console.log(err);
@@ -95,50 +95,50 @@ function StripeController(dependencies) {
                 if (userResult.StripeToken == null) {
                     /// Create a customer in Stripe
                     _stripe.customers.update(userResult.CustomerId,
-                    {
-                        description: customerData.Description,
-                        source: customerData.StripeToken // obtained with Stripe.js
-                    }, function (err, customer) {
-                        if (err) {
-                            console.log(err);
-                            callback({ success: false, message: 'Something went error occurred when creating customer', result: null });
-                        }
-                        //// Create a new subscription
-                        getPlan(customerData.Plan, function (plan) {
-                            if (plan != undefined && plan != null) {
-                                _stripe.subscriptions.create({
-                                    customer: customer.id,
-                                    plan: plan.id
-                                }, function (err, subscription) {
-                                    if (err) {
-                                        console.log(err);
-                                        callback({ success: false, message: 'Something went error occurred when subscribing customer in plan', result: null });
-                                    }
-
-                                    //// Save customer on mongo
-                                    userResult.CustomerId = customer.id;
-                                    userResult.StripeToken = customerData.StripeToken;
-                                    userResult.PlanId = plan.id;
-                                    userResult.SubscriptionId = subscription.id;
-                                    userResult.FirstNameCard = customerData.Firstname;
-                                    userResult.LastNameCard = customerData.Lastname;
-
-                                    _database.User().UpdatePaymentData(userResult, function (result) {
-                                        if (result == null) {
-                                            callback({ success: false, message: 'Something went occurred wrong when update payment method, try again.', result: result });
-                                        }
-                                        else {
-                                            callback({ success: true, message: 'Payment saved succesfuly', result: result })
-                                        }
-                                    })
-                                });
+                        {
+                            description: customerData.Description,
+                            source: customerData.StripeToken // obtained with Stripe.js
+                        }, function (err, customer) {
+                            if (err) {
+                                console.log(err);
+                                callback({ success: false, message: 'Something went error occurred when creating customer', result: null });
                             }
-                            else {
-                                callback({ success: false, message: 'Something went occurred wrong, try again.', result: result });
-                            }
+                            //// Create a new subscription
+                            getPlan(customerData.Plan, function (plan) {
+                                if (plan != undefined && plan != null) {
+                                    _stripe.subscriptions.create({
+                                        customer: customer.id,
+                                        plan: plan.id
+                                    }, function (err, subscription) {
+                                        if (err) {
+                                            console.log(err);
+                                            callback({ success: false, message: 'Something went error occurred when subscribing customer in plan', result: null });
+                                        }
+
+                                        //// Save customer on mongo
+                                        userResult.CustomerId = customer.id;
+                                        userResult.StripeToken = customerData.StripeToken;
+                                        userResult.PlanId = plan.id;
+                                        userResult.SubscriptionId = subscription.id;
+                                        userResult.FirstNameCard = customerData.Firstname;
+                                        userResult.LastNameCard = customerData.Lastname;
+
+                                        _database.User().UpdatePaymentData(userResult, function (result) {
+                                            if (result == null) {
+                                                callback({ success: false, message: 'Something went occurred wrong when update payment method, try again.', result: result });
+                                            }
+                                            else {
+                                                callback({ success: true, message: 'Payment saved succesfuly', result: result })
+                                            }
+                                        })
+                                    });
+                                }
+                                else {
+                                    callback({ success: false, message: 'Something went occurred wrong, try again.', result: result });
+                                }
+                            });
+
                         });
-
-                    });
                 }
                 // if exist retrieve the customer
                 else {
