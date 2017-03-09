@@ -192,6 +192,7 @@ function UserController(dependencies) {
     }
 
     var updateHeatmapsInsights = function (data, callback) {
+        console.log(data)
         callback({ success: true, message: 'UpdateHeatmapsInsights', result: result });
     }
 

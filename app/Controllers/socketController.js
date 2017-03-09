@@ -54,7 +54,7 @@ function Socket(dependencies) {
                 var ratServiceNamespace;
                 // Search if namespace exist
                 if ((Object.keys(_io.nsps).indexOf('/' + namespace.Id) > -1) == false) {
-                    
+
                 }
                 ratServiceNamespace = _io.of('/' + namespace.Id);
                 ratServiceNamespace.on('connection', function (socket) {
@@ -166,7 +166,7 @@ function Socket(dependencies) {
                 }
             })
 
-            
+
         })
 
         /// Admin Pool Namespace (APN)
@@ -214,6 +214,12 @@ function Socket(dependencies) {
         /// All site Users will be connected in this pool and wait for any request
         userPoolNamespace.on('connection', function (socket) {
             _console.log('Client connected: ' + socket.id, 'socket-message');
+
+            _database.User.UpdateHeatmapsInsights({ ApiKey: socket.request._query['ApiKey'] }, function (response) {
+                /*
+                Do Something
+                */
+            })
 
             /// Emit a welcome message to new connection
             socket.emit('Welcome', { Message: 'Welcome to Coplest.Flinger', SocketId: socket.id });
