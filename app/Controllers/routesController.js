@@ -497,6 +497,41 @@ function Routes(dependencies) {
             })
         });
 
+        // (POST http://localhost:3000/api/User/UpdateHeatmapsInsights)
+        _apiRoutes.post('/User/UpdateHeatmapsInsights', function (req, res) {
+            _database.User().UpdateHeatmapsInsights(req.body, function (result) {
+                res.json(result);
+            })
+        });
+
+        // (POST http://localhost:3000/api/User/UpdateRATInsights)
+        _apiRoutes.post('/User/UpdateRATInsights', function (req, res) {
+            _database.User().UpdateRATInsights(req.body, function (result) {
+                res.json(result);
+            })
+        });
+
+        // (POST http://localhost:3000/api/User/UpdateFormsInsights)
+        _apiRoutes.post('/User/UpdateFormsInsights', function (req, res) {
+            _database.User().UpdateFormsInsights(req.body, function (result) {
+                res.json(result);
+            })
+        });
+
+        // (POST http://localhost:3000/api/User/UpdateRecordsInsights)
+        _apiRoutes.post('/User/UpdateRecordsInsights', function (req, res) {
+            _database.User().UpdateRecordsInsights(req.body, function (result) {
+                res.json(result);
+            })
+        });
+
+        // (POST http://localhost:3000/api/User/UpdateClientsBehavior)
+        _apiRoutes.post('/User/UpdateClientsBehavior', function (req, res) {
+            _database.User().UpdateClientsBehavior(req.body, function (result) {
+                res.json(result);
+            })
+        });
+
         /// FrontEndReviews api routes
         /// -------------------------
         //  (POST http://localhost:3000/api/FrontEndReview/Create)

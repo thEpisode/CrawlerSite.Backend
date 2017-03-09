@@ -45,7 +45,8 @@ function User(dependencies) {
                 AcceptTerms: Boolean,
                 State: Number,
                 Settings: [_schema.Types.Mixed],
-                Insights: {
+                DashboardInsights: {
+                    ClientsBehavior: [Number],
                     Heatmaps: {
                         PageViewsPerMonth: Number,
                         PageViewsLifeTime: Number,
@@ -64,6 +65,7 @@ function User(dependencies) {
                     FormAnalysis: {
                         FormsAnalyzed: Number,
                         Issues: Number,
+                        Success: Number,
                         NumberInputs: Number
                     },
                     Records: {

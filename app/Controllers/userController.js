@@ -48,14 +48,42 @@ function UserController(dependencies) {
                         Country: data.Country,
                         AcceptTerms: data.AcceptTerms,
                         State: data.State,
-                        Settings: []
+                        Settings: [],
+                        DashboardInsights: {
+                            ClientsBehavior: [0, 0, 0, 0, 0, 0, 0, 0, 0],
+                            Heatmaps: {
+                                PageViewsPerMonth: 0,
+                                PageViewsLifeTime: 0,
+                                MovementRegistersPerMonth: 0,
+                                MovementRegistersLifeTime: 0,
+                                ClickRegistersPerMonth: 0,
+                                ClickRegistersPerLifeTime: 0,
+                                ScrollRegistersPerMonth: 0,
+                                ScrollRegistersLifeTime: 0,
+                            },
+                            RAT: {
+                                UsersOnline: 0,
+                                MinutesUsed: 0,
+                                ConectionsSuccesfuly: 0
+                            },
+                            FormAnalysis: {
+                                FormsAnalyzed: 0,
+                                Issues: 0,
+                                Success: 0,
+                                NumberInputs: 0
+                            },
+                            Records: {
+                                TotalMinutes: 0,
+                                TotalRecords: 0,
+                            }
+                        }
                     });
 
                 user.save().then(function (result) {
                     // When database return any result call the "return" named callback
-                    _stripeController.CreateInitialCustomer(result, function(stripeResult){
+                    _stripeController.CreateInitialCustomer(result, function (stripeResult) {
                         callback(stripeResult);
-                    });                    
+                    });
                 }, function (err) {
                     console.log('Error while saving:')
                     console.log(err)
@@ -127,7 +155,7 @@ function UserController(dependencies) {
 
     var getAllUser = function (data, callback) {
         _entity.GetModel().find({}, function (err, result) {
-            if (err){
+            if (err) {
                 console.log(err);
                 callback({ success: false, message: 'GetAllUser', result: null });
             }
@@ -153,7 +181,7 @@ function UserController(dependencies) {
     }
 
     var updatePaymentData = function (data, callback) {
-        _entity.GetModel().findOneAndUpdate({ "_id": data._id }, { $set: {StripeToken: data.StripeToken, CustomerId: data.CustomerId, PlanId: data.PlanId, SubscriptionId: data.SubscriptionId, FirstNameCard: data.FirstNameCard, LastNameCard: data.LastNameCard } }, { upsert: false }, function (err, result) {
+        _entity.GetModel().findOneAndUpdate({ "_id": data._id }, { $set: { StripeToken: data.StripeToken, CustomerId: data.CustomerId, PlanId: data.PlanId, SubscriptionId: data.SubscriptionId, FirstNameCard: data.FirstNameCard, LastNameCard: data.LastNameCard } }, { upsert: false }, function (err, result) {
             if (err) {
                 console.log(err);
                 callback(null);
@@ -161,6 +189,26 @@ function UserController(dependencies) {
 
             callback(result);
         })
+    }
+
+    var updateHeatmapsInsights = function (data, callback) {
+        callback({ success: true, message: 'UpdateHeatmapsInsights', result: result });
+    }
+
+    var updateRATInsights = function (data, callback) {
+        callback({ success: true, message: 'UpdateRATInsights', result: result });
+    }
+
+    var updateFormsInsights = function (data, callback) {
+        callback({ success: true, message: 'UpdateFormsInsights', result: result });
+    }
+
+    var updateRecordsInsights = function (data, callback) {
+        callback({ success: true, message: 'UpdateRecordsInsights', result: result });
+    }
+
+    var updateClientsBehavior = function (data, callback) {
+        callback({ success: true, message: 'UpdateClientsBehavior', result: result });
     }
 
     return {
@@ -173,6 +221,11 @@ function UserController(dependencies) {
         GetAllUser: getAllUser,
         EditUser: editUser,
         UpdatePaymentData: updatePaymentData,
+        UpdateHeatmapsInsights: updateHeatmapsInsights,
+        UpdateRATInsights: updateRATInsights,
+        UpdateFormsInsights: updateFormsInsights,
+        UpdateRecordsInsights: updateRecordsInsights,
+        UpdateClientsBehavior: updateClientsBehavior,
         Entity: getEntity
     }
 }
