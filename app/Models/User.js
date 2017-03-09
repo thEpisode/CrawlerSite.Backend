@@ -44,7 +44,33 @@ function User(dependencies) {
                 Country: String,
                 AcceptTerms: Boolean,
                 State: Number,
-                Settings: [_schema.Types.Mixed]
+                Settings: [_schema.Types.Mixed],
+                Insights: {
+                    Heatmaps: {
+                        PageViewsPerMonth: Number,
+                        PageViewsLifeTime: Number,
+                        MovementRegistersPerMonth: Number,
+                        MovementRegistersLifeTime: Number,
+                        ClickRegistersPerMonth: Number,
+                        ClickRegistersPerLifeTime: Number,
+                        ScrollRegistersPerMonth: Number,
+                        ScrollRegistersLifeTime: Number,
+                    },
+                    RAT: {
+                        UsersOnline: Number,
+                        MinutesUsed: Number,
+                        ConectionsSuccesfuly: Number
+                    },
+                    FormAnalysis: {
+                        FormsAnalyzed: Number,
+                        Issues: Number,
+                        NumberInputs: Number
+                    },
+                    Records: {
+                        TotalMinutes: Number,
+                        TotalRecords: Number,
+                    }
+                }
             },
             { timestamps: { createdAt: 'created_at' }, minimize: false, collection: 'User' }
         ));
