@@ -279,20 +279,26 @@ function SiteController(dependencies) {
         });
     }
 
-    var updateHeatmapsInsights = function (data, callback) {
+    var increasePageviewsHeatmapsInsights = function (data, callback) {
         _entity.GetModel().findOne({ "ApiKey": data.ApiKey }, function (err, result) {
             if (err) {
                 console.log(err);
                 callback({ success: false, message: 'Something went wrong when updating insights, try again.', result: null });
             }
             else {
-                _entity.GetModel().findOneAndUpdate({ "ApiKey": data.ApiKey }, { $set: { 'Insights.Heatmaps.PageViewsLifeTime': ++(result.Insights.Heatmaps.PageViewsLifeTime) } }, { upsert: false }, function (err, result) {
+                _entity.GetModel().findOneAndUpdate({ "ApiKey": data.ApiKey }, 
+                { $set: 
+                    { 
+                        'Insights.Heatmaps.PageViewsLifeTime': ++(result.Insights.Heatmaps.PageViewsLifeTime),
+                        'Insights.Heatmaps.PageViewsPerMonth': ++(result.Insights.Heatmaps.PageViewsPerMonth),
+                    } 
+                }, { upsert: false }, function (err, result) {
                     if (err) {
                         console.log(err);
                         callback({ success: false, message: 'Something went wrong when updating insights, try again.', result: null });
                     }
                     console.log(result.Insights.Heatmaps)
-                    callback({ success: true, message: 'UpdateHeatmapsInsights', result: result });
+                    callback({ success: true, message: 'IncreasePageviewsHeatmapsInsights', result: result });
                 });
             }
 
@@ -335,7 +341,7 @@ function SiteController(dependencies) {
         AddScreenshotToChild: addScreenshotToChild,
         SearchBranch: searchBranch,
         GetSiteScreenshotIdByPathname: getSiteScreenshotIdByPathname,
-        UpdateHeatmapsInsights: updateHeatmapsInsights,
+        IncreasePageviewsHeatmapsInsights: increasePageviewsHeatmapsInsights,
         UpdateRATInsights: updateRATInsights,
         UpdateFormsInsights: updateFormsInsights,
         UpdateRecordsInsights: updateRecordsInsights,
