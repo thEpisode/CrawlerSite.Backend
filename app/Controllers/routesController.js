@@ -497,37 +497,37 @@ function Routes(dependencies) {
             })
         });
 
-        // (POST http://localhost:3000/api/User/UpdateHeatmapsInsights)
-        _apiRoutes.post('/User/UpdateHeatmapsInsights', function (req, res) {
-            _database.User().UpdateHeatmapsInsights(req.body, function (result) {
+        // (POST http://localhost:3000/api/Site/UpdateHeatmapsInsights)
+        _apiRoutes.post('/Site/UpdateHeatmapsInsights', function (req, res) {
+            _database.Site().UpdateHeatmapsInsights(req.body, function (result) {
                 res.json(result);
             })
         });
 
-        // (POST http://localhost:3000/api/User/UpdateRATInsights)
+        // (POST http://localhost:3000/api/Site/UpdateRATInsights)
         _apiRoutes.post('/User/UpdateRATInsights', function (req, res) {
-            _database.User().UpdateRATInsights(req.body, function (result) {
+            _database.Site().UpdateRATInsights(req.body, function (result) {
                 res.json(result);
             })
         });
 
-        // (POST http://localhost:3000/api/User/UpdateFormsInsights)
-        _apiRoutes.post('/User/UpdateFormsInsights', function (req, res) {
-            _database.User().UpdateFormsInsights(req.body, function (result) {
+        // (POST http://localhost:3000/api/Site/UpdateFormsInsights)
+        _apiRoutes.post('/Site/UpdateFormsInsights', function (req, res) {
+            _database.Site().UpdateFormsInsights(req.body, function (result) {
                 res.json(result);
             })
         });
 
-        // (POST http://localhost:3000/api/User/UpdateRecordsInsights)
+        // (POST http://localhost:3000/api/Site/UpdateRecordsInsights)
         _apiRoutes.post('/User/UpdateRecordsInsights', function (req, res) {
-            _database.User().UpdateRecordsInsights(req.body, function (result) {
+            _database.Site().UpdateRecordsInsights(req.body, function (result) {
                 res.json(result);
             })
         });
 
-        // (POST http://localhost:3000/api/User/UpdateClientsBehavior)
-        _apiRoutes.post('/User/UpdateClientsBehavior', function (req, res) {
-            _database.User().UpdateClientsBehavior(req.body, function (result) {
+        // (POST http://localhost:3000/api/Site/UpdateClientsBehavior)
+        _apiRoutes.post('/Site/UpdateClientsBehavior', function (req, res) {
+            _database.Site().UpdateClientsBehavior(req.body, function (result) {
                 res.json(result);
             })
         });

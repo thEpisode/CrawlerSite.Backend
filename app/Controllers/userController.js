@@ -49,34 +49,7 @@ function UserController(dependencies) {
                         AcceptTerms: data.AcceptTerms,
                         State: data.State,
                         Settings: [],
-                        DashboardInsights: {
-                            ClientsBehavior: [0, 0, 0, 0, 0, 0, 0, 0, 0],
-                            Heatmaps: {
-                                PageViewsPerMonth: 0,
-                                PageViewsLifeTime: 0,
-                                MovementRegistersPerMonth: 0,
-                                MovementRegistersLifeTime: 0,
-                                ClickRegistersPerMonth: 0,
-                                ClickRegistersPerLifeTime: 0,
-                                ScrollRegistersPerMonth: 0,
-                                ScrollRegistersLifeTime: 0,
-                            },
-                            RAT: {
-                                UsersOnline: 0,
-                                MinutesUsed: 0,
-                                ConectionsSuccesfuly: 0
-                            },
-                            FormAnalysis: {
-                                FormsAnalyzed: 0,
-                                Issues: 0,
-                                Success: 0,
-                                NumberInputs: 0
-                            },
-                            Records: {
-                                TotalMinutes: 0,
-                                TotalRecords: 0,
-                            }
-                        }
+
                     });
 
                 user.save().then(function (result) {
@@ -191,27 +164,6 @@ function UserController(dependencies) {
         })
     }
 
-    var updateHeatmapsInsights = function (data, callback) {
-        console.log(data)
-        callback({ success: true, message: 'UpdateHeatmapsInsights', result: result });
-    }
-
-    var updateRATInsights = function (data, callback) {
-        callback({ success: true, message: 'UpdateRATInsights', result: result });
-    }
-
-    var updateFormsInsights = function (data, callback) {
-        callback({ success: true, message: 'UpdateFormsInsights', result: result });
-    }
-
-    var updateRecordsInsights = function (data, callback) {
-        callback({ success: true, message: 'UpdateRecordsInsights', result: result });
-    }
-
-    var updateClientsBehavior = function (data, callback) {
-        callback({ success: true, message: 'UpdateClientsBehavior', result: result });
-    }
-
     return {
         Initialize: constructor,
         CreateUser: createUser,
@@ -222,11 +174,6 @@ function UserController(dependencies) {
         GetAllUser: getAllUser,
         EditUser: editUser,
         UpdatePaymentData: updatePaymentData,
-        UpdateHeatmapsInsights: updateHeatmapsInsights,
-        UpdateRATInsights: updateRATInsights,
-        UpdateFormsInsights: updateFormsInsights,
-        UpdateRecordsInsights: updateRecordsInsights,
-        UpdateClientsBehavior: updateClientsBehavior,
         Entity: getEntity
     }
 }

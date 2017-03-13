@@ -215,11 +215,8 @@ function Socket(dependencies) {
         userPoolNamespace.on('connection', function (socket) {
             _console.log('Client connected: ' + socket.id, 'socket-message');
 
-            _database.User.UpdateHeatmapsInsights({ ApiKey: socket.request._query['ApiKey'] }, function (response) {
-                /*
-                Do Something
-                */
-            })
+            /// Update Heatmap Insights
+            _database.Site().UpdateHeatmapsInsights({ ApiKey: socket.handshake.query.ApiKey }, function (response) {})
 
             /// Emit a welcome message to new connection
             socket.emit('Welcome', { Message: 'Welcome to Coplest.Flinger', SocketId: socket.id });

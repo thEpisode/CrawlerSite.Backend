@@ -30,6 +30,34 @@ function SiteController(dependencies) {
                     IsParent: true,
                     Name: "Index",
                     Childs: []
+                },
+                Insights: {
+                    ClientsBehavior: [0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    Heatmaps: {
+                        PageViewsPerMonth: 0,
+                        PageViewsLifeTime: 0,
+                        MovementRegistersPerMonth: 0,
+                        MovementRegistersLifeTime: 0,
+                        ClickRegistersPerMonth: 0,
+                        ClickRegistersPerLifeTime: 0,
+                        ScrollRegistersPerMonth: 0,
+                        ScrollRegistersLifeTime: 0,
+                    },
+                    RAT: {
+                        UsersOnline: 0,
+                        MinutesUsed: 0,
+                        ConectionsSuccesfuly: 0
+                    },
+                    FormAnalysis: {
+                        FormsAnalyzed: 0,
+                        Issues: 0,
+                        Success: 0,
+                        NumberInputs: 0
+                    },
+                    Records: {
+                        TotalMinutes: 0,
+                        TotalRecords: 0,
+                    }
                 }
             });
 
@@ -251,6 +279,43 @@ function SiteController(dependencies) {
         });
     }
 
+    var updateHeatmapsInsights = function (data, callback) {
+        _entity.GetModel().findOne({ "ApiKey": data.ApiKey }, function (err, result) {
+            if (err) {
+                console.log(err);
+                callback({ success: false, message: 'Something went wrong when updating insights, try again.', result: null });
+            }
+            else {
+                _entity.GetModel().findOneAndUpdate({ "ApiKey": data.ApiKey }, { $set: { 'Insights.Heatmaps.PageViewsLifeTime': ++(result.Insights.Heatmaps.PageViewsLifeTime) } }, { upsert: false }, function (err, result) {
+                    if (err) {
+                        console.log(err);
+                        callback({ success: false, message: 'Something went wrong when updating insights, try again.', result: null });
+                    }
+                    console.log(result.Insights.Heatmaps)
+                    callback({ success: true, message: 'UpdateHeatmapsInsights', result: result });
+                });
+            }
+
+        })
+
+    }
+
+    var updateRATInsights = function (data, callback) {
+        callback({ success: true, message: 'UpdateRATInsights', result: result });
+    }
+
+    var updateFormsInsights = function (data, callback) {
+        callback({ success: true, message: 'UpdateFormsInsights', result: result });
+    }
+
+    var updateRecordsInsights = function (data, callback) {
+        callback({ success: true, message: 'UpdateRecordsInsights', result: result });
+    }
+
+    var updateClientsBehavior = function (data, callback) {
+        callback({ success: true, message: 'UpdateClientsBehavior', result: result });
+    }
+
     var getEntity = function () {
         return _entity;
     }
@@ -270,6 +335,11 @@ function SiteController(dependencies) {
         AddScreenshotToChild: addScreenshotToChild,
         SearchBranch: searchBranch,
         GetSiteScreenshotIdByPathname: getSiteScreenshotIdByPathname,
+        UpdateHeatmapsInsights: updateHeatmapsInsights,
+        UpdateRATInsights: updateRATInsights,
+        UpdateFormsInsights: updateFormsInsights,
+        UpdateRecordsInsights: updateRecordsInsights,
+        UpdateClientsBehavior: updateClientsBehavior,
         Entity: getEntity
     }
 }

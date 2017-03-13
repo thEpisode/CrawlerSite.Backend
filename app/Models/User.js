@@ -45,34 +45,7 @@ function User(dependencies) {
                 AcceptTerms: Boolean,
                 State: Number,
                 Settings: [_schema.Types.Mixed],
-                DashboardInsights: {
-                    ClientsBehavior: [Number],
-                    Heatmaps: {
-                        PageViewsPerMonth: Number,
-                        PageViewsLifeTime: Number,
-                        MovementRegistersPerMonth: Number,
-                        MovementRegistersLifeTime: Number,
-                        ClickRegistersPerMonth: Number,
-                        ClickRegistersPerLifeTime: Number,
-                        ScrollRegistersPerMonth: Number,
-                        ScrollRegistersLifeTime: Number,
-                    },
-                    RAT: {
-                        UsersOnline: Number,
-                        MinutesUsed: Number,
-                        ConectionsSuccesfuly: Number
-                    },
-                    FormAnalysis: {
-                        FormsAnalyzed: Number,
-                        Issues: Number,
-                        Success: Number,
-                        NumberInputs: Number
-                    },
-                    Records: {
-                        TotalMinutes: Number,
-                        TotalRecords: Number,
-                    }
-                }
+                
             },
             { timestamps: { createdAt: 'created_at' }, minimize: false, collection: 'User' }
         ));
