@@ -215,7 +215,7 @@ function Socket(dependencies) {
         userPoolNamespace.on('connection', function (socket) {
             _console.log('Client connected: ' + socket.id, 'socket-message');
 
-            /// Update Heatmap Insights
+            /// Add a pageview Heatmap Insights
             _database.Site().IncreasePageviewsHeatmapsInsights({ ApiKey: socket.handshake.query.ApiKey }, function (response) {})
 
             /// Emit a welcome message to new connection

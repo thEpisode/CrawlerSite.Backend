@@ -504,6 +504,20 @@ function Routes(dependencies) {
             })
         });
 
+        //  (GET http://localhost:3000/api/Site/UserId)
+        _apiRoutes.get('/Site/GetPageViewsHeatmapsInsightsByApiKey/:ApiKey', function (req, res) {
+            _database.Site().GetPageViewsHeatmapsInsightsByApiKey(req.params, function (result) {
+                res.json(result);
+            })
+        });
+
+        //  (GET http://localhost:3000/api/Site/UserId)
+        _apiRoutes.get('/Site/GetPageViewsHeatmapsInsightsByApiKeys/', function (req, res) {
+            _database.Site().GetPageViewsHeatmapsInsightsByApiKeys(req.query, function (result) {
+                res.json(result);
+            })
+        });
+
         // (POST http://localhost:3000/api/Site/UpdateRATInsights)
         _apiRoutes.post('/User/UpdateRATInsights', function (req, res) {
             _database.Site().UpdateRATInsights(req.body, function (result) {

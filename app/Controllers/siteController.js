@@ -286,24 +286,85 @@ function SiteController(dependencies) {
                 callback({ success: false, message: 'Something went wrong when updating insights, try again.', result: null });
             }
             else {
-                _entity.GetModel().findOneAndUpdate({ "ApiKey": data.ApiKey }, 
-                { $set: 
-                    { 
-                        'Insights.Heatmaps.PageViewsLifeTime': ++(result.Insights.Heatmaps.PageViewsLifeTime),
-                        'Insights.Heatmaps.PageViewsPerMonth': ++(result.Insights.Heatmaps.PageViewsPerMonth),
-                    } 
-                }, { upsert: false }, function (err, result) {
-                    if (err) {
-                        console.log(err);
-                        callback({ success: false, message: 'Something went wrong when updating insights, try again.', result: null });
-                    }
-                    console.log(result.Insights.Heatmaps)
-                    callback({ success: true, message: 'IncreasePageviewsHeatmapsInsights', result: result });
-                });
+                _entity.GetModel().findOneAndUpdate({ "ApiKey": data.ApiKey },
+                    {
+                        $set:
+                        {
+                            'Insights.Heatmaps.PageViewsLifeTime': ++(result.Insights.Heatmaps.PageViewsLifeTime),
+                            'Insights.Heatmaps.PageViewsPerMonth': ++(result.Insights.Heatmaps.PageViewsPerMonth),
+                        }
+                    }, { upsert: false }, function (err, result) {
+                        if (err) {
+                            console.log(err);
+                            callback({ success: false, message: 'Something went wrong when updating insights, try again.', result: null });
+                        }
+                        //console.log(result.Insights.Heatmaps)
+                        callback({ success: true, message: 'IncreasePageviewsHeatmapsInsights', result: result });
+                    });
             }
 
         })
 
+    }
+
+    var getPageViewsHeatmapsInsightsByApiKey = function (data, callback) {
+        _entity.GetModel().aggregate([
+            {
+                $match: {
+                    ApiKey: data.ApiKey
+                }
+            },
+            {
+                '$group': {
+                    _id: '$region',
+                    TotalLifeTime: { $sum: '$Insights.Heatmaps.PageViewsLifeTime' },
+                    TotalMonth: { $sum: '$Insights.Heatmaps.PageViewsPerMonth' }
+                }
+            }], function (err, result) {
+                if (err) {
+                    console.log(err);
+                    callback({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
+                }
+                else {
+                    callback({ success: true, message: 'GetPageViewsHeatmapsInsightsByApiKey', result: result });
+                }
+            });
+    }
+
+    var getPageViewsHeatmapsInsightsByApiKeys = function (data, callback) {
+        if (data.ApiKeys != undefined && data.ApiKeys != null) {
+            if (Object.prototype.toString.call(data.ApiKeys) === '[object Array]') {
+                //var sitesId = data.ApiKeys.map(function (id) { return _mongoose.Types.ObjectId(id) });
+
+                _entity.GetModel().aggregate([
+                    {
+                        $match: {
+                            ApiKey: { $in: data.ApiKeys }
+                        }
+                    },
+                    {
+                        '$group': {
+                            _id: '$region',
+                            TotalLifeTime: { $sum: '$Insights.Heatmaps.PageViewsLifeTime' },
+                            TotalMonth: { $sum: '$Insights.Heatmaps.PageViewsPerMonth' }
+                        }
+                    }], function (err, result) {
+                        if (err) {
+                            console.log(err);
+                            callback({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
+                        }
+                        else {
+                            callback({ success: true, message: 'GetPageViewsHeatmapsInsightsByApiKey', result: result });
+                        }
+                    });
+            }
+            else {
+                callback({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
+            }
+        }
+        else {
+            callback({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
+        }
     }
 
     var updateRATInsights = function (data, callback) {
@@ -346,6 +407,8 @@ function SiteController(dependencies) {
         UpdateFormsInsights: updateFormsInsights,
         UpdateRecordsInsights: updateRecordsInsights,
         UpdateClientsBehavior: updateClientsBehavior,
+        GetPageViewsHeatmapsInsightsByApiKey: getPageViewsHeatmapsInsightsByApiKey,
+        GetPageViewsHeatmapsInsightsByApiKeys: getPageViewsHeatmapsInsightsByApiKeys,
         Entity: getEntity
     }
 }
