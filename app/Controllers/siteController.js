@@ -316,7 +316,7 @@ function SiteController(dependencies) {
             },
             {
                 '$group': {
-                    _id: '$region',
+                    _id: '$GetPageViewsHeatmapsInsightsByApiKey',
                     TotalLifeTime: { $sum: '$Insights.Heatmaps.PageViewsLifeTime' },
                     TotalMonth: { $sum: '$Insights.Heatmaps.PageViewsPerMonth' }
                 }
@@ -344,7 +344,7 @@ function SiteController(dependencies) {
                     },
                     {
                         '$group': {
-                            _id: '$region',
+                            _id: '$GetPageViewsHeatmapsInsightsByApiKey',
                             TotalLifeTime: { $sum: '$Insights.Heatmaps.PageViewsLifeTime' },
                             TotalMonth: { $sum: '$Insights.Heatmaps.PageViewsPerMonth' }
                         }
