@@ -623,8 +623,54 @@ function SiteController(dependencies) {
         }
     }
 
-    var updateRATInsights = function (data, callback) {
-        callback({ success: true, message: 'UpdateRATInsights', result: result });
+    var increaseUsersOnlineRAT = function (data, callback) {
+        _entity.GetModel().findOne({ "ApiKey": data.ApiKey }, function (err, result) {
+            if (err) {
+                console.log(err);
+                callback({ success: false, message: 'Something went wrong when updating insights, try again.', result: null });
+            }
+            else {
+                _entity.GetModel().findOneAndUpdate({ "ApiKey": data.ApiKey },
+                    {
+                        $set:
+                        {
+                            'Insights.RAT.UsersOnline': ++(result.Insights.RAT.UsersOnline),
+                        }
+                    }, { upsert: false }, function (err, result) {
+                        if (err) {
+                            console.log(err);
+                            callback({ success: false, message: 'Something went wrong when updating insights, try again.', result: null });
+                        }
+                        //console.log(result.Insights.Heatmaps)
+                        callback({ success: true, message: 'IncreaseUsersOnlineRAT', result: result });
+                    });
+            }
+        });
+    }
+
+    var decreaseUsersOnlineRAT = function(data, callback){
+        _entity.GetModel().findOne({ "ApiKey": data.ApiKey }, function (err, result) {
+            if (err) {
+                console.log(err);
+                callback({ success: false, message: 'Something went wrong when updating insights, try again.', result: null });
+            }
+            else {
+                _entity.GetModel().findOneAndUpdate({ "ApiKey": data.ApiKey },
+                    {
+                        $set:
+                        {
+                            'Insights.RAT.UsersOnline': --(result.Insights.RAT.UsersOnline),
+                        }
+                    }, { upsert: false }, function (err, result) {
+                        if (err) {
+                            console.log(err);
+                            callback({ success: false, message: 'Something went wrong when updating insights, try again.', result: null });
+                        }
+                        //console.log(result.Insights.Heatmaps)
+                        callback({ success: true, message: 'DecreaseUsersOnlineRAT', result: result });
+                    });
+            }
+        });
     }
 
     var updateFormsInsights = function (data, callback) {
@@ -670,7 +716,8 @@ function SiteController(dependencies) {
         GetClickHeatmapsByApiKeys: getClickHeatmapsByApiKeys,
         GetScrollHeatmapsByApiKey: getScrollHeatmapsByApiKey,
         GetScrollHeatmapsByApiKeys: getScrollHeatmapsByApiKeys,
-        UpdateRATInsights: updateRATInsights,
+        IncreaseUsersOnlineRAT: increaseUsersOnlineRAT,
+        DecreaseUsersOnlineRAT: decreaseUsersOnlineRAT,
         UpdateFormsInsights: updateFormsInsights,
         UpdateRecordsInsights: updateRecordsInsights,
         UpdateClientsBehavior: updateClientsBehavior,

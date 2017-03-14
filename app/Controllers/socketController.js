@@ -11,6 +11,7 @@ function Socket(dependencies) {
     const MAX_CLIENTS = 10;
 
     var _siteNamespaces = [];
+    var _usersconnectedClients = [];
 
     var constructor = function () {
         _io = dependencies.io;
@@ -216,7 +217,11 @@ function Socket(dependencies) {
             _console.log('Client connected: ' + socket.id, 'socket-message');
 
             /// Add a pageview Heatmap Insights
-            _database.Site().IncreasePageviewsHeatmaps({ ApiKey: socket.handshake.query.ApiKey }, function (response) {})
+            _database.Site().IncreasePageviewsHeatmaps({ ApiKey: socket.handshake.query.ApiKey }, function (response) { })
+
+            _database.Site().IncreaseUsersOnlineRAT({ ApiKey: socket.handshake.query.ApiKey }, function (response) {
+                _usersconnectedClients.push({ SocketId: socket.id, ApiKey: socket.handshake.query.ApiKey })
+            })
 
             /// Emit a welcome message to new connection
             socket.emit('Welcome', { Message: 'Welcome to Coplest.Flinger', SocketId: socket.id });
@@ -224,6 +229,15 @@ function Socket(dependencies) {
             /// Catch when this connection is closed
             socket.on('disconnect', function () {
                 _console.log('Client disconnected: ' + socket.id, 'socket-message');
+
+                _database.Site().DecreaseUsersOnlineRAT({ ApiKey: socket.handshake.query.ApiKey }, function (response) {
+                    _usersconnectedClients.push({ SocketId: socket.id, ApiKey: socket.handshake.query.ApiKey })
+
+                    /// Delete an element in array: http://stackoverflow.com/questions/15287865/remove-array-element-based-on-object-property
+                    _usersconnectedClients = _usersconnectedClients.filter(function (obj) {
+                        return obj.SocketId !== socket.id;
+                    });
+                })
 
                 adminPoolNamespace.emit('Coplest.Flinger.RAT', { Command: 'UnsubscribeSocketToApiKey#Request', Values: { SocketId: socket.id, ApiKey: socket.ApiKey } });
             });
@@ -248,19 +262,19 @@ function Socket(dependencies) {
                         case 'Click':
                             _database.Click().CreateClick(data.Values, function () {
                                 //console.log('Click Saved');
-                                _database.Site().IncreaseClickHeatmaps({ ApiKey: data.Values.ApiKey }, function (response) {})
+                                _database.Site().IncreaseClickHeatmaps({ ApiKey: data.Values.ApiKey }, function (response) { })
                             })
                             break;
                         case 'Movement':
                             _database.Movement().CreateMovement(data.Values, function () {
                                 //console.log('Movement Saved');
-                                _database.Site().IncreaseMovementHeatmaps({ ApiKey: data.Values.ApiKey }, function (response) {})
+                                _database.Site().IncreaseMovementHeatmaps({ ApiKey: data.Values.ApiKey }, function (response) { })
                             })
                             break;
                         case 'Scroll':
                             _database.Scroll().CreateScroll(data.Values, function () {
                                 //console.log('Scroll Saved');
-                                _database.Site().IncreaseScrollHeatmaps({ ApiKey: data.Values.ApiKey }, function (response) {})
+                                _database.Site().IncreaseScrollHeatmaps({ ApiKey: data.Values.ApiKey }, function (response) { })
                             })
                             break;
                     }
