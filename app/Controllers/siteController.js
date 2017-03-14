@@ -279,7 +279,7 @@ function SiteController(dependencies) {
         });
     }
 
-    var increasePageviewsHeatmapsInsights = function (data, callback) {
+    var increasePageviewsHeatmaps = function (data, callback) {
         _entity.GetModel().findOne({ "ApiKey": data.ApiKey }, function (err, result) {
             if (err) {
                 console.log(err);
@@ -302,12 +302,88 @@ function SiteController(dependencies) {
                         callback({ success: true, message: 'IncreasePageviewsHeatmapsInsights', result: result });
                     });
             }
-
-        })
-
+        });
     }
 
-    var getPageViewsHeatmapsInsightsByApiKey = function (data, callback) {
+    var increaseMovementHeatmaps = function (data, callback) {
+        _entity.GetModel().findOne({ "ApiKey": data.ApiKey }, function (err, result) {
+            if (err) {
+                console.log(err);
+                callback({ success: false, message: 'Something went wrong when updating insights, try again.', result: null });
+            }
+            else {
+                _entity.GetModel().findOneAndUpdate({ "ApiKey": data.ApiKey },
+                    {
+                        $set:
+                        {
+                            'Insights.Heatmaps.MovementRegistersPerMonth': ++(result.Insights.Heatmaps.MovementRegistersPerMonth),
+                            'Insights.Heatmaps.MovementRegistersLifeTime': ++(result.Insights.Heatmaps.MovementRegistersLifeTime),
+                        }
+                    }, { upsert: false }, function (err, result) {
+                        if (err) {
+                            console.log(err);
+                            callback({ success: false, message: 'Something went wrong when updating insights, try again.', result: null });
+                        }
+                        //console.log(result.Insights.Heatmaps)
+                        callback({ success: true, message: 'IncreaseMovementHeatmaps', result: result });
+                    });
+            }
+        });
+    }
+
+    var increaseClickHeatmaps = function (data, callback) {
+        _entity.GetModel().findOne({ "ApiKey": data.ApiKey }, function (err, result) {
+            if (err) {
+                console.log(err);
+                callback({ success: false, message: 'Something went wrong when updating insights, try again.', result: null });
+            }
+            else {
+                _entity.GetModel().findOneAndUpdate({ "ApiKey": data.ApiKey },
+                    {
+                        $set:
+                        {
+                            'Insights.Heatmaps.ClickRegistersPerMonth': ++(result.Insights.Heatmaps.ClickRegistersPerMonth),
+                            'Insights.Heatmaps.ClickRegistersPerLifeTime': ++(result.Insights.Heatmaps.ClickRegistersPerLifeTime),
+                        }
+                    }, { upsert: false }, function (err, result) {
+                        if (err) {
+                            console.log(err);
+                            callback({ success: false, message: 'Something went wrong when updating insights, try again.', result: null });
+                        }
+                        //console.log(result.Insights.Heatmaps)
+                        callback({ success: true, message: 'IncreaseClickHeatmaps', result: result });
+                    });
+            }
+        });
+    }
+
+    var increaseScrollHeatmaps = function (data, callback) {
+        _entity.GetModel().findOne({ "ApiKey": data.ApiKey }, function (err, result) {
+            if (err) {
+                console.log(err);
+                callback({ success: false, message: 'Something went wrong when updating insights, try again.', result: null });
+            }
+            else {
+                _entity.GetModel().findOneAndUpdate({ "ApiKey": data.ApiKey },
+                    {
+                        $set:
+                        {
+                            'Insights.Heatmaps.ScrollRegistersPerMonth': ++(result.Insights.Heatmaps.ScrollRegistersPerMonth),
+                            'Insights.Heatmaps.ScrollRegistersLifeTime': ++(result.Insights.Heatmaps.ScrollRegistersLifeTime),
+                        }
+                    }, { upsert: false }, function (err, result) {
+                        if (err) {
+                            console.log(err);
+                            callback({ success: false, message: 'Something went wrong when updating insights, try again.', result: null });
+                        }
+                        //console.log(result.Insights.Heatmaps)
+                        callback({ success: true, message: 'IncreaseScrollHeatmaps', result: result });
+                    });
+            }
+        });
+    }
+
+    var getPageViewsHeatmapsByApiKey = function (data, callback) {
         _entity.GetModel().aggregate([
             {
                 $match: {
@@ -316,7 +392,7 @@ function SiteController(dependencies) {
             },
             {
                 '$group': {
-                    _id: '$GetPageViewsHeatmapsInsightsByApiKey',
+                    _id: '$GetPageViewsHeatmapsByApiKey',
                     TotalLifeTime: { $sum: '$Insights.Heatmaps.PageViewsLifeTime' },
                     TotalMonth: { $sum: '$Insights.Heatmaps.PageViewsPerMonth' }
                 }
@@ -326,12 +402,12 @@ function SiteController(dependencies) {
                     callback({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
                 }
                 else {
-                    callback({ success: true, message: 'GetPageViewsHeatmapsInsightsByApiKey', result: result });
+                    callback({ success: true, message: 'GetPageViewsHeatmapsByApiKey', result: result });
                 }
             });
     }
 
-    var getPageViewsHeatmapsInsightsByApiKeys = function (data, callback) {
+    var getPageViewsHeatmapsByApiKeys = function (data, callback) {
         if (data.ApiKeys != undefined && data.ApiKeys != null) {
             if (Object.prototype.toString.call(data.ApiKeys) === '[object Array]') {
                 //var sitesId = data.ApiKeys.map(function (id) { return _mongoose.Types.ObjectId(id) });
@@ -344,7 +420,7 @@ function SiteController(dependencies) {
                     },
                     {
                         '$group': {
-                            _id: '$GetPageViewsHeatmapsInsightsByApiKey',
+                            _id: '$GetPageViewsHeatmapsByApiKeys',
                             TotalLifeTime: { $sum: '$Insights.Heatmaps.PageViewsLifeTime' },
                             TotalMonth: { $sum: '$Insights.Heatmaps.PageViewsPerMonth' }
                         }
@@ -354,7 +430,187 @@ function SiteController(dependencies) {
                             callback({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
                         }
                         else {
-                            callback({ success: true, message: 'GetPageViewsHeatmapsInsightsByApiKey', result: result });
+                            callback({ success: true, message: 'GetPageViewsHeatmapsByApiKeys', result: result });
+                        }
+                    });
+            }
+            else {
+                callback({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
+            }
+        }
+        else {
+            callback({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
+        }
+    }
+
+    var getMovementHeatmapsByApiKey = function (data, callback) {
+        _entity.GetModel().aggregate([
+            {
+                $match: {
+                    ApiKey: data.ApiKey
+                }
+            },
+            {
+                '$group': {
+                    _id: '$GetMovementHeatmapsByApiKey',
+                    TotalLifeTime: { $sum: '$Insights.Heatmaps.MovementRegistersLifeTime' },
+                    TotalMonth: { $sum: '$Insights.Heatmaps.MovementRegistersPerMonth' }
+                }
+            }], function (err, result) {
+                if (err) {
+                    console.log(err);
+                    callback({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
+                }
+                else {
+                    callback({ success: true, message: 'GetMovementHeatmapsByApiKey', result: result });
+                }
+            });
+    }
+
+    var getMovementHeatmapsByApiKeys = function (data, callback) {
+        if (data.ApiKeys != undefined && data.ApiKeys != null) {
+            if (Object.prototype.toString.call(data.ApiKeys) === '[object Array]') {
+                //var sitesId = data.ApiKeys.map(function (id) { return _mongoose.Types.ObjectId(id) });
+
+                _entity.GetModel().aggregate([
+                    {
+                        $match: {
+                            ApiKey: { $in: data.ApiKeys }
+                        }
+                    },
+                    {
+                        '$group': {
+                            _id: '$GetMovementHeatmapsByApiKeys',
+                            TotalLifeTime: { $sum: '$Insights.Heatmaps.MovementRegistersLifeTime' },
+                            TotalMonth: { $sum: '$Insights.Heatmaps.MovementRegistersPerMonth' }
+                        }
+                    }], function (err, result) {
+                        if (err) {
+                            console.log(err);
+                            callback({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
+                        }
+                        else {
+                            callback({ success: true, message: 'GetMovementHeatmapsByApiKeys', result: result });
+                        }
+                    });
+            }
+            else {
+                callback({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
+            }
+        }
+        else {
+            callback({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
+        }
+    }
+
+    var getClickHeatmapsByApiKey = function (data, callback) {
+        _entity.GetModel().aggregate([
+            {
+                $match: {
+                    ApiKey: data.ApiKey
+                }
+            },
+            {
+                '$group': {
+                    _id: '$GetClickHeatmapsByApiKey',
+                    TotalLifeTime: { $sum: '$Insights.Heatmaps.ClickRegistersPerMonth' },
+                    TotalMonth: { $sum: '$Insights.Heatmaps.ClickRegistersPerLifeTime' }
+                }
+            }], function (err, result) {
+                if (err) {
+                    console.log(err);
+                    callback({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
+                }
+                else {
+                    callback({ success: true, message: 'GetClickHeatmapsByApiKey', result: result });
+                }
+            });
+    }
+
+    var getClickHeatmapsByApiKeys = function (data, callback) {
+        if (data.ApiKeys != undefined && data.ApiKeys != null) {
+            if (Object.prototype.toString.call(data.ApiKeys) === '[object Array]') {
+                //var sitesId = data.ApiKeys.map(function (id) { return _mongoose.Types.ObjectId(id) });
+
+                _entity.GetModel().aggregate([
+                    {
+                        $match: {
+                            ApiKey: { $in: data.ApiKeys }
+                        }
+                    },
+                    {
+                        '$group': {
+                            _id: '$GetClickHeatmapsByApiKeys',
+                            TotalLifeTime: { $sum: '$Insights.Heatmaps.ClickRegistersPerLifeTime' },
+                            TotalMonth: { $sum: '$Insights.Heatmaps.ClickRegistersPerMonth' }
+                        }
+                    }], function (err, result) {
+                        if (err) {
+                            console.log(err);
+                            callback({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
+                        }
+                        else {
+                            callback({ success: true, message: 'GetClickHeatmapsByApiKeys', result: result });
+                        }
+                    });
+            }
+            else {
+                callback({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
+            }
+        }
+        else {
+            callback({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
+        }
+    }
+
+    var getScrollHeatmapsByApiKey = function (data, callback) {
+        _entity.GetModel().aggregate([
+            {
+                $match: {
+                    ApiKey: data.ApiKey
+                }
+            },
+            {
+                '$group': {
+                    _id: '$GetScrollHeatmapsByApiKey',
+                    TotalLifeTime: { $sum: '$Insights.Heatmaps.ScrollRegistersPerMonth' },
+                    TotalMonth: { $sum: '$Insights.Heatmaps.ScrollRegistersLifeTime' }
+                }
+            }], function (err, result) {
+                if (err) {
+                    console.log(err);
+                    callback({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
+                }
+                else {
+                    callback({ success: true, message: 'GetScrollHeatmapsByApiKey', result: result });
+                }
+            });
+    }
+
+    var getScrollHeatmapsByApiKeys = function (data, callback) {
+        if (data.ApiKeys != undefined && data.ApiKeys != null) {
+            if (Object.prototype.toString.call(data.ApiKeys) === '[object Array]') {
+                //var sitesId = data.ApiKeys.map(function (id) { return _mongoose.Types.ObjectId(id) });
+
+                _entity.GetModel().aggregate([
+                    {
+                        $match: {
+                            ApiKey: { $in: data.ApiKeys }
+                        }
+                    },
+                    {
+                        '$group': {
+                            _id: '$GetScrollHeatmapsByApiKeys',
+                            TotalLifeTime: { $sum: '$Insights.Heatmaps.ScrollRegistersLifeTime' },
+                            TotalMonth: { $sum: '$Insights.Heatmaps.ScrollRegistersPerMonth' }
+                        }
+                    }], function (err, result) {
+                        if (err) {
+                            console.log(err);
+                            callback({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
+                        }
+                        else {
+                            callback({ success: true, message: 'GetScrollHeatmapsByApiKeys', result: result });
                         }
                     });
             }
@@ -402,13 +658,22 @@ function SiteController(dependencies) {
         AddScreenshotToChild: addScreenshotToChild,
         SearchBranch: searchBranch,
         GetSiteScreenshotIdByPathname: getSiteScreenshotIdByPathname,
-        IncreasePageviewsHeatmapsInsights: increasePageviewsHeatmapsInsights,
+        IncreasePageviewsHeatmaps: increasePageviewsHeatmaps,
+        IncreaseMovementHeatmaps: increaseMovementHeatmaps,
+        IncreaseClickHeatmaps: increaseClickHeatmaps,
+        IncreaseScrollHeatmaps: increaseScrollHeatmaps,
+        GetPageViewsHeatmapsByApiKey: getPageViewsHeatmapsByApiKey,
+        GetPageViewsHeatmapsByApiKeys: getPageViewsHeatmapsByApiKeys,
+        GetMovementHeatmapsByApiKey: getMovementHeatmapsByApiKey,
+        GetMovementHeatmapsByApiKeys: getMovementHeatmapsByApiKeys,
+        GetClickHeatmapsByApiKey: getClickHeatmapsByApiKey,
+        GetClickHeatmapsByApiKeys: getClickHeatmapsByApiKeys,
+        GetScrollHeatmapsByApiKey: getScrollHeatmapsByApiKey,
+        GetScrollHeatmapsByApiKeys: getScrollHeatmapsByApiKeys,
         UpdateRATInsights: updateRATInsights,
         UpdateFormsInsights: updateFormsInsights,
         UpdateRecordsInsights: updateRecordsInsights,
         UpdateClientsBehavior: updateClientsBehavior,
-        GetPageViewsHeatmapsInsightsByApiKey: getPageViewsHeatmapsInsightsByApiKey,
-        GetPageViewsHeatmapsInsightsByApiKeys: getPageViewsHeatmapsInsightsByApiKeys,
         Entity: getEntity
     }
 }

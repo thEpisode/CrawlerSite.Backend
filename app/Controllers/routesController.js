@@ -505,15 +505,15 @@ function Routes(dependencies) {
         });
 
         //  (GET http://localhost:3000/api/Site/UserId)
-        _apiRoutes.get('/Site/GetPageViewsHeatmapsInsightsByApiKey/:ApiKey', function (req, res) {
-            _database.Site().GetPageViewsHeatmapsInsightsByApiKey(req.params, function (result) {
+        _apiRoutes.get('/Site/GetPageViewsHeatmapsByApiKey/:ApiKey', function (req, res) {
+            _database.Site().GetPageViewsHeatmapsByApiKey(req.params, function (result) {
                 res.json(result);
             })
         });
 
         //  (GET http://localhost:3000/api/Site/UserId)
-        _apiRoutes.get('/Site/GetPageViewsHeatmapsInsightsByApiKeys/', function (req, res) {
-            _database.Site().GetPageViewsHeatmapsInsightsByApiKeys(req.query, function (result) {
+        _apiRoutes.get('/Site/GetPageViewsHeatmapsByApiKeys/', function (req, res) {
+            _database.Site().GetPageViewsHeatmapsByApiKeys(req.query, function (result) {
                 res.json(result);
             })
         });
