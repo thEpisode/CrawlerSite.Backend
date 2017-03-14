@@ -45,7 +45,8 @@ function SiteController(dependencies) {
                     },
                     RAT: {
                         UsersOnline: 0,
-                        MinutesUsed: 0,
+                        SecondUsedPerMonth: 0,
+                        SecondUsedLifeTime: 0,
                         ConectionsSuccesfuly: 0
                     },
                     FormAnalysis: {
@@ -306,27 +307,32 @@ function SiteController(dependencies) {
     }
 
     var increaseMovementHeatmaps = function (data, callback) {
-        _entity.GetModel().findOne({ "ApiKey": data.ApiKey }, function (err, result) {
+        _entity.GetModel().findOne({ "ApiKey": data.ApiKey }, function (err, siteResult) {
             if (err) {
                 console.log(err);
                 callback({ success: false, message: 'Something went wrong when updating insights, try again.', result: null });
             }
             else {
-                _entity.GetModel().findOneAndUpdate({ "ApiKey": data.ApiKey },
-                    {
-                        $set:
+                if (siteResult != null) {
+                    _entity.GetModel().findOneAndUpdate({ "ApiKey": data.ApiKey },
                         {
-                            'Insights.Heatmaps.MovementRegistersPerMonth': ++(result.Insights.Heatmaps.MovementRegistersPerMonth),
-                            'Insights.Heatmaps.MovementRegistersLifeTime': ++(result.Insights.Heatmaps.MovementRegistersLifeTime),
-                        }
-                    }, { upsert: false }, function (err, result) {
-                        if (err) {
-                            console.log(err);
-                            callback({ success: false, message: 'Something went wrong when updating insights, try again.', result: null });
-                        }
-                        //console.log(result.Insights.Heatmaps)
-                        callback({ success: true, message: 'IncreaseMovementHeatmaps', result: result });
-                    });
+                            $set:
+                            {
+                                'Insights.Heatmaps.MovementRegistersPerMonth': ++(siteResult.Insights.Heatmaps.MovementRegistersPerMonth),
+                                'Insights.Heatmaps.MovementRegistersLifeTime': ++(siteResult.Insights.Heatmaps.MovementRegistersLifeTime),
+                            }
+                        }, { upsert: false }, function (err, result) {
+                            if (err) {
+                                console.log(err);
+                                callback({ success: false, message: 'Something went wrong when updating insights, try again.', result: null });
+                            }
+                            //console.log(result.Insights.Heatmaps)
+                            callback({ success: true, message: 'IncreaseMovementHeatmaps', result: result });
+                        });
+                }
+                else {
+                    callback({ success: false, message: 'Something went wrong when updating insights, try again.', result: null });
+                }
             }
         });
     }
@@ -623,7 +629,7 @@ function SiteController(dependencies) {
         }
     }
 
-    var increaseUsersOnlineRAT = function (data, callback) {
+    var increaseUsersOnlineRATByApiKey = function (data, callback) {
         _entity.GetModel().findOne({ "ApiKey": data.ApiKey }, function (err, result) {
             if (err) {
                 console.log(err);
@@ -648,7 +654,7 @@ function SiteController(dependencies) {
         });
     }
 
-    var decreaseUsersOnlineRAT = function(data, callback){
+    var decreaseUsersOnlineRATByApiKey = function (data, callback) {
         _entity.GetModel().findOne({ "ApiKey": data.ApiKey }, function (err, result) {
             if (err) {
                 console.log(err);
@@ -668,6 +674,32 @@ function SiteController(dependencies) {
                         }
                         //console.log(result.Insights.Heatmaps)
                         callback({ success: true, message: 'DecreaseUsersOnlineRAT', result: result });
+                    });
+            }
+        });
+    }
+
+    var increaseRATTimeByApiKey = function (data, callback) {
+        _entity.GetModel().findOne({ "ApiKey": data.ApiKey }, function (err, result) {
+            if (err) {
+                console.log(err);
+                callback({ success: false, message: 'Something went wrong when updating insights, try again.', result: null });
+            }
+            else {
+                _entity.GetModel().findOneAndUpdate({ "ApiKey": data.ApiKey },
+                    {
+                        $set:
+                        {
+                            'Insights.RAT.SecondUsedLifeTime': ++(result.Insights.RAT.SecondUsedLifeTime),
+                            'Insights.RAT.SecondUsedPerMonth': ++(result.Insights.RAT.SecondUsedPerMonth),
+                        }
+                    }, { upsert: false }, function (err, result) {
+                        if (err) {
+                            console.log(err);
+                            callback({ success: false, message: 'Something went wrong when updating insights, try again.', result: null });
+                        }
+                        //console.log(result.Insights.Heatmaps)
+                        callback({ success: true, message: 'IncreaseUsersOnlineRAT', result: result });
                     });
             }
         });
@@ -716,8 +748,9 @@ function SiteController(dependencies) {
         GetClickHeatmapsByApiKeys: getClickHeatmapsByApiKeys,
         GetScrollHeatmapsByApiKey: getScrollHeatmapsByApiKey,
         GetScrollHeatmapsByApiKeys: getScrollHeatmapsByApiKeys,
-        IncreaseUsersOnlineRAT: increaseUsersOnlineRAT,
-        DecreaseUsersOnlineRAT: decreaseUsersOnlineRAT,
+        IncreaseUsersOnlineRATByApiKey: increaseUsersOnlineRATByApiKey,
+        DecreaseUsersOnlineRATByApiKey: decreaseUsersOnlineRATByApiKey,
+        IncreaseRATTimeByApiKey: increaseRATTimeByApiKey,
         UpdateFormsInsights: updateFormsInsights,
         UpdateRecordsInsights: updateRecordsInsights,
         UpdateClientsBehavior: updateClientsBehavior,

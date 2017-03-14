@@ -43,7 +43,8 @@ function Site(dependencies) {
                     },
                     RAT: {
                         UsersOnline: Number,
-                        MinutesUsed: Number,
+                        SecondUsedPerMonth: Number,
+                        SecondUsedLifeTime: Number,
                         ConectionsSuccesfuly: Number
                     },
                     FormAnalysis: {

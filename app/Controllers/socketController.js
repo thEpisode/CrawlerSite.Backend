@@ -123,6 +123,10 @@ function Socket(dependencies) {
         ratPoolNamespace.on('connection', function (socket) {
             _console.log('Socket connected to RAT pool: ' + socket.id, 'socket-message');
 
+            var connectionTimer = setInterval(function(){
+                _database.Site().IncreaseRATTimeByApiKey({ ApiKey: socket.handshake.query.ApiKey }, function (response) { })
+            }, 1000);
+
             /// Welcome to the new admin client
             socket.emit('Coplest.Flinger.RAT', { Command: 'ConnectedToRPN#Response', Values: { SocketId: socket.id.split('#')[1] } });
 
@@ -167,7 +171,10 @@ function Socket(dependencies) {
                 }
             })
 
-
+            socket.on('disconnect', function(){
+                
+                clearInterval(connectionTimer);
+            })
         })
 
         /// Admin Pool Namespace (APN)
@@ -219,7 +226,7 @@ function Socket(dependencies) {
             /// Add a pageview Heatmap Insights
             _database.Site().IncreasePageviewsHeatmaps({ ApiKey: socket.handshake.query.ApiKey }, function (response) { })
 
-            _database.Site().IncreaseUsersOnlineRAT({ ApiKey: socket.handshake.query.ApiKey }, function (response) {
+            _database.Site().IncreaseUsersOnlineRATByApiKey({ ApiKey: socket.handshake.query.ApiKey }, function (response) {
                 _usersconnectedClients.push({ SocketId: socket.id, ApiKey: socket.handshake.query.ApiKey })
             })
 
@@ -230,7 +237,7 @@ function Socket(dependencies) {
             socket.on('disconnect', function () {
                 _console.log('Client disconnected: ' + socket.id, 'socket-message');
 
-                _database.Site().DecreaseUsersOnlineRAT({ ApiKey: socket.handshake.query.ApiKey }, function (response) {
+                _database.Site().DecreaseUsersOnlineRATByApiKey({ ApiKey: socket.handshake.query.ApiKey }, function (response) {
                     _usersconnectedClients.push({ SocketId: socket.id, ApiKey: socket.handshake.query.ApiKey })
 
                     /// Delete an element in array: http://stackoverflow.com/questions/15287865/remove-array-element-based-on-object-property
