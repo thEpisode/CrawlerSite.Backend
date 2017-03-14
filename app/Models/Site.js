@@ -48,14 +48,18 @@ function Site(dependencies) {
                         ConectionsSuccesfuly: Number
                     },
                     FormAnalysis: {
-                        FormsAnalyzed: Number,
-                        Issues: Number,
+                        FormsAnalyzedPerMonth: Number,
+                        FormsAnalyzedLifeTime: Number,
+                        IssuesPerMonth: Number,
+                        IssuesLifeTime: Number,
                         Success: Number,
                         NumberInputs: Number
                     },
                     Records: {
-                        TotalMinutes: Number,
-                        TotalRecords: Number,
+                        TotalSecondsPerMonth: Number,
+                        TotalSecondsLifeTime: Number,
+                        TotalRecordsPerMonth: Number,
+                        TotalRecordsLifeTime: Number,
                     }
                 }
             },

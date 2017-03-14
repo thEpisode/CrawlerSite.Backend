@@ -50,14 +50,18 @@ function SiteController(dependencies) {
                         ConectionsSuccesfuly: 0
                     },
                     FormAnalysis: {
-                        FormsAnalyzed: 0,
-                        Issues: 0,
+                        FormsAnalyzedPerMonth: 0,
+                        FormsAnalyzedLifeTime: 0,
+                        IssuesPerMonth: 0,
+                        IssuesLifeTime: 0,
                         Success: 0,
                         NumberInputs: 0
                     },
                     Records: {
-                        TotalMinutes: 0,
-                        TotalRecords: 0,
+                        TotalSecondsPerMonth: 0,
+                        TotalSecondsLifeTime: 0,
+                        TotalRecordsPerMonth: 0,
+                        TotalRecordsLifeTime: 0,
                     }
                 }
             });
