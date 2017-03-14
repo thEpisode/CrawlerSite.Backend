@@ -497,9 +497,30 @@ function Routes(dependencies) {
             })
         });
 
-        // (POST http://localhost:3000/api/Site/UpdateHeatmapsInsights)
-        _apiRoutes.post('/Site/UpdateHeatmapsInsights', function (req, res) {
-            _database.Site().UpdateHeatmapsInsights(req.body, function (result) {
+        // (POST http://localhost:3000/api/Site/IncreasePageviewsHeatmaps)
+        _apiRoutes.post('/Site/IncreasePageviewsHeatmaps', function (req, res) {
+            _database.Site().IncreasePageviewsHeatmaps(req.body, function (result) {
+                res.json(result);
+            })
+        });
+
+        // (POST http://localhost:3000/api/Site/IncreaseMovementHeatmaps)
+        _apiRoutes.post('/Site/IncreaseMovementHeatmaps', function (req, res) {
+            _database.Site().IncreaseMovementHeatmaps(req.body, function (result) {
+                res.json(result);
+            })
+        });
+
+        // (POST http://localhost:3000/api/Site/IncreaseClickHeatmaps)
+        _apiRoutes.post('/Site/IncreaseClickHeatmaps', function (req, res) {
+            _database.Site().IncreaseClickHeatmaps(req.body, function (result) {
+                res.json(result);
+            })
+        });
+
+        // (POST http://localhost:3000/api/Site/IncreaseScrollHeatmaps)
+        _apiRoutes.post('/Site/IncreaseScrollHeatmaps', function (req, res) {
+            _database.Site().IncreaseScrollHeatmaps(req.body, function (result) {
                 res.json(result);
             })
         });
@@ -514,6 +535,48 @@ function Routes(dependencies) {
         //  (GET http://localhost:3000/api/Site/UserId)
         _apiRoutes.get('/Site/GetPageViewsHeatmapsByApiKeys/', function (req, res) {
             _database.Site().GetPageViewsHeatmapsByApiKeys(req.query, function (result) {
+                res.json(result);
+            })
+        });
+
+        //  (GET http://localhost:3000/api/Site/GetMovementHeatmapsByApiKey)
+        _apiRoutes.get('/Site/GetMovementHeatmapsByApiKey/:ApiKey', function (req, res) {
+            _database.Site().GetMovementHeatmapsByApiKey(req.params, function (result) {
+                res.json(result);
+            })
+        });
+
+        //  (GET http://localhost:3000/api/Site/GetMovementHeatmapsByApiKeys)
+        _apiRoutes.get('/Site/GetMovementHeatmapsByApiKeys/', function (req, res) {
+            _database.Site().GetMovementHeatmapsByApiKeys(req.query, function (result) {
+                res.json(result);
+            })
+        });
+
+        //  (GET http://localhost:3000/api/Site/GetClickHeatmapsByApiKey)
+        _apiRoutes.get('/Site/GetClickHeatmapsByApiKey/:ApiKey', function (req, res) {
+            _database.Site().GetClickHeatmapsByApiKey(req.params, function (result) {
+                res.json(result);
+            })
+        });
+
+        //  (GET http://localhost:3000/api/Site/GetClickHeatmapsByApiKeys)
+        _apiRoutes.get('/Site/GetClickHeatmapsByApiKeys/', function (req, res) {
+            _database.Site().GetClickHeatmapsByApiKeys(req.query, function (result) {
+                res.json(result);
+            })
+        });
+
+        //  (GET http://localhost:3000/api/Site/GetScrollHeatmapsByApiKey)
+        _apiRoutes.get('/Site/GetScrollHeatmapsByApiKey/:ApiKey', function (req, res) {
+            _database.Site().GetScrollHeatmapsByApiKey(req.params, function (result) {
+                res.json(result);
+            })
+        });
+
+        //  (GET http://localhost:3000/api/Site/GetScrollHeatmapsByApiKeys)
+        _apiRoutes.get('/Site/GetScrollHeatmapsByApiKeys/', function (req, res) {
+            _database.Site().GetScrollHeatmapsByApiKeys(req.query, function (result) {
                 res.json(result);
             })
         });
