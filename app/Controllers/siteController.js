@@ -1257,11 +1257,25 @@ function SiteController(dependencies) {
         }
     }
 
-    var getAvailableChartsByApiKey = function (data, callback) {
-        _entity.GetModel().find({ "ApiKey": data.ApiKey }, function (err, result) {
-            if (err) console.log(err);
+    var getAvailableChartsByApiKey = function (apiKey, callback) {
+        _entity.GetModel().findOne({ "ApiKey": apiKey }, function (err, result) {
+            if (err) {
+                console.log(err);
+                callback({ success: false, message: 'Something went error while retreiving available Charts', result: null });
+            }
 
-            callback({ success: true, message: 'GetAvailableChartsByApiKey', result: result.AvailableCharts });
+            if(result != undefined){
+                if(result != null){
+                    callback({ success: true, message: 'GetAvailableChartsByApiKey', result: result.Insights.AvailableCharts });
+                }
+                else{
+                    callback({ success: false, message: 'We haven\'t available charts at this moment', result: null });
+                }
+                
+            }
+            else{
+                callback({ success: false, message: 'Something went error while retreiving available Charts', result: null });
+            }
         })
     }
 
