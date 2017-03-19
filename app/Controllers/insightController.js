@@ -486,22 +486,22 @@ function InsightController(dependencies) {
 
                                 switch (chart.toLowerCase()) {
                                     case 'PageViewsPerMonth'.toLowerCase():
-                                        _database.Site().GetPageViewsHeatmapsByApiKeys(apiKeys, function (result) {
+                                        _database.Site().GetPageViewsHeatmapsByApiKeys({ApiKeys: apiKeys}, function (result) {
                                             sm.emit('digestContent', result);
                                         })
                                         break;
                                     case 'RATUsersOnline'.toLowerCase():
-                                        _database.Site().GetRATUsersOnlineByApiKeys(apiKeys, function (result) {
+                                        _database.Site().GetRATUsersOnlineByApiKeys({ApiKeys: apiKeys}, function (result) {
                                             sm.emit('digestContent', result);
                                         })
                                         break;
                                     case 'WebFormsIssues'.toLowerCase():
-                                        _database.Site().GetFormIssuesByApiKeys(apiKeys, function (result) {
+                                        _database.Site().GetFormIssuesByApiKeys({ApiKeys: apiKeys}, function (result) {
                                             sm.emit('digestContent', result);
                                         })
                                         break;
                                     case 'RecordsPerMonth'.toLowerCase():
-                                        _database.Site().GetTotalRecordsByApiKeys(apiKeys, function (result) {
+                                        _database.Site().GetTotalRecordsByApiKeys({ApiKeys: apiKeys}, function (result) {
                                             sm.emit('digestContent', result);
                                         })
                                         break;
