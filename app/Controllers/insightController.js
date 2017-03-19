@@ -212,8 +212,8 @@ function InsightController(dependencies) {
                                     sm.emit('digestContent', result);
                                 })
                                 break;
-                            case 'RecordsPerMonth'.toLowerCase():
-                                _database.Site().GetTotalRecordsByApiKey(data, function (result) {
+                            case 'SecondsUsedPerMonth'.toLowerCase():
+                                _database.Site().GetTotalSecondsRecordsByApiKey(data, function (result) {
                                     sm.emit('digestContent', result);
                                 })
                                 break;
@@ -349,8 +349,8 @@ function InsightController(dependencies) {
                                         sm.emit('digestContent', result);
                                     })
                                     break;
-                                case 'RecordsPerMonth'.toLowerCase():
-                                    _database.Site().GetTotalRecordsByApiKeys({ApiKeys: data.ApiKeys}, function (result) {
+                                case 'SecondsUsedPerMonth'.toLowerCase():
+                                    _database.Site().GetTotalSecondsRecordsByApiKeys({ApiKeys: data.ApiKeys}, function (result) {
                                         sm.emit('digestContent', result);
                                     })
                                     break;
@@ -500,8 +500,8 @@ function InsightController(dependencies) {
                                             sm.emit('digestContent', result);
                                         })
                                         break;
-                                    case 'RecordsPerMonth'.toLowerCase():
-                                        _database.Site().GetTotalRecordsByApiKeys({ApiKeys: apiKeys}, function (result) {
+                                    case 'SecondsUsedPerMonth'.toLowerCase():
+                                        _database.Site().GetTotalSecondsRecordsByApiKeys({ApiKeys: apiKeys}, function (result) {
                                             sm.emit('digestContent', result);
                                         })
                                         break;

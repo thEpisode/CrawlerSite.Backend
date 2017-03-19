@@ -32,7 +32,7 @@ function SiteController(dependencies) {
                     Childs: []
                 },
                 Insights: {
-                    AvailableCharts: ['PageViewsPerMonth', 'RATUsersOnline', 'WebFormsIssues', 'RecordsPerMonth', 'UsersBehavior', 'FormAnalysis'],
+                    AvailableCharts: ['PageViewsPerMonth', 'RATUsersOnline', 'WebFormsIssues', 'SecondsUsedPerMonth', 'UsersBehavior', 'FormAnalysis'],
                     ClientsBehavior: [0, 0, 0, 0, 0, 0, 0, 0, 0],
                     Heatmaps: {
                         PageViewsPerMonth: 0,
@@ -794,7 +794,7 @@ function SiteController(dependencies) {
                     {
                         '$group': {
                             _id: '$GetRATUsersOnlineByApiKeys',
-                            TotalLifeTime: { $sum: '$Insights.RAT.UsersOnline' },
+                            UsersOnline: { $sum: '$Insights.RAT.UsersOnline' },
                         }
                     }], function (err, result) {
                         if (err) {
@@ -996,8 +996,8 @@ function SiteController(dependencies) {
                     {
                         '$group': {
                             _id: '$GetFormIssuesByApiKeys',
-                            SecondUsedPerMonth: { $sum: '$Insights.FormAnalysis.IssuesPerMonth' },
-                            SecondUsedLifeTime: { $sum: '$Insights.FormAnalysis.IssuesPerMonth' },
+                            IssuesPerMonth: { $sum: '$Insights.FormAnalysis.IssuesPerMonth' },
+                            IssuesLifeTime: { $sum: '$Insights.FormAnalysis.IssuesPerMonth' },
                         }
                     }], function (err, result) {
                         if (err) {
