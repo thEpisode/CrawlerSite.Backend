@@ -147,13 +147,11 @@ function InsightController(dependencies) {
 
                     const next = (result) => { // must be called when each task chain completes
 
-                        if (result != undefined) { // preserve result of task chain
-                            if (result != null) {
-                                context.results.push(result);
-                            }
-                            else {
-                                context.results.push({ success: false, message: 'Chart not available', result: result });
-                            }
+                        if (result != undefined && result != null) { // preserve result of task chain
+                            context.results.push(result);
+                        }
+                        else {
+                            context.results.push({ success: false, message: 'Chart not available', result: result });
                         }
 
                         // decrement the number of running tasks
@@ -225,9 +223,6 @@ function InsightController(dependencies) {
                                 sm.emit('digestContent', null);
                                 break;
                         }
-
-
-
                     });
 
                     // compute length of path contents
@@ -259,7 +254,7 @@ function InsightController(dependencies) {
                     // ======================================================
                     sm.emit('start', RequestCharts);
                 }
-                else{
+                else {
                     callback({ success: false, message: 'We haven\'t available charts at this moment', result: null });
                 }
             })
