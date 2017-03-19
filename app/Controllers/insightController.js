@@ -335,22 +335,22 @@ function InsightController(dependencies) {
 
                             switch (chart.toLowerCase()) {
                                 case 'PageViewsPerMonth'.toLowerCase():
-                                    _database.Site().GetPageViewsHeatmapsByApiKey(data.ApiKeys, function (result) {
+                                    _database.Site().GetPageViewsHeatmapsByApiKeys({ApiKeys: data.ApiKeys}, function (result) {
                                         sm.emit('digestContent', result);
                                     })
                                     break;
                                 case 'RATUsersOnline'.toLowerCase():
-                                    _database.Site().GetRATUsersOnlineByApiKey(data.ApiKeys, function (result) {
+                                    _database.Site().GetRATUsersOnlineByApiKeys({ApiKeys: data.ApiKeys}, function (result) {
                                         sm.emit('digestContent', result);
                                     })
                                     break;
                                 case 'WebFormsIssues'.toLowerCase():
-                                    _database.Site().GetFormIssuesByApiKey(data.ApiKeys, function (result) {
+                                    _database.Site().GetFormIssuesByApiKeys({ApiKeys: data.ApiKeys}, function (result) {
                                         sm.emit('digestContent', result);
                                     })
                                     break;
                                 case 'RecordsPerMonth'.toLowerCase():
-                                    _database.Site().GetTotalRecordsByApiKey(data.ApiKeys, function (result) {
+                                    _database.Site().GetTotalRecordsByApiKeys({ApiKeys: data.ApiKeys}, function (result) {
                                         sm.emit('digestContent', result);
                                     })
                                     break;
