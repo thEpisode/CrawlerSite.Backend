@@ -375,7 +375,8 @@ function SiteController(dependencies) {
                 callback({ success: false, message: 'Something went wrong when updating insights, try again.', result: null });
             }
             else {
-                _entity.GetModel().findOneAndUpdate({ "ApiKey": data.ApiKey },
+                if(result != undefined && result != null){
+                    _entity.GetModel().findOneAndUpdate({ "ApiKey": data.ApiKey },
                     {
                         $set:
                         {
@@ -390,6 +391,7 @@ function SiteController(dependencies) {
                         //console.log(result.Insights.Heatmaps)
                         callback({ success: true, message: 'IncreaseScrollHeatmaps', result: result });
                     });
+                }
             }
         });
     }
