@@ -715,6 +715,13 @@ function Routes(dependencies) {
             })
         });
 
+        _apiRoutes.post('/Insights/DashboardByApiKey', function (req, res) {
+            _insights.DashboardInsightsByApiKey(req.body, function (result) {
+               
+                res.json(result)
+            })
+        });
+
         // apply the routes to our application with the prefix /api
         _app.use('/api', _apiRoutes);
     }

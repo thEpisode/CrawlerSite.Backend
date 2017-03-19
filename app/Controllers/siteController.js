@@ -32,6 +32,7 @@ function SiteController(dependencies) {
                     Childs: []
                 },
                 Insights: {
+                    AvailableCharts: ['PageViewsPerMonth', 'RATUsersOnline', 'WebFormsIssues', 'RecordsPerMonth', 'UsersBehavior', 'FormAnalysis'],
                     ClientsBehavior: [0, 0, 0, 0, 0, 0, 0, 0, 0],
                     Heatmaps: {
                         PageViewsPerMonth: 0,
@@ -709,7 +710,183 @@ function SiteController(dependencies) {
         });
     }
 
-    var updateFormsInsights = function (data, callback) {
+    var getRATUsersOnlineByApiKey = function (data, callback) {
+        _entity.GetModel().aggregate([
+            {
+                $match: {
+                    ApiKey: data.ApiKey
+                }
+            },
+            {
+                '$group': {
+                    _id: '$GetRATUsersOnlineByApiKey',
+                    UsersOnline: { $sum: '$Insights.RAT.UsersOnline' },
+                }
+            }], function (err, result) {
+                if (err) {
+                    console.log(err);
+                    callback({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
+                }
+                else {
+                    callback({ success: true, message: 'GetRATUsersOnlineByApiKey', result: result });
+                }
+            });
+    }
+
+    var getRATSecondsUsedByApiKey = function (data, callback) {
+        _entity.GetModel().aggregate([
+            {
+                $match: {
+                    ApiKey: data.ApiKey
+                }
+            },
+            {
+                '$group': {
+                    _id: '$GetRATSecondsUsedByApiKey',
+                    SecondUsedPerMonth: { $sum: '$Insights.RAT.SecondUsedPerMonth' },
+                    SecondUsedLifeTime: { $sum: '$Insights.RAT.SecondUsedLifeTime' },
+                }
+            }], function (err, result) {
+                if (err) {
+                    console.log(err);
+                    callback({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
+                }
+                else {
+                    callback({ success: true, message: 'GetRATSecondsUsedByApiKey', result: result });
+                }
+            });
+    }
+
+    var getRATSucesfulyConnectionsByApiKey = function (data, callback) {
+        _entity.GetModel().aggregate([
+            {
+                $match: {
+                    ApiKey: data.ApiKey
+                }
+            },
+            {
+                '$group': {
+                    _id: '$GetRATSucesfulyConnectionsByApiKey',
+                    ConectionsSuccesfuly: { $sum: '$Insights.RAT.ConectionsSuccesfuly' },
+                }
+            }], function (err, result) {
+                if (err) {
+                    console.log(err);
+                    callback({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
+                }
+                else {
+                    callback({ success: true, message: 'GetRATSucesfulyConnectionsByApiKey', result: result });
+                }
+            });
+    }
+
+    var getRATUsersOnlineByApiKeys = function (data, callback) {
+        if (data.ApiKeys != undefined && data.ApiKeys != null) {
+            if (Object.prototype.toString.call(data.ApiKeys) === '[object Array]') {
+                //var sitesId = data.ApiKeys.map(function (id) { return _mongoose.Types.ObjectId(id) });
+
+                _entity.GetModel().aggregate([
+                    {
+                        $match: {
+                            ApiKey: { $in: data.ApiKeys }
+                        }
+                    },
+                    {
+                        '$group': {
+                            _id: '$GetRATUsersOnlineByApiKeys',
+                            TotalLifeTime: { $sum: '$Insights.RAT.UsersOnline' },
+                        }
+                    }], function (err, result) {
+                        if (err) {
+                            console.log(err);
+                            callback({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
+                        }
+                        else {
+                            callback({ success: true, message: 'GetRATUsersOnlineByApiKeys', result: result });
+                        }
+                    });
+            }
+            else {
+                callback({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
+            }
+        }
+        else {
+            callback({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
+        }
+    }
+
+    var getRATSecondsUsedByApiKeys = function (data, callback) {
+        if (data.ApiKeys != undefined && data.ApiKeys != null) {
+            if (Object.prototype.toString.call(data.ApiKeys) === '[object Array]') {
+                //var sitesId = data.ApiKeys.map(function (id) { return _mongoose.Types.ObjectId(id) });
+
+                _entity.GetModel().aggregate([
+                    {
+                        $match: {
+                            ApiKey: { $in: data.ApiKeys }
+                        }
+                    },
+                    {
+                        '$group': {
+                            _id: '$GetRATSecondsUsedByApiKeys',
+                            SecondUsedPerMonth: { $sum: '$Insights.RAT.SecondUsedPerMonth' },
+                            SecondUsedLifeTime: { $sum: '$Insights.RAT.SecondUsedLifeTime' },
+                        }
+                    }], function (err, result) {
+                        if (err) {
+                            console.log(err);
+                            callback({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
+                        }
+                        else {
+                            callback({ success: true, message: 'GetRATSecondsUsedByApiKeys', result: result });
+                        }
+                    });
+            }
+            else {
+                callback({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
+            }
+        }
+        else {
+            callback({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
+        }
+    }
+
+    var getRATSucesfulyConnectionsByApiKeys = function (data, callback) {
+        if (data.ApiKeys != undefined && data.ApiKeys != null) {
+            if (Object.prototype.toString.call(data.ApiKeys) === '[object Array]') {
+                //var sitesId = data.ApiKeys.map(function (id) { return _mongoose.Types.ObjectId(id) });
+
+                _entity.GetModel().aggregate([
+                    {
+                        $match: {
+                            ApiKey: { $in: data.ApiKeys }
+                        }
+                    },
+                    {
+                        '$group': {
+                            _id: '$GetRATSucesfulyConnectionsByApiKeys',
+                            ConectionsSuccesfuly: { $sum: '$Insights.RAT.ConectionsSuccesfuly' },
+                        }
+                    }], function (err, result) {
+                        if (err) {
+                            console.log(err);
+                            callback({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
+                        }
+                        else {
+                            callback({ success: true, message: 'GetRATSucesfulyConnectionsByApiKeys', result: result });
+                        }
+                    });
+            }
+            else {
+                callback({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
+            }
+        }
+        else {
+            callback({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
+        }
+    }
+
+    /*var updateFormsInsights = function (data, callback) {
         callback({ success: true, message: 'UpdateFormsInsights', result: result });
     }
 
@@ -719,6 +896,373 @@ function SiteController(dependencies) {
 
     var updateClientsBehavior = function (data, callback) {
         callback({ success: true, message: 'UpdateClientsBehavior', result: result });
+    }*/
+
+    var getFormsAnalyzedByApiKey = function (data, callback) {
+        _entity.GetModel().aggregate([
+            {
+                $match: {
+                    ApiKey: data.ApiKey
+                }
+            },
+            {
+                '$group': {
+                    _id: '$GetFormsAnalyzedByApiKey',
+                    FormsAnalyzedPerMonth: { $sum: '$Insights.FormAnalysis.FormsAnalyzedPerMonth' },
+                    FormsAnalyzedLifeTime: { $sum: '$Insights.FormAnalysis.FormsAnalyzedLifeTime' },
+                }
+            }], function (err, result) {
+                if (err) {
+                    console.log(err);
+                    callback({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
+                }
+                else {
+                    callback({ success: true, message: 'GetFormsAnalyzedByApiKey', result: result });
+                }
+            });
+    }
+
+    var getFormsAnalyzedByApiKeys = function (data, callback) {
+        if (data.ApiKeys != undefined && data.ApiKeys != null) {
+            if (Object.prototype.toString.call(data.ApiKeys) === '[object Array]') {
+                //var sitesId = data.ApiKeys.map(function (id) { return _mongoose.Types.ObjectId(id) });
+
+                _entity.GetModel().aggregate([
+                    {
+                        $match: {
+                            ApiKey: { $in: data.ApiKeys }
+                        }
+                    },
+                    {
+                        '$group': {
+                            _id: '$GetFormsAnalyzedByApiKeys',
+                            SecondUsedPerMonth: { $sum: '$Insights.FormAnalysis.FormsAnalyzedPerMonth' },
+                            SecondUsedLifeTime: { $sum: '$Insights.FormAnalysis.FormsAnalyzedPerMonth' },
+                        }
+                    }], function (err, result) {
+                        if (err) {
+                            console.log(err);
+                            callback({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
+                        }
+                        else {
+                            callback({ success: true, message: 'GetFormsAnalyzedByApiKeys', result: result });
+                        }
+                    });
+            }
+            else {
+                callback({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
+            }
+        }
+        else {
+            callback({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
+        }
+    }
+
+    var getFormIssuesByApiKey = function (data, callback) {
+        _entity.GetModel().aggregate([
+            {
+                $match: {
+                    ApiKey: data.ApiKey
+                }
+            },
+            {
+                '$group': {
+                    _id: '$GetFormIssuesByApiKey',
+                    IssuesPerMonth: { $sum: '$Insights.FormAnalysis.IssuesPerMonth' },
+                    IssuesLifeTime: { $sum: '$Insights.FormAnalysis.IssuesLifeTime' },
+                }
+            }], function (err, result) {
+                if (err) {
+                    console.log(err);
+                    callback({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
+                }
+                else {
+                    callback({ success: true, message: 'GetFormIssuesByApiKey', result: result });
+                }
+            });
+    }
+
+    var getFormIssuesByApiKeys = function (data, callback) {
+        if (data.ApiKeys != undefined && data.ApiKeys != null) {
+            if (Object.prototype.toString.call(data.ApiKeys) === '[object Array]') {
+                //var sitesId = data.ApiKeys.map(function (id) { return _mongoose.Types.ObjectId(id) });
+
+                _entity.GetModel().aggregate([
+                    {
+                        $match: {
+                            ApiKey: { $in: data.ApiKeys }
+                        }
+                    },
+                    {
+                        '$group': {
+                            _id: '$GetFormIssuesByApiKeys',
+                            SecondUsedPerMonth: { $sum: '$Insights.FormAnalysis.IssuesPerMonth' },
+                            SecondUsedLifeTime: { $sum: '$Insights.FormAnalysis.IssuesPerMonth' },
+                        }
+                    }], function (err, result) {
+                        if (err) {
+                            console.log(err);
+                            callback({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
+                        }
+                        else {
+                            callback({ success: true, message: 'GetFormIssuesByApiKeys', result: result });
+                        }
+                    });
+            }
+            else {
+                callback({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
+            }
+        }
+        else {
+            callback({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
+        }
+    }
+
+    var getFormSuccessByApiKey = function (data, callback) {
+        _entity.GetModel().aggregate([
+            {
+                $match: {
+                    ApiKey: data.ApiKey
+                }
+            },
+            {
+                '$group': {
+                    _id: '$GetFormSuccessByApiKey',
+                    Success: { $sum: '$Insights.FormAnalysis.Success' },
+                }
+            }], function (err, result) {
+                if (err) {
+                    console.log(err);
+                    callback({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
+                }
+                else {
+                    callback({ success: true, message: 'GetFormSuccessByApiKey', result: result });
+                }
+            });
+
+    }
+
+    var getFormSuccessByApiKeys = function (data, callback) {
+        if (data.ApiKeys != undefined && data.ApiKeys != null) {
+            if (Object.prototype.toString.call(data.ApiKeys) === '[object Array]') {
+                //var sitesId = data.ApiKeys.map(function (id) { return _mongoose.Types.ObjectId(id) });
+
+                _entity.GetModel().aggregate([
+                    {
+                        $match: {
+                            ApiKey: { $in: data.ApiKeys }
+                        }
+                    },
+                    {
+                        '$group': {
+                            _id: '$GetFormSuccessByApiKeys',
+                            SecondUsedPerMonth: { $sum: '$Insights.FormAnalysis.Success' },
+                        }
+                    }], function (err, result) {
+                        if (err) {
+                            console.log(err);
+                            callback({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
+                        }
+                        else {
+                            callback({ success: true, message: 'GetFormSuccessByApiKeys', result: result });
+                        }
+                    });
+            }
+            else {
+                callback({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
+            }
+        }
+        else {
+            callback({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
+        }
+
+    }
+
+    var getFormNumberOfInputsByApiKey = function (data, callback) {
+        _entity.GetModel().aggregate([
+            {
+                $match: {
+                    ApiKey: data.ApiKey
+                }
+            },
+            {
+                '$group': {
+                    _id: '$GetFormNumberOfInputsByApiKey',
+                    NumberInputs: { $sum: '$Insights.FormAnalysis.NumberInputs' },
+                }
+            }], function (err, result) {
+                if (err) {
+                    console.log(err);
+                    callback({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
+                }
+                else {
+                    callback({ success: true, message: 'GetFormNumberOfInputsByApiKey', result: result });
+                }
+            });
+    }
+
+    var getFormNumberOfInputsByApiKeys = function (data, callback) {
+        if (data.ApiKeys != undefined && data.ApiKeys != null) {
+            if (Object.prototype.toString.call(data.ApiKeys) === '[object Array]') {
+                //var sitesId = data.ApiKeys.map(function (id) { return _mongoose.Types.ObjectId(id) });
+
+                _entity.GetModel().aggregate([
+                    {
+                        $match: {
+                            ApiKey: { $in: data.ApiKeys }
+                        }
+                    },
+                    {
+                        '$group': {
+                            _id: '$GetFormNumberOfInputsByApiKeys',
+                            NumberInputs: { $sum: '$Insights.FormAnalysis.NumberInputs' },
+                        }
+                    }], function (err, result) {
+                        if (err) {
+                            console.log(err);
+                            callback({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
+                        }
+                        else {
+                            callback({ success: true, message: 'GetFormNumberOfInputsByApiKeys', result: result });
+                        }
+                    });
+            }
+            else {
+                callback({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
+            }
+        }
+        else {
+            callback({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
+        }
+    }
+
+    var getTotalSecondsRecordsByApiKey = function (data, callback) {
+        _entity.GetModel().aggregate([
+            {
+                $match: {
+                    ApiKey: data.ApiKey
+                }
+            },
+            {
+                '$group': {
+                    _id: '$GetTotalSecondsRecordsByApiKey',
+                    TotalSecondsPerMonth: { $sum: '$Insights.Records.TotalSecondsPerMonth' },
+                    TotalSecondsPerMonth: { $sum: '$Insights.Records.TotalSecondsPerMonth' },
+                }
+            }], function (err, result) {
+                if (err) {
+                    console.log(err);
+                    callback({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
+                }
+                else {
+                    callback({ success: true, message: 'GetTotalSecondsRecordsByApiKey', result: result });
+                }
+            });
+    }
+
+    var getTotalSecondsRecordsByApiKeys = function (data, callback) {
+        if (data.ApiKeys != undefined && data.ApiKeys != null) {
+            if (Object.prototype.toString.call(data.ApiKeys) === '[object Array]') {
+                //var sitesId = data.ApiKeys.map(function (id) { return _mongoose.Types.ObjectId(id) });
+
+                _entity.GetModel().aggregate([
+                    {
+                        $match: {
+                            ApiKey: { $in: data.ApiKeys }
+                        }
+                    },
+                    {
+                        '$group': {
+                            _id: '$GetTotalSecondsRecordsByApiKeys',
+                            TotalSecondsPerMonth: { $sum: '$Insights.Records.TotalSecondsPerMonth' },
+                            TotalSecondsLifeTime: { $sum: '$Insights.Records.TotalSecondsLifeTime' },
+                        }
+                    }], function (err, result) {
+                        if (err) {
+                            console.log(err);
+                            callback({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
+                        }
+                        else {
+                            callback({ success: true, message: 'GetTotalSecondsRecordsByApiKeys', result: result });
+                        }
+                    });
+            }
+            else {
+                callback({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
+            }
+        }
+        else {
+            callback({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
+        }
+    }
+
+    var getTotalRecordsByApiKey = function (data, callback) {
+        _entity.GetModel().aggregate([
+            {
+                $match: {
+                    ApiKey: data.ApiKey
+                }
+            },
+            {
+                '$group': {
+                    _id: '$GetTotalRecordsByApiKey',
+                    TotalRecordsPerMonth: { $sum: '$Insights.Records.TotalRecordsPerMonth' },
+                    TotalRecordsPerMonth: { $sum: '$Insights.Records.TotalRecordsPerMonth' },
+                }
+            }], function (err, result) {
+                if (err) {
+                    console.log(err);
+                    callback({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
+                }
+                else {
+                    callback({ success: true, message: 'GetTotalRecordsByApiKey', result: result });
+                }
+            });
+
+    }
+
+    var getTotalRecordsByApiKeys = function (data, callback) {
+        if (data.ApiKeys != undefined && data.ApiKeys != null) {
+            if (Object.prototype.toString.call(data.ApiKeys) === '[object Array]') {
+                //var sitesId = data.ApiKeys.map(function (id) { return _mongoose.Types.ObjectId(id) });
+
+                _entity.GetModel().aggregate([
+                    {
+                        $match: {
+                            ApiKey: { $in: data.ApiKeys }
+                        }
+                    },
+                    {
+                        '$group': {
+                            _id: '$GetTotalRecordsByApiKeys',
+                            TotalRecordsPerMonth: { $sum: '$Insights.Records.TotalRecordsPerMonth' },
+                            TotalRecordsLifeTime: { $sum: '$Insights.Records.TotalRecordsLifeTime' },
+                        }
+                    }], function (err, result) {
+                        if (err) {
+                            console.log(err);
+                            callback({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
+                        }
+                        else {
+                            callback({ success: true, message: 'GetTotalRecordsByApiKeys', result: result });
+                        }
+                    });
+            }
+            else {
+                callback({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
+            }
+        }
+        else {
+            callback({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
+        }
+    }
+
+    var getAvailableChartsByApiKey = function (data, callback) {
+        _entity.GetModel().find({ "ApiKey": data.ApiKey }, function (err, result) {
+            if (err) console.log(err);
+
+            callback({ success: true, message: 'GetAvailableChartsByApiKey', result: result.AvailableCharts });
+        })
     }
 
     var getEntity = function () {
@@ -755,9 +1299,28 @@ function SiteController(dependencies) {
         IncreaseUsersOnlineRATByApiKey: increaseUsersOnlineRATByApiKey,
         DecreaseUsersOnlineRATByApiKey: decreaseUsersOnlineRATByApiKey,
         IncreaseRATTimeByApiKey: increaseRATTimeByApiKey,
-        UpdateFormsInsights: updateFormsInsights,
+        /*UpdateFormsInsights: updateFormsInsights,
         UpdateRecordsInsights: updateRecordsInsights,
-        UpdateClientsBehavior: updateClientsBehavior,
+        UpdateClientsBehavior: updateClientsBehavior,*/
+        GetRATUsersOnlineByApiKey: getRATUsersOnlineByApiKey,
+        GetRATSecondsUsedByApiKey: getRATSecondsUsedByApiKey,
+        GetRATSucesfulyConnectionsByApiKey: getRATSucesfulyConnectionsByApiKey,
+        GetRATUsersOnlineByApiKeys: getRATUsersOnlineByApiKeys,
+        GetRATSecondsUsedByApiKeys: getRATSecondsUsedByApiKeys,
+        GetRATSucesfulyConnectionsByApiKeys: getRATSucesfulyConnectionsByApiKeys,
+        GetFormsAnalyzedByApiKey: getFormsAnalyzedByApiKey,
+        getFormsAnalyzedByApiKeys: getFormsAnalyzedByApiKeys,
+        GetFormIssuesByApiKey: getFormIssuesByApiKey,
+        GetFormIssuesByApiKeys: getFormIssuesByApiKeys,
+        GetFormSuccessByApiKey: getFormSuccessByApiKey,
+        GetFormSuccessByApiKeys: getFormSuccessByApiKeys,
+        GetFormNumberOfInputsByApiKey: getFormNumberOfInputsByApiKey,
+        GetFormNumberOfInputsByApiKeys: getFormNumberOfInputsByApiKeys,
+        GetTotalSecondsRecordsByApiKey: getTotalSecondsRecordsByApiKey,
+        GetTotalSecondsRecordsByApiKeys: getTotalSecondsRecordsByApiKeys,
+        GetTotalRecordsByApiKey: getTotalRecordsByApiKey,
+        GetTotalRecordsByApiKeys: getTotalRecordsByApiKeys,
+        GetAvailableChartsByApiKey: getAvailableChartsByApiKey,
         Entity: getEntity
     }
 }

@@ -30,6 +30,7 @@ function Site(dependencies) {
                 DiscoveryMode: Boolean,
                 Track: _schema.Types.Mixed,
                 Insights: {
+                    AvailableCharts: [String],
                     ClientsBehavior: [Number],
                     Heatmaps: {
                         PageViewsPerMonth: Number,
