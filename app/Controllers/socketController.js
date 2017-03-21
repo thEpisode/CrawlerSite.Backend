@@ -11,6 +11,7 @@ function Socket(dependencies) {
     const MAX_CLIENTS = 10;
 
     var _siteNamespaces = [];
+    var _usersconnectedClients = [];
 
     var constructor = function () {
         _io = dependencies.io;
@@ -54,7 +55,7 @@ function Socket(dependencies) {
                 var ratServiceNamespace;
                 // Search if namespace exist
                 if ((Object.keys(_io.nsps).indexOf('/' + namespace.Id) > -1) == false) {
-                    
+
                 }
                 ratServiceNamespace = _io.of('/' + namespace.Id);
                 ratServiceNamespace.on('connection', function (socket) {
@@ -122,6 +123,10 @@ function Socket(dependencies) {
         ratPoolNamespace.on('connection', function (socket) {
             _console.log('Socket connected to RAT pool: ' + socket.id, 'socket-message');
 
+            var connectionTimer = setInterval(function(){
+                _database.Site().IncreaseRATTimeByApiKey({ ApiKey: socket.handshake.query.ApiKey }, function (response) { })
+            }, 1000);
+
             /// Welcome to the new admin client
             socket.emit('Coplest.Flinger.RAT', { Command: 'ConnectedToRPN#Response', Values: { SocketId: socket.id.split('#')[1] } });
 
@@ -166,7 +171,10 @@ function Socket(dependencies) {
                 }
             })
 
-            
+            socket.on('disconnect', function(){
+                
+                clearInterval(connectionTimer);
+            })
         })
 
         /// Admin Pool Namespace (APN)
@@ -215,12 +223,28 @@ function Socket(dependencies) {
         userPoolNamespace.on('connection', function (socket) {
             _console.log('Client connected: ' + socket.id, 'socket-message');
 
+            /// Add a pageview Heatmap Insights
+            _database.Site().IncreasePageviewsHeatmaps({ ApiKey: socket.handshake.query.ApiKey }, function (response) { })
+
+            _database.Site().IncreaseUsersOnlineRATByApiKey({ ApiKey: socket.handshake.query.ApiKey }, function (response) {
+                _usersconnectedClients.push({ SocketId: socket.id, ApiKey: socket.handshake.query.ApiKey })
+            })
+
             /// Emit a welcome message to new connection
             socket.emit('Welcome', { Message: 'Welcome to Coplest.Flinger', SocketId: socket.id });
 
             /// Catch when this connection is closed
             socket.on('disconnect', function () {
                 _console.log('Client disconnected: ' + socket.id, 'socket-message');
+
+                _database.Site().DecreaseUsersOnlineRATByApiKey({ ApiKey: socket.handshake.query.ApiKey }, function (response) {
+                    _usersconnectedClients.push({ SocketId: socket.id, ApiKey: socket.handshake.query.ApiKey })
+
+                    /// Delete an element in array: http://stackoverflow.com/questions/15287865/remove-array-element-based-on-object-property
+                    _usersconnectedClients = _usersconnectedClients.filter(function (obj) {
+                        return obj.SocketId !== socket.id;
+                    });
+                })
 
                 adminPoolNamespace.emit('Coplest.Flinger.RAT', { Command: 'UnsubscribeSocketToApiKey#Request', Values: { SocketId: socket.id, ApiKey: socket.ApiKey } });
             });
@@ -245,16 +269,22 @@ function Socket(dependencies) {
                         case 'Click':
                             _database.Click().CreateClick(data.Values, function () {
                                 //console.log('Click Saved');
+                                _database.Site().IncreaseClickHeatmaps({ ApiKey: data.Values.ApiKey }, function (response) { })
+                                _database.Site().IncreaseHeatmapClientsBehaviorByApiKey({ ApiKey: data.Values.ApiKey }, function (response) { })
                             })
                             break;
                         case 'Movement':
                             _database.Movement().CreateMovement(data.Values, function () {
                                 //console.log('Movement Saved');
+                                _database.Site().IncreaseMovementHeatmaps({ ApiKey: data.Values.ApiKey }, function (response) { })
+                                _database.Site().IncreaseHeatmapClientsBehaviorByApiKey({ ApiKey: data.Values.ApiKey }, function (response) { })
                             })
                             break;
                         case 'Scroll':
                             _database.Scroll().CreateScroll(data.Values, function () {
                                 //console.log('Scroll Saved');
+                                _database.Site().IncreaseScrollHeatmaps({ ApiKey: data.Values.ApiKey }, function (response) { })
+                                _database.Site().IncreaseHeatmapClientsBehaviorByApiKey({ ApiKey: data.Values.ApiKey }, function (response) { })
                             })
                             break;
                     }

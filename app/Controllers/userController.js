@@ -48,14 +48,15 @@ function UserController(dependencies) {
                         Country: data.Country,
                         AcceptTerms: data.AcceptTerms,
                         State: data.State,
-                        Settings: []
+                        Settings: [],
+
                     });
 
                 user.save().then(function (result) {
                     // When database return any result call the "return" named callback
-                    _stripeController.CreateInitialCustomer(result, function(stripeResult){
+                    _stripeController.CreateInitialCustomer(result, function (stripeResult) {
                         callback(stripeResult);
-                    });                    
+                    });
                 }, function (err) {
                     console.log('Error while saving:')
                     console.log(err)
@@ -127,7 +128,7 @@ function UserController(dependencies) {
 
     var getAllUser = function (data, callback) {
         _entity.GetModel().find({}, function (err, result) {
-            if (err){
+            if (err) {
                 console.log(err);
                 callback({ success: false, message: 'GetAllUser', result: null });
             }
@@ -153,7 +154,7 @@ function UserController(dependencies) {
     }
 
     var updatePaymentData = function (data, callback) {
-        _entity.GetModel().findOneAndUpdate({ "_id": data._id }, { $set: {StripeToken: data.StripeToken, CustomerId: data.CustomerId, PlanId: data.PlanId, SubscriptionId: data.SubscriptionId, FirstNameCard: data.FirstNameCard, LastNameCard: data.LastNameCard } }, { upsert: false }, function (err, result) {
+        _entity.GetModel().findOneAndUpdate({ "_id": data._id }, { $set: { StripeToken: data.StripeToken, CustomerId: data.CustomerId, PlanId: data.PlanId, SubscriptionId: data.SubscriptionId, FirstNameCard: data.FirstNameCard, LastNameCard: data.LastNameCard } }, { upsert: false }, function (err, result) {
             if (err) {
                 console.log(err);
                 callback(null);

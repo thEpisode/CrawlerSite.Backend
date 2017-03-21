@@ -44,7 +44,8 @@ function User(dependencies) {
                 Country: String,
                 AcceptTerms: Boolean,
                 State: Number,
-                Settings: [_schema.Types.Mixed]
+                Settings: [_schema.Types.Mixed],
+                
             },
             { timestamps: { createdAt: 'created_at' }, minimize: false, collection: 'User' }
         ));

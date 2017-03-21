@@ -497,6 +497,118 @@ function Routes(dependencies) {
             })
         });
 
+        // (POST http://localhost:3000/api/Site/IncreasePageviewsHeatmaps)
+        _apiRoutes.post('/Site/IncreasePageviewsHeatmaps', function (req, res) {
+            _database.Site().IncreasePageviewsHeatmaps(req.body, function (result) {
+                res.json(result);
+            })
+        });
+
+        // (POST http://localhost:3000/api/Site/IncreaseMovementHeatmaps)
+        _apiRoutes.post('/Site/IncreaseMovementHeatmaps', function (req, res) {
+            _database.Site().IncreaseMovementHeatmaps(req.body, function (result) {
+                res.json(result);
+            })
+        });
+
+        // (POST http://localhost:3000/api/Site/IncreaseClickHeatmaps)
+        _apiRoutes.post('/Site/IncreaseClickHeatmaps', function (req, res) {
+            _database.Site().IncreaseClickHeatmaps(req.body, function (result) {
+                res.json(result);
+            })
+        });
+
+        // (POST http://localhost:3000/api/Site/IncreaseScrollHeatmaps)
+        _apiRoutes.post('/Site/IncreaseScrollHeatmaps', function (req, res) {
+            _database.Site().IncreaseScrollHeatmaps(req.body, function (result) {
+                res.json(result);
+            })
+        });
+
+        //  (GET http://localhost:3000/api/Site/UserId)
+        _apiRoutes.get('/Site/GetPageViewsHeatmapsByApiKey/:ApiKey', function (req, res) {
+            _database.Site().GetPageViewsHeatmapsByApiKey(req.params, function (result) {
+                res.json(result);
+            })
+        });
+
+        //  (GET http://localhost:3000/api/Site/UserId)
+        _apiRoutes.get('/Site/GetPageViewsHeatmapsByApiKeys/', function (req, res) {
+            _database.Site().GetPageViewsHeatmapsByApiKeys(req.query, function (result) {
+                res.json(result);
+            })
+        });
+
+        //  (GET http://localhost:3000/api/Site/GetMovementHeatmapsByApiKey)
+        _apiRoutes.get('/Site/GetMovementHeatmapsByApiKey/:ApiKey', function (req, res) {
+            _database.Site().GetMovementHeatmapsByApiKey(req.params, function (result) {
+                res.json(result);
+            })
+        });
+
+        //  (GET http://localhost:3000/api/Site/GetMovementHeatmapsByApiKeys)
+        _apiRoutes.get('/Site/GetMovementHeatmapsByApiKeys/', function (req, res) {
+            _database.Site().GetMovementHeatmapsByApiKeys(req.query, function (result) {
+                res.json(result);
+            })
+        });
+
+        //  (GET http://localhost:3000/api/Site/GetClickHeatmapsByApiKey)
+        _apiRoutes.get('/Site/GetClickHeatmapsByApiKey/:ApiKey', function (req, res) {
+            _database.Site().GetClickHeatmapsByApiKey(req.params, function (result) {
+                res.json(result);
+            })
+        });
+
+        //  (GET http://localhost:3000/api/Site/GetClickHeatmapsByApiKeys)
+        _apiRoutes.get('/Site/GetClickHeatmapsByApiKeys/', function (req, res) {
+            _database.Site().GetClickHeatmapsByApiKeys(req.query, function (result) {
+                res.json(result);
+            })
+        });
+
+        //  (GET http://localhost:3000/api/Site/GetScrollHeatmapsByApiKey)
+        _apiRoutes.get('/Site/GetScrollHeatmapsByApiKey/:ApiKey', function (req, res) {
+            _database.Site().GetScrollHeatmapsByApiKey(req.params, function (result) {
+                res.json(result);
+            })
+        });
+
+        //  (GET http://localhost:3000/api/Site/GetScrollHeatmapsByApiKeys)
+        _apiRoutes.get('/Site/GetScrollHeatmapsByApiKeys/', function (req, res) {
+            _database.Site().GetScrollHeatmapsByApiKeys(req.query, function (result) {
+                res.json(result);
+            })
+        });
+
+        // (POST http://localhost:3000/api/Site/UpdateRATInsights)
+        _apiRoutes.post('/User/UpdateRATInsights', function (req, res) {
+            _database.Site().UpdateRATInsights(req.body, function (result) {
+                res.json(result);
+            })
+        });
+
+        // (POST http://localhost:3000/api/Site/UpdateFormsInsights)
+        _apiRoutes.post('/Site/UpdateFormsInsights', function (req, res) {
+            _database.Site().UpdateFormsInsights(req.body, function (result) {
+                res.json(result);
+            })
+        });
+
+        // (POST http://localhost:3000/api/Site/UpdateRecordsInsights)
+        _apiRoutes.post('/User/UpdateRecordsInsights', function (req, res) {
+            _database.Site().UpdateRecordsInsights(req.body, function (result) {
+                res.json(result);
+            })
+        });
+
+        // (POST http://localhost:3000/api/Site/UpdateClientsBehavior)
+        _apiRoutes.post('/Site/UpdateClientsBehavior', function (req, res) {
+            _database.Site().UpdateClientsBehavior(req.body, function (result) {
+                res.json(result);
+            })
+        });
+
         /// FrontEndReviews api routes
         /// -------------------------
         //  (POST http://localhost:3000/api/FrontEndReview/Create)
@@ -600,6 +712,27 @@ function Routes(dependencies) {
             _insights.HeatmapScreenshot(req.params.ApiKey, req.params.Pathname, function (file) {
                 file.pipe(res);
                 //res.json({ message: 'HeatmapData', result: result})
+            })
+        });
+
+        _apiRoutes.post('/Insights/DashboardByApiKey', function (req, res) {
+            _insights.DashboardInsightsByApiKey(req.body, function (result) {
+               
+                res.json(result)
+            })
+        });
+
+        _apiRoutes.post('/Insights/DashboardInsightsByApiKeys', function (req, res) {
+            _insights.DashboardInsightsByApiKeys(req.body, function (result) {
+               
+                res.json(result)
+            })
+        });
+
+        _apiRoutes.get('/Insights/DashboardInsightsByUserId/:UserId', function (req, res) {
+            _insights.DashboardInsightsByUserId(req.params, function (result) {
+               
+                res.json(result)
             })
         });
 

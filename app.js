@@ -32,6 +32,7 @@ var fs = require('fs');
 var grid = require('gridfs-stream');
 var emailjs = require('emailjs');
 var stripe = require('stripe')(cross.GetStripePrivateKey());
+var eventEmiter = require('events').EventEmitter;
 
 var dependencies = {
     express: express,
@@ -53,7 +54,8 @@ var dependencies = {
     gridfs: {},
     mail: emailjs,
     stripe: stripe,
-    cross: cross
+    cross: cross,
+    eventEmiter: eventEmiter
 }
 
 console.log(dependencies.colors.green(' Flinger: ') + 'Libs imported');
