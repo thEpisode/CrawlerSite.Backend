@@ -270,18 +270,21 @@ function Socket(dependencies) {
                             _database.Click().CreateClick(data.Values, function () {
                                 //console.log('Click Saved');
                                 _database.Site().IncreaseClickHeatmaps({ ApiKey: data.Values.ApiKey }, function (response) { })
+                                _database.Site().IncreaseHeatmapClientsBehaviorByApiKey({ ApiKey: data.Values.ApiKey }, function (response) { })
                             })
                             break;
                         case 'Movement':
                             _database.Movement().CreateMovement(data.Values, function () {
                                 //console.log('Movement Saved');
                                 _database.Site().IncreaseMovementHeatmaps({ ApiKey: data.Values.ApiKey }, function (response) { })
+                                _database.Site().IncreaseHeatmapClientsBehaviorByApiKey({ ApiKey: data.Values.ApiKey }, function (response) { })
                             })
                             break;
                         case 'Scroll':
                             _database.Scroll().CreateScroll(data.Values, function () {
                                 //console.log('Scroll Saved');
                                 _database.Site().IncreaseScrollHeatmaps({ ApiKey: data.Values.ApiKey }, function (response) { })
+                                _database.Site().IncreaseHeatmapClientsBehaviorByApiKey({ ApiKey: data.Values.ApiKey }, function (response) { })
                             })
                             break;
                     }

@@ -33,7 +33,6 @@ function SiteController(dependencies) {
                 },
                 Insights: {
                     AvailableCharts: ['PageViewsPerMonth', 'RATUsersOnline', 'WebFormsIssues', 'SecondsUsedPerMonth', 'UsersBehavior', 'FormAnalysis'],
-                    ClientsBehavior: [0, 0, 0, 0, 0, 0, 0, 0, 0],
                     Heatmaps: {
                         PageViewsPerMonth: 0,
                         PageViewsLifeTime: 0,
@@ -43,12 +42,64 @@ function SiteController(dependencies) {
                         ClickRegistersPerLifeTime: 0,
                         ScrollRegistersPerMonth: 0,
                         ScrollRegistersLifeTime: 0,
+                        ClientsBehavior: {
+                            H00: 0,
+                            H01: 0,
+                            H02: 0,
+                            H03: 0,
+                            H04: 0,
+                            H05: 0,
+                            H06: 0,
+                            H07: 0,
+                            H08: 0,
+                            H09: 0,
+                            H10: 0,
+                            H11: 0,
+                            H12: 0,
+                            H13: 0,
+                            H14: 0,
+                            H15: 0,
+                            H16: 0,
+                            H17: 0,
+                            H18: 0,
+                            H19: 0,
+                            H20: 0,
+                            H21: 0,
+                            H22: 0,
+                            H23: 0
+                        },
                     },
                     RAT: {
                         UsersOnline: 0,
                         SecondUsedPerMonth: 0,
                         SecondUsedLifeTime: 0,
-                        ConectionsSuccesfuly: 0
+                        ConectionsSuccesfuly: 0,
+                        ClientsBehavior: {
+                            H00: 0,
+                            H01: 0,
+                            H02: 0,
+                            H03: 0,
+                            H04: 0,
+                            H05: 0,
+                            H06: 0,
+                            H07: 0,
+                            H08: 0,
+                            H09: 0,
+                            H10: 0,
+                            H11: 0,
+                            H12: 0,
+                            H13: 0,
+                            H14: 0,
+                            H15: 0,
+                            H16: 0,
+                            H17: 0,
+                            H18: 0,
+                            H19: 0,
+                            H20: 0,
+                            H21: 0,
+                            H22: 0,
+                            H23: 0
+                        },
                     },
                     FormAnalysis: {
                         FormsAnalyzedPerMonth: 0,
@@ -56,13 +107,65 @@ function SiteController(dependencies) {
                         IssuesPerMonth: 0,
                         IssuesLifeTime: 0,
                         Success: 0,
-                        NumberInputs: 0
+                        NumberInputs: 0,
+                        ClientsBehavior: {
+                            H00: 0,
+                            H01: 0,
+                            H02: 0,
+                            H03: 0,
+                            H04: 0,
+                            H05: 0,
+                            H06: 0,
+                            H07: 0,
+                            H08: 0,
+                            H09: 0,
+                            H10: 0,
+                            H11: 0,
+                            H12: 0,
+                            H13: 0,
+                            H14: 0,
+                            H15: 0,
+                            H16: 0,
+                            H17: 0,
+                            H18: 0,
+                            H19: 0,
+                            H20: 0,
+                            H21: 0,
+                            H22: 0,
+                            H23: 0
+                        },
                     },
                     Records: {
                         TotalSecondsPerMonth: 0,
                         TotalSecondsLifeTime: 0,
                         TotalRecordsPerMonth: 0,
                         TotalRecordsLifeTime: 0,
+                        ClientsBehavior: {
+                            H00: 0,
+                            H01: 0,
+                            H02: 0,
+                            H03: 0,
+                            H04: 0,
+                            H05: 0,
+                            H06: 0,
+                            H07: 0,
+                            H08: 0,
+                            H09: 0,
+                            H10: 0,
+                            H11: 0,
+                            H12: 0,
+                            H13: 0,
+                            H14: 0,
+                            H15: 0,
+                            H16: 0,
+                            H17: 0,
+                            H18: 0,
+                            H19: 0,
+                            H20: 0,
+                            H21: 0,
+                            H22: 0,
+                            H23: 0
+                        },
                     }
                 }
             });
@@ -375,22 +478,22 @@ function SiteController(dependencies) {
                 callback({ success: false, message: 'Something went wrong when updating insights, try again.', result: null });
             }
             else {
-                if(result != undefined && result != null){
+                if (result != undefined && result != null) {
                     _entity.GetModel().findOneAndUpdate({ "ApiKey": data.ApiKey },
-                    {
-                        $set:
                         {
-                            'Insights.Heatmaps.ScrollRegistersPerMonth': ++(result.Insights.Heatmaps.ScrollRegistersPerMonth),
-                            'Insights.Heatmaps.ScrollRegistersLifeTime': ++(result.Insights.Heatmaps.ScrollRegistersLifeTime),
-                        }
-                    }, { upsert: false }, function (err, result) {
-                        if (err) {
-                            console.log(err);
-                            callback({ success: false, message: 'Something went wrong when updating insights, try again.', result: null });
-                        }
-                        //console.log(result.Insights.Heatmaps)
-                        callback({ success: true, message: 'IncreaseScrollHeatmaps', result: result });
-                    });
+                            $set:
+                            {
+                                'Insights.Heatmaps.ScrollRegistersPerMonth': ++(result.Insights.Heatmaps.ScrollRegistersPerMonth),
+                                'Insights.Heatmaps.ScrollRegistersLifeTime': ++(result.Insights.Heatmaps.ScrollRegistersLifeTime),
+                            }
+                        }, { upsert: false }, function (err, result) {
+                            if (err) {
+                                console.log(err);
+                                callback({ success: false, message: 'Something went wrong when updating insights, try again.', result: null });
+                            }
+                            //console.log(result.Insights.Heatmaps)
+                            callback({ success: true, message: 'IncreaseScrollHeatmaps', result: result });
+                        });
                 }
             }
         });
@@ -1266,19 +1369,151 @@ function SiteController(dependencies) {
                 callback({ success: false, message: 'Something went error while retreiving available Charts', result: null });
             }
 
-            if(result != undefined){
-                if(result != null){
+            if (result != undefined) {
+                if (result != null) {
                     callback({ success: true, message: 'GetAvailableChartsByApiKey', result: result.Insights.AvailableCharts });
                 }
-                else{
+                else {
                     callback({ success: false, message: 'We haven\'t available charts at this moment', result: null });
                 }
-                
+
             }
-            else{
+            else {
                 callback({ success: false, message: 'Something went error while retreiving available Charts', result: null });
             }
         })
+    }
+
+    function addZeroBefore(n) {
+        return (n < 10 ? '0' : '') + n;
+    }
+
+    var increaseHeatmapClientsBehaviorByApiKey = function (data, callback) {
+        _entity.GetModel().findOne({ "ApiKey": data.ApiKey }, function (err, siteResult) {
+            if (err) {
+                console.log(err);
+                callback({ success: false, message: 'Something went wrong when updating insights, try again.', result: null });
+            }
+            else {
+                if (siteResult != null) {
+                    var hour = 'H' + addZeroBefore((new Date()).getHours());
+                    var insertKey = 'Insights.Heatmaps.ClientsBehavior.' + hour;
+                    var insertObj = {
+                        insertKey: ++(siteResult.Insights.Heatmaps.ClientsBehavior[hour]),
+                    }
+                    _entity.GetModel().findOneAndUpdate({ "ApiKey": data.ApiKey },
+                        {
+                            $set: insertObj
+                        }, { upsert: false }, function (err, result) {
+                            if (err) {
+                                console.log(err);
+                                callback({ success: false, message: 'Something went wrong when updating insights, try again.', result: null });
+                            }
+                            //console.log(result.Insights.Heatmaps)
+                            callback({ success: true, message: 'IncreaseMovementHeatmaps', result: result });
+                        });
+                }
+                else {
+                    callback({ success: false, message: 'Something went wrong when updating insights, try again.', result: null });
+                }
+            }
+        });
+    }
+
+    var increaseRATClientsBehaviorByApiKey = function (data, callback) {
+        _entity.GetModel().findOne({ "ApiKey": data.ApiKey }, function (err, siteResult) {
+            if (err) {
+                console.log(err);
+                callback({ success: false, message: 'Something went wrong when updating insights, try again.', result: null });
+            }
+            else {
+                if (siteResult != null) {
+                    var hour = 'H' + addZeroBefore((new Date()).getHours());
+                    var insertKey = 'Insights.RAT.ClientsBehavior.' + hour;
+                    var insertObj = {
+                        insertKey: ++(siteResult.Insights.Heatmaps.ClientsBehavior[hour]),
+                    }
+                    _entity.GetModel().findOneAndUpdate({ "ApiKey": data.ApiKey },
+                        {
+                            $set: insertObj
+                        }, { upsert: false }, function (err, result) {
+                            if (err) {
+                                console.log(err);
+                                callback({ success: false, message: 'Something went wrong when updating insights, try again.', result: null });
+                            }
+                            //console.log(result.Insights.Heatmaps)
+                            callback({ success: true, message: 'IncreaseMovementHeatmaps', result: result });
+                        });
+                }
+                else {
+                    callback({ success: false, message: 'Something went wrong when updating insights, try again.', result: null });
+                }
+            }
+        });
+    }
+
+    var increaseFormAnalysisClientsBehaviorByApiKey = function (data, callback) {
+        _entity.GetModel().findOne({ "ApiKey": data.ApiKey }, function (err, siteResult) {
+            if (err) {
+                console.log(err);
+                callback({ success: false, message: 'Something went wrong when updating insights, try again.', result: null });
+            }
+            else {
+                if (siteResult != null) {
+                    var hour = 'H' + addZeroBefore((new Date()).getHours());
+                    var insertKey = 'Insights.FormAnalysis.ClientsBehavior.' + hour;
+                    var insertObj = {
+                        insertKey: ++(siteResult.Insights.Heatmaps.ClientsBehavior[hour]),
+                    }
+                    _entity.GetModel().findOneAndUpdate({ "ApiKey": data.ApiKey },
+                        {
+                            $set: insertObj
+                        }, { upsert: false }, function (err, result) {
+                            if (err) {
+                                console.log(err);
+                                callback({ success: false, message: 'Something went wrong when updating insights, try again.', result: null });
+                            }
+                            //console.log(result.Insights.Heatmaps)
+                            callback({ success: true, message: 'IncreaseMovementHeatmaps', result: result });
+                        });
+                }
+                else {
+                    callback({ success: false, message: 'Something went wrong when updating insights, try again.', result: null });
+                }
+            }
+        });
+    }
+
+    var increaseRecordsClientsBehaviorByApiKey = function (data, callback) {
+        _entity.GetModel().findOne({ "ApiKey": data.ApiKey }, function (err, siteResult) {
+            if (err) {
+                console.log(err);
+                callback({ success: false, message: 'Something went wrong when updating insights, try again.', result: null });
+            }
+            else {
+                if (siteResult != null) {
+                    var hour = 'H' + addZeroBefore((new Date()).getHours());
+                    var insertKey = 'Insights.Records.ClientsBehavior.' + hour;
+                    var insertObj = {
+                        insertKey: ++(siteResult.Insights.Heatmaps.ClientsBehavior[hour]),
+                    }
+                    _entity.GetModel().findOneAndUpdate({ "ApiKey": data.ApiKey },
+                        {
+                            $set: insertObj
+                        }, { upsert: false }, function (err, result) {
+                            if (err) {
+                                console.log(err);
+                                callback({ success: false, message: 'Something went wrong when updating insights, try again.', result: null });
+                            }
+                            //console.log(result.Insights.Heatmaps)
+                            callback({ success: true, message: 'IncreaseMovementHeatmaps', result: result });
+                        });
+                }
+                else {
+                    callback({ success: false, message: 'Something went wrong when updating insights, try again.', result: null });
+                }
+            }
+        });
     }
 
     var getEntity = function () {
@@ -1337,6 +1572,10 @@ function SiteController(dependencies) {
         GetTotalRecordsByApiKey: getTotalRecordsByApiKey,
         GetTotalRecordsByApiKeys: getTotalRecordsByApiKeys,
         GetAvailableChartsByApiKey: getAvailableChartsByApiKey,
+        IncreaseHeatmapClientsBehaviorByApiKey: increaseHeatmapClientsBehaviorByApiKey,
+        IncreaseRATClientsBehaviorByApiKey: increaseRATClientsBehaviorByApiKey,
+        IncreaseFormAnalysisClientsBehaviorByApiKey: increaseFormAnalysisClientsBehaviorByApiKey,
+        IncreaseRecordsClientsBehaviorByApiKey: increaseRecordsClientsBehaviorByApiKey,
         Entity: getEntity
     }
 }
