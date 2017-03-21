@@ -506,6 +506,8 @@ function InsightController(dependencies) {
                                         })
                                         break;
                                     case 'UsersBehavior'.toLowerCase():
+                                        _database.Site().
+                                        break;
                                     case 'WebFormsIssues'.toLowerCase():
                                     default:
                                         sm.emit('digestContent', null);

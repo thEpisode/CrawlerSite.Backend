@@ -1399,7 +1399,7 @@ function SiteController(dependencies) {
                     var hour = 'H' + addZeroBefore((new Date()).getHours());
                     var insertKey = 'Insights.Heatmaps.ClientsBehavior.' + hour;
                     var insertObj = {
-                        insertKey: ++(siteResult.Insights.Heatmaps.ClientsBehavior[hour]),
+                        [insertKey]: ++(siteResult.Insights.Heatmaps.ClientsBehavior[hour]),
                     }
                     _entity.GetModel().findOneAndUpdate({ "ApiKey": data.ApiKey },
                         {
@@ -1516,6 +1516,234 @@ function SiteController(dependencies) {
         });
     }
 
+    var getHeatmapClientsBehaviorByApiKey = function(data, callback){
+        _entity.GetModel().findOne({ "ApiKey": data.ApiKey }, function (err, result) {
+            if (err) {
+                console.log(err);
+                callback({ success: false, message: 'Something went error while retreiving available Charts', result: null });
+            }
+
+            if (result != undefined) {
+                if (result != null) {
+                    callback({ success: true, message: 'GetHeatmapClientsBehaviorByApiKey', result: result.Insights.Heatmaps.ClientsBehavior });
+                }
+                else {
+                    callback({ success: false, message: 'We haven\'t available data at this moment', result: null });
+                }
+
+            }
+            else {
+                callback({ success: false, message: 'Something went error while retreiving available Charts', result: null });
+            }
+        });
+    }
+
+    var getRATClientsBehaviorByApiKey = function(data, callback){
+        _entity.GetModel().findOne({ "ApiKey": data.ApiKey }, function (err, result) {
+            if (err) {
+                console.log(err);
+                callback({ success: false, message: 'Something went error while retreiving available Charts', result: null });
+            }
+
+            if (result != undefined) {
+                if (result != null) {
+                    callback({ success: true, message: 'GetHeatmapClientsBehaviorByApiKey', result: result.Insights.RAT.ClientsBehavior });
+                }
+                else {
+                    callback({ success: false, message: 'We haven\'t available data at this moment', result: null });
+                }
+
+            }
+            else {
+                callback({ success: false, message: 'Something went error while retreiving available Charts', result: null });
+            }
+        });
+    }
+
+    var getFormAnalysisClientsBehaviorByApiKey = function(data, callback){
+        _entity.GetModel().findOne({ "ApiKey": data.ApiKey }, function (err, result) {
+            if (err) {
+                console.log(err);
+                callback({ success: false, message: 'Something went error while retreiving available Charts', result: null });
+            }
+
+            if (result != undefined) {
+                if (result != null) {
+                    callback({ success: true, message: 'GetHeatmapClientsBehaviorByApiKey', result: result.Insights.FormAnalysis.ClientsBehavior });
+                }
+                else {
+                    callback({ success: false, message: 'We haven\'t available data at this moment', result: null });
+                }
+
+            }
+            else {
+                callback({ success: false, message: 'Something went error while retreiving available Charts', result: null });
+            }
+        });
+    }
+
+    var getRecordsClientsBehaviorByApiKey = function(data, callback){
+        _entity.GetModel().findOne({ "ApiKey": data.ApiKey }, function (err, result) {
+            if (err) {
+                console.log(err);
+                callback({ success: false, message: 'Something went error while retreiving available Charts', result: null });
+            }
+
+            if (result != undefined) {
+                if (result != null) {
+                    callback({ success: true, message: 'GetHeatmapClientsBehaviorByApiKey', result: result.Insights.Records.ClientsBehavior });
+                }
+                else {
+                    callback({ success: false, message: 'We haven\'t available data at this moment', result: null });
+                }
+
+            }
+            else {
+                callback({ success: false, message: 'Something went error while retreiving available Charts', result: null });
+            }
+        });
+    }
+
+    var getHeatmapClientsBehaviorByApiKeys = function(data, callback){
+        if (data.ApiKeys != undefined && data.ApiKeys != null) {
+            if (Object.prototype.toString.call(data.ApiKeys) === '[object Array]') {
+                //var sitesId = data.ApiKeys.map(function (id) { return _mongoose.Types.ObjectId(id) });
+
+                _entity.GetModel().aggregate([
+                    {
+                        $match: {
+                            ApiKey: { $in: data.ApiKeys }
+                        }
+                    },
+                    {
+                        '$group': {
+                            _id: '$GetHeatmapClientsBehaviorByApiKeys',
+                            ClientsBehavior: { $sum: '$Insights.Heatmaps.ClientsBehavior' },
+                        }
+                    }], function (err, result) {
+                        if (err) {
+                            console.log(err);
+                            callback({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
+                        }
+                        else {
+                            callback({ success: true, message: 'GetHeatmapClientsBehaviorByApiKeys', result: result });
+                        }
+                    });
+            }
+            else {
+                callback({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
+            }
+        }
+        else {
+            callback({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
+        }
+    }
+
+    var getRATClientsBehaviorByApiKeys = function(data, callback){
+        if (data.ApiKeys != undefined && data.ApiKeys != null) {
+            if (Object.prototype.toString.call(data.ApiKeys) === '[object Array]') {
+                //var sitesId = data.ApiKeys.map(function (id) { return _mongoose.Types.ObjectId(id) });
+
+                _entity.GetModel().aggregate([
+                    {
+                        $match: {
+                            ApiKey: { $in: data.ApiKeys }
+                        }
+                    },
+                    {
+                        '$group': {
+                            _id: '$GetHeatmapClientsBehaviorByApiKeys',
+                            ClientsBehavior: { $sum: '$Insights.RAT.ClientsBehavior' },
+                        }
+                    }], function (err, result) {
+                        if (err) {
+                            console.log(err);
+                            callback({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
+                        }
+                        else {
+                            callback({ success: true, message: 'GetHeatmapClientsBehaviorByApiKeys', result: result });
+                        }
+                    });
+            }
+            else {
+                callback({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
+            }
+        }
+        else {
+            callback({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
+        }
+    }
+
+    var getFormAnalysisClientsBehaviorByApiKeys = function(data, callback){
+        if (data.ApiKeys != undefined && data.ApiKeys != null) {
+            if (Object.prototype.toString.call(data.ApiKeys) === '[object Array]') {
+                //var sitesId = data.ApiKeys.map(function (id) { return _mongoose.Types.ObjectId(id) });
+
+                _entity.GetModel().aggregate([
+                    {
+                        $match: {
+                            ApiKey: { $in: data.ApiKeys }
+                        }
+                    },
+                    {
+                        '$group': {
+                            _id: '$GetHeatmapClientsBehaviorByApiKeys',
+                            ClientsBehavior: { $sum: '$Insights.FormAnalysis.ClientsBehavior' },
+                        }
+                    }], function (err, result) {
+                        if (err) {
+                            console.log(err);
+                            callback({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
+                        }
+                        else {
+                            callback({ success: true, message: 'GetHeatmapClientsBehaviorByApiKeys', result: result });
+                        }
+                    });
+            }
+            else {
+                callback({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
+            }
+        }
+        else {
+            callback({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
+        }
+    }
+
+    var getRecordsClientsBehaviorByApiKeys = function(data, callback){
+        if (data.ApiKeys != undefined && data.ApiKeys != null) {
+            if (Object.prototype.toString.call(data.ApiKeys) === '[object Array]') {
+                //var sitesId = data.ApiKeys.map(function (id) { return _mongoose.Types.ObjectId(id) });
+
+                _entity.GetModel().aggregate([
+                    {
+                        $match: {
+                            ApiKey: { $in: data.ApiKeys }
+                        }
+                    },
+                    {
+                        '$group': {
+                            _id: '$GetHeatmapClientsBehaviorByApiKeys',
+                            ClientsBehavior: { $sum: '$Insights.Records.ClientsBehavior' },
+                        }
+                    }], function (err, result) {
+                        if (err) {
+                            console.log(err);
+                            callback({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
+                        }
+                        else {
+                            callback({ success: true, message: 'GetHeatmapClientsBehaviorByApiKeys', result: result });
+                        }
+                    });
+            }
+            else {
+                callback({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
+            }
+        }
+        else {
+            callback({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
+        }
+    }
+
     var getEntity = function () {
         return _entity;
     }
@@ -1576,6 +1804,14 @@ function SiteController(dependencies) {
         IncreaseRATClientsBehaviorByApiKey: increaseRATClientsBehaviorByApiKey,
         IncreaseFormAnalysisClientsBehaviorByApiKey: increaseFormAnalysisClientsBehaviorByApiKey,
         IncreaseRecordsClientsBehaviorByApiKey: increaseRecordsClientsBehaviorByApiKey,
+        GetHeatmapClientsBehaviorByApiKey:getHeatmapClientsBehaviorByApiKey,
+        GetHeatmapClientsBehaviorByApiKeys:getHeatmapClientsBehaviorByApiKeys,
+        GetRATClientsBehaviorByApiKey:getRATClientsBehaviorByApiKey,
+        GetRATClientsBehaviorByApiKey:getRATClientsBehaviorByApiKey,
+        GetFormAnalysisClientsBehaviorByApiKey:getFormAnalysisClientsBehaviorByApiKey,
+        GetFormAnalysisClientsBehaviorByApiKeys:getFormAnalysisClientsBehaviorByApiKeys,
+        GetRecordsClientsBehaviorByApiKey:getRecordsClientsBehaviorByApiKey,
+        GetRecordsClientsBehaviorByApiKeys:getRecordsClientsBehaviorByApiKeys,
         Entity: getEntity
     }
 }
