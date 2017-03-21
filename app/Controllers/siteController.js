@@ -1744,6 +1744,44 @@ function SiteController(dependencies) {
         }
     }
 
+    var getClientsBehaviorByApiKeys = function(data, callback){
+        if (data.ApiKeys != undefined && data.ApiKeys != null) {
+            if (Object.prototype.toString.call(data.ApiKeys) === '[object Array]') {
+                //var sitesId = data.ApiKeys.map(function (id) { return _mongoose.Types.ObjectId(id) });
+
+                _entity.GetModel().aggregate([
+                    {
+                        $match: {
+                            ApiKey: { $in: data.ApiKeys }
+                        }
+                    },
+                    {
+                        '$group': {
+                            _id: '$GetHeatmapClientsBehaviorByApiKeys',
+                            HeatmapsClientsBehavior: { $sum: '$Insights.Heatmaps.ClientsBehavior' },
+                            RATClientsBehavior: { $sum: '$Insights.RAT.ClientsBehavior' },
+                            FormAnalysisClientsBehavior: { $sum: '$Insights.FormAnalysis.ClientsBehavior' },
+                            RecordsClientsBehavior: { $sum: '$Insights.Records.ClientsBehavior' },
+                        }
+                    }], function (err, result) {
+                        if (err) {
+                            console.log(err);
+                            callback({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
+                        }
+                        else {
+                            callback({ success: true, message: 'GetHeatmapClientsBehaviorByApiKeys', result: result });
+                        }
+                    });
+            }
+            else {
+                callback({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
+            }
+        }
+        else {
+            callback({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
+        }
+    }
+
     var getEntity = function () {
         return _entity;
     }
@@ -1812,6 +1850,7 @@ function SiteController(dependencies) {
         GetFormAnalysisClientsBehaviorByApiKeys:getFormAnalysisClientsBehaviorByApiKeys,
         GetRecordsClientsBehaviorByApiKey:getRecordsClientsBehaviorByApiKey,
         GetRecordsClientsBehaviorByApiKeys:getRecordsClientsBehaviorByApiKeys,
+        GetClientsBehaviorByApiKeys:getClientsBehaviorByApiKeys,
         Entity: getEntity
     }
 }

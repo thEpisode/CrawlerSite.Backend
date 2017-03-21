@@ -506,7 +506,9 @@ function InsightController(dependencies) {
                                         })
                                         break;
                                     case 'UsersBehavior'.toLowerCase():
-                                        _database.Site().
+                                        _database.Site().GetClientsBehaviorByApiKeys({ApiKeys: apiKeys}, function(result){
+                                            sm.emit('digestContent', result);
+                                        })
                                         break;
                                     case 'WebFormsIssues'.toLowerCase():
                                     default:
