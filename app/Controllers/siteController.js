@@ -1516,7 +1516,7 @@ function SiteController(dependencies) {
         });
     }
 
-    var getHeatmapClientsBehaviorByApiKey = function(data, callback){
+    var getHeatmapClientsBehaviorByApiKey = function (data, callback) {
         _entity.GetModel().findOne({ "ApiKey": data.ApiKey }, function (err, result) {
             if (err) {
                 console.log(err);
@@ -1538,7 +1538,7 @@ function SiteController(dependencies) {
         });
     }
 
-    var getRATClientsBehaviorByApiKey = function(data, callback){
+    var getRATClientsBehaviorByApiKey = function (data, callback) {
         _entity.GetModel().findOne({ "ApiKey": data.ApiKey }, function (err, result) {
             if (err) {
                 console.log(err);
@@ -1560,7 +1560,7 @@ function SiteController(dependencies) {
         });
     }
 
-    var getFormAnalysisClientsBehaviorByApiKey = function(data, callback){
+    var getFormAnalysisClientsBehaviorByApiKey = function (data, callback) {
         _entity.GetModel().findOne({ "ApiKey": data.ApiKey }, function (err, result) {
             if (err) {
                 console.log(err);
@@ -1582,7 +1582,7 @@ function SiteController(dependencies) {
         });
     }
 
-    var getRecordsClientsBehaviorByApiKey = function(data, callback){
+    var getRecordsClientsBehaviorByApiKey = function (data, callback) {
         _entity.GetModel().findOne({ "ApiKey": data.ApiKey }, function (err, result) {
             if (err) {
                 console.log(err);
@@ -1604,7 +1604,7 @@ function SiteController(dependencies) {
         });
     }
 
-    var getHeatmapClientsBehaviorByApiKeys = function(data, callback){
+    var getHeatmapClientsBehaviorByApiKeys = function (data, callback) {
         if (data.ApiKeys != undefined && data.ApiKeys != null) {
             if (Object.prototype.toString.call(data.ApiKeys) === '[object Array]') {
                 //var sitesId = data.ApiKeys.map(function (id) { return _mongoose.Types.ObjectId(id) });
@@ -1639,7 +1639,7 @@ function SiteController(dependencies) {
         }
     }
 
-    var getRATClientsBehaviorByApiKeys = function(data, callback){
+    var getRATClientsBehaviorByApiKeys = function (data, callback) {
         if (data.ApiKeys != undefined && data.ApiKeys != null) {
             if (Object.prototype.toString.call(data.ApiKeys) === '[object Array]') {
                 //var sitesId = data.ApiKeys.map(function (id) { return _mongoose.Types.ObjectId(id) });
@@ -1674,7 +1674,7 @@ function SiteController(dependencies) {
         }
     }
 
-    var getFormAnalysisClientsBehaviorByApiKeys = function(data, callback){
+    var getFormAnalysisClientsBehaviorByApiKeys = function (data, callback) {
         if (data.ApiKeys != undefined && data.ApiKeys != null) {
             if (Object.prototype.toString.call(data.ApiKeys) === '[object Array]') {
                 //var sitesId = data.ApiKeys.map(function (id) { return _mongoose.Types.ObjectId(id) });
@@ -1709,7 +1709,7 @@ function SiteController(dependencies) {
         }
     }
 
-    var getRecordsClientsBehaviorByApiKeys = function(data, callback){
+    var getRecordsClientsBehaviorByApiKeys = function (data, callback) {
         if (data.ApiKeys != undefined && data.ApiKeys != null) {
             if (Object.prototype.toString.call(data.ApiKeys) === '[object Array]') {
                 //var sitesId = data.ApiKeys.map(function (id) { return _mongoose.Types.ObjectId(id) });
@@ -1744,7 +1744,7 @@ function SiteController(dependencies) {
         }
     }
 
-    var getClientsBehaviorByApiKeys = function(data, callback){
+    var getClientsBehaviorByApiKeys = function (data, callback) {
         if (data.ApiKeys != undefined && data.ApiKeys != null) {
             if (Object.prototype.toString.call(data.ApiKeys) === '[object Array]') {
                 //var sitesId = data.ApiKeys.map(function (id) { return _mongoose.Types.ObjectId(id) });
@@ -1842,15 +1842,15 @@ function SiteController(dependencies) {
         IncreaseRATClientsBehaviorByApiKey: increaseRATClientsBehaviorByApiKey,
         IncreaseFormAnalysisClientsBehaviorByApiKey: increaseFormAnalysisClientsBehaviorByApiKey,
         IncreaseRecordsClientsBehaviorByApiKey: increaseRecordsClientsBehaviorByApiKey,
-        GetHeatmapClientsBehaviorByApiKey:getHeatmapClientsBehaviorByApiKey,
-        GetHeatmapClientsBehaviorByApiKeys:getHeatmapClientsBehaviorByApiKeys,
-        GetRATClientsBehaviorByApiKey:getRATClientsBehaviorByApiKey,
-        GetRATClientsBehaviorByApiKey:getRATClientsBehaviorByApiKey,
-        GetFormAnalysisClientsBehaviorByApiKey:getFormAnalysisClientsBehaviorByApiKey,
-        GetFormAnalysisClientsBehaviorByApiKeys:getFormAnalysisClientsBehaviorByApiKeys,
-        GetRecordsClientsBehaviorByApiKey:getRecordsClientsBehaviorByApiKey,
-        GetRecordsClientsBehaviorByApiKeys:getRecordsClientsBehaviorByApiKeys,
-        GetClientsBehaviorByApiKeys:getClientsBehaviorByApiKeys,
+        GetHeatmapClientsBehaviorByApiKey: getHeatmapClientsBehaviorByApiKey,
+        GetHeatmapClientsBehaviorByApiKeys: getHeatmapClientsBehaviorByApiKeys,
+        GetRATClientsBehaviorByApiKey: getRATClientsBehaviorByApiKey,
+        GetRATClientsBehaviorByApiKey: getRATClientsBehaviorByApiKey,
+        GetFormAnalysisClientsBehaviorByApiKey: getFormAnalysisClientsBehaviorByApiKey,
+        GetFormAnalysisClientsBehaviorByApiKeys: getFormAnalysisClientsBehaviorByApiKeys,
+        GetRecordsClientsBehaviorByApiKey: getRecordsClientsBehaviorByApiKey,
+        GetRecordsClientsBehaviorByApiKeys: getRecordsClientsBehaviorByApiKeys,
+        GetClientsBehaviorByApiKeys: getClientsBehaviorByApiKeys,
         Entity: getEntity
     }
 }
