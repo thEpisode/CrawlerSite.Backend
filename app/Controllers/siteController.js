@@ -1398,8 +1398,9 @@ function SiteController(dependencies) {
                 if (siteResult != null) {
                     var hour = 'H' + addZeroBefore((new Date()).getHours());
                     var insertKey = 'Insights.Heatmaps.ClientsBehavior.' + hour;
+                    var value2Insert = siteResult.updatedAt.getHours() < (new Date()).getHours() ? 1 : ++(siteResult.Insights.Heatmaps.ClientsBehavior[hour]);
                     var insertObj = {
-                        [insertKey]: ++(siteResult.Insights.Heatmaps.ClientsBehavior[hour]),
+                        [insertKey]: value2Insert,
                     }
                     _entity.GetModel().findOneAndUpdate({ "ApiKey": data.ApiKey },
                         {
@@ -1429,9 +1430,10 @@ function SiteController(dependencies) {
             else {
                 if (siteResult != null) {
                     var hour = 'H' + addZeroBefore((new Date()).getHours());
-                    var insertKey = 'Insights.RAT.ClientsBehavior.' + hour;
+                    var insertKey = 'Insights.Heatmaps.ClientsBehavior.' + hour;
+                    var value2Insert = siteResult.updatedAt.getHours() < (new Date()).getHours() ? 1 : ++(siteResult.Insights.Heatmaps.ClientsBehavior[hour]);
                     var insertObj = {
-                        insertKey: ++(siteResult.Insights.Heatmaps.ClientsBehavior[hour]),
+                        [insertKey]: value2Insert,
                     }
                     _entity.GetModel().findOneAndUpdate({ "ApiKey": data.ApiKey },
                         {
@@ -1461,9 +1463,10 @@ function SiteController(dependencies) {
             else {
                 if (siteResult != null) {
                     var hour = 'H' + addZeroBefore((new Date()).getHours());
-                    var insertKey = 'Insights.FormAnalysis.ClientsBehavior.' + hour;
+                    var insertKey = 'Insights.Heatmaps.ClientsBehavior.' + hour;
+                    var value2Insert = siteResult.updatedAt.getHours() < (new Date()).getHours() ? 1 : ++(siteResult.Insights.Heatmaps.ClientsBehavior[hour]);
                     var insertObj = {
-                        insertKey: ++(siteResult.Insights.Heatmaps.ClientsBehavior[hour]),
+                        [insertKey]: value2Insert,
                     }
                     _entity.GetModel().findOneAndUpdate({ "ApiKey": data.ApiKey },
                         {
@@ -1493,9 +1496,10 @@ function SiteController(dependencies) {
             else {
                 if (siteResult != null) {
                     var hour = 'H' + addZeroBefore((new Date()).getHours());
-                    var insertKey = 'Insights.Records.ClientsBehavior.' + hour;
+                    var insertKey = 'Insights.Heatmaps.ClientsBehavior.' + hour;
+                    var value2Insert = siteResult.updatedAt.getHours() < (new Date()).getHours() ? 1 : ++(siteResult.Insights.Heatmaps.ClientsBehavior[hour]);
                     var insertObj = {
-                        insertKey: ++(siteResult.Insights.Heatmaps.ClientsBehavior[hour]),
+                        [insertKey]: value2Insert,
                     }
                     _entity.GetModel().findOneAndUpdate({ "ApiKey": data.ApiKey },
                         {
@@ -1752,16 +1756,20 @@ function SiteController(dependencies) {
                 _entity.GetModel().aggregate([
                     {
                         $match: {
-                            ApiKey: { $in: data.ApiKeys }
+                            $and:[
+                                {ApiKey: { $in: data.ApiKeys }},
+                                {created_at: {$lt: new Date()}}
+                            ]
+                            
                         }
                     },
                     {
                         '$group': {
                             _id: '$GetHeatmapClientsBehaviorByApiKeys',
-                            HeatmapsClientsBehavior: { $sum: '$Insights.Heatmaps.ClientsBehavior' },
-                            RATClientsBehavior: { $sum: '$Insights.RAT.ClientsBehavior' },
-                            FormAnalysisClientsBehavior: { $sum: '$Insights.FormAnalysis.ClientsBehavior' },
-                            RecordsClientsBehavior: { $sum: '$Insights.Records.ClientsBehavior' },
+                            HeatmapsClientsBehavior: { $push: '$Insights.Heatmaps.ClientsBehavior' },
+                            RATClientsBehavior: { $push: '$Insights.RAT.ClientsBehavior' },
+                            FormAnalysisClientsBehavior: { $push: '$Insights.FormAnalysis.ClientsBehavior' },
+                            RecordsClientsBehavior: { $push: '$Insights.Records.ClientsBehavior' },
                         }
                     }], function (err, result) {
                         if (err) {
@@ -1769,7 +1777,7 @@ function SiteController(dependencies) {
                             callback({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
                         }
                         else {
-                            callback({ success: true, message: 'GetHeatmapClientsBehaviorByApiKeys', result: result });
+                            callback({ success: true, message: 'GetClientsBehaviorByApiKeys', result: result });
                         }
                     });
             }
