@@ -70,7 +70,6 @@ function UserController(dependencies) {
     var deleteUser = function (data, callback) {
         _database.Site().GetAllSitesByUserId(data.UserId, function (sitesResult) {
 
-
             if (sitesResult.result.length > 0) {
                 for (var i = 0; i < sitesResult.result.length; i++) {
                     if (sitesResult.result[i].UsersId.length == 1) {
