@@ -14,6 +14,7 @@ function Routes(dependencies) {
     var _cross;
     var _fileHandler;
     var _insights;
+    var _geolocate;
     var _stripe;
     var _mail;
     var _notificationHub;
@@ -33,6 +34,7 @@ function Routes(dependencies) {
         _insights = dependencies.insights;
         _stripe = dependencies.stripeController;
         _mail = dependencies.mailController;
+        _geolocate = dependencies.geolocateController;
         _notificationHub = dependencies.notificationHub
 
         createAPI();
@@ -740,6 +742,21 @@ function Routes(dependencies) {
             _insights.DashboardInsightsByUserId(req.params, function (result) {
                
                 res.json(result)
+            })
+        });
+
+        _apiRoutes.get('/GeoLocate/LocateByIp/:IP', function (req, res) {
+            _geolocate.Locate(req.params, function (result) {
+               
+                res.json(result);
+            })
+        });
+
+        _apiRoutes.get('/GeoLocate/Locate/', function (req, res) {
+            var ip =  req.ip;debugger;
+            _geolocate.Locate({IP: ip}, function (result) {
+               
+                res.json(result);
             })
         });
 

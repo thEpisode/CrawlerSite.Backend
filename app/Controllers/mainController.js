@@ -29,6 +29,7 @@ function FlingerServer(dependencies) {
 
         /// Setting up secret for JWT
         _app.set('FlingerSecretJWT', _cross.GetFlingerSecretJWT());
+        _app.set('trust_proxy', 'loopback');
 
         /// Database declaration
         _databaseController = require('./databaseController')(dependencies);

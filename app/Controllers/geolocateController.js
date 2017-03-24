@@ -36,12 +36,16 @@ function GeolocateController(dependencies) {
         });
     }
 
-    var locate = function (IP, callback) {
+    var locate = function (data, callback) {
         if (_geolocator != undefined) {
-            if (IP != undefined) {
-                var result = _geolocator.get(IP);
-
-                callback({ success: true, message: 'LocateIP', result: result });
+            if (data.IP != undefined) {
+                var result = _geolocator.get(data.IP);
+                if(result != null){
+                    callback({ success: true, message: 'LocateIP', result: result });
+                }
+                else{
+                    callback({ success: false, message: 'Something went wrong when try to geolocate your IP, try again.', result: null });
+                }
             }
             else {
                 callback({ success: false, message: 'Something went wrong when try to geolocate your IP, try again.', result: null });
