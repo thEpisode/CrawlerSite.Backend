@@ -63,18 +63,41 @@ function UserController(dependencies) {
                 })
             }
         })
-
-
     }
 
     var deleteUser = function (data, callback) {
-        _entity.GetModel().findOneAndRemove(data, function (err, result) {
+        _entity.GetModel().findOneAndRemove(data.UserId, function (err, result) {
             if (err) {
                 console.log(err);
-                callback(false);
+                callback({ success: false, message: 'Something went wrong when updating password, try again.', result: null });
             }
 
-            callback(true);
+            callback({ success: true, message: 'ChangePasswordByUserId', result: result });
+        })
+    }
+
+    var changePasswordByUserId = function (data, callback) {
+        _entity.GetModel().findOne({ "_id": data.UserId }, function (err, userResult) {
+            if (err) {
+                console.log(err);
+                callback({ success: false, message: 'Something went wrong when updating password, try again.', result: null });
+            }
+            else {
+                // Decrypt password and compare
+                if (userResult.Password === data.OldPassword) {
+                    _entity.GetModel().findOneAndUpdate({ "_id": data.UserId }, { $set: { Password: data.NewPassword } }, { upsert: false }, function (err, result) {
+                        if (err) {
+                            console.log(err);
+                            callback({ success: false, message: 'Something went wrong when updating password, try again.', result: null });
+                        }
+
+                        callback({ success: true, message: 'ChangePasswordByUserId', result: result });
+                    })
+                }
+                else{
+                    callback({ success: false, message: 'Old password isn\'t valid, try again.', result: null });
+                }
+            }
         })
     }
 
@@ -167,7 +190,8 @@ function UserController(dependencies) {
     return {
         Initialize: constructor,
         CreateUser: createUser,
-        DeleteUser: deleteUser,
+        DeleteAccountByUserId: deleteUser,
+        ChangePasswordByUserId: changePasswordByUserId,
         GetUserById: getUserById,
         GetUserByEmail: getUserByEmail,
         GetUserByCredentials: getUserByCredentials,

@@ -490,10 +490,17 @@ function Routes(dependencies) {
             })
         });
 
+        // (POST http://localhost:3000/api/User/ChangePasswordByUserId)
+        _apiRoutes.post('/User/ChangePasswordByUserId', function (req, res) {
+            _database.User().ChangePasswordByUserId(req.body, function (result) {
+                res.json(result);
+            })
+        });
+
         // (POST http://localhost:3000/api/User/Delete)
-        _apiRoutes.post('/User/Delete', function (req, res) {
-            _database.User().DeleteUser(req.body, function (result) {
-                res.json({ success: true, message: 'DeleteUser', result: result });
+        _apiRoutes.post('/User/DeleteAccountByUserId', function (req, res) {
+            _database.User().DeleteAccountByUserId(req.body, function (result) {
+                res.json(result);
             })
         });
 
