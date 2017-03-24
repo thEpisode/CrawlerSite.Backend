@@ -14,6 +14,7 @@ function FlingerServer(dependencies) {
     var _stripeController;
     var _mailController;
     var _notificationHubController;
+    var _geolocateController;
 
     var constructor = function (callback) {
         _app = dependencies.app;
@@ -33,6 +34,10 @@ function FlingerServer(dependencies) {
         _databaseController = require('./databaseController')(dependencies);
         dependencies.database = _databaseController;
 
+        /// GeoLocate Controller
+        _geolocateController = require('./geolocateController')(dependencies);
+        dependencies.geolocateController = _geolocateController;
+
         _mailController = require('./mailController')(dependencies);
         dependencies.mailController = _mailController;
 
@@ -40,35 +45,44 @@ function FlingerServer(dependencies) {
         _stripeController = require('./stripeController')(dependencies);
         dependencies.stripeController = _stripeController;
 
-        _databaseController.Initialize(function (result) {
-            if (result == true) {
-                dependencies.gridfs = _databaseController.GetGridFS();
+        _databaseController.Initialize(function (databaseResult) {
+            if (databaseResult == true) {
+                _geolocateController.Initialize(function (geolocateResult) {
+                    if (geolocateResult == true) {
+                        dependencies.gridfs = _databaseController.GetGridFS();
 
-                _notificationHubController = require('./notificationHubController')(dependencies);
-                dependencies.notificationHub = _notificationHubController;
+                        _notificationHubController = require('./notificationHubController')(dependencies);
+                        dependencies.notificationHub = _notificationHubController;
 
-                /// Insights controller
-                _insightController = require('./insightController')(dependencies);
-                dependencies.insights = _insightController;
+                        /// Insights controller
+                        _insightController = require('./insightController')(dependencies);
+                        dependencies.insights = _insightController;
 
-                /// FileHandler declaration
-                _fileHandler = require('./fileController')(dependencies);
-                dependencies.fileHandler = _fileHandler;
+                        /// FileHandler declaration
+                        _fileHandler = require('./fileController')(dependencies);
+                        dependencies.fileHandler = _fileHandler;
 
-                /// Frontend declaration
-                _frontendController = require('./frontendController')(dependencies);
+                        /// Frontend declaration
+                        _frontendController = require('./frontendController')(dependencies);
 
-                /// Routes declaration
-                _routesController = require('./routesController')(dependencies);
+                        /// Routes declaration
+                        _routesController = require('./routesController')(dependencies);
 
-                /// Socket declaration
-                _socketController = require('./socketController')(dependencies);
+                        /// Socket declaration
+                        _socketController = require('./socketController')(dependencies);
 
-                initializeControllers(callback);
+                        initializeControllers(callback);
 
-                _console.log('Server initialized', 'server-success');
+                        _console.log('Server initialized', 'server-success');
+                    }
+                    else{
+                        _console.log('Exiting from server app', 'error');
+                        process.exit(0);
+                    }
+                })
             }
             else {
+                _console.log('Exiting from server app', 'error');
                 process.exit(0);
             }
         });

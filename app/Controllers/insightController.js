@@ -306,8 +306,6 @@ function InsightController(dependencies) {
                             const len = charts.length;
 
                             if (len > 0) {
-                                console.log(`start: beginning processing of ${len} charts`);
-
                                 context.tasks = len;              // total number of tasks
                                 context.active = len;             // number of active tasks
 
@@ -322,17 +320,11 @@ function InsightController(dependencies) {
 
                         // start processing of each path
                         sm.on('forEachCharts', (charts) => {
-
-                            console.log(`forEachCharts: starting ${charts.length} process chains`);
-
                             charts.forEach((chart) => sm.emit('getChart', chart));
                         });
 
                         // read contents from path
                         sm.on('getChart', (chart) => {
-
-                            console.log(`  getChart: ${chart}`);
-
                             switch (chart.toLowerCase()) {
                                 case 'PageViewsPerMonth'.toLowerCase():
                                     _database.Site().GetPageViewsHeatmapsByApiKeys({ ApiKeys: data.ApiKeys }, function (result) {
@@ -364,17 +356,11 @@ function InsightController(dependencies) {
 
                         // compute length of path contents
                         sm.on('digestContent', (content) => {
-
-                            console.log(`  digestContent`);
-
                             next(content);
                         });
 
                         // when processing is complete
                         sm.on('done', () => {
-
-                            console.log(`The total of ${context.tasks}`);
-
                             if (context.tasks > 0 && context.active === 0) {
                                 callback({ success: true, message: 'GetDashboardInsightsByApiKey', result: context.results })
                             }

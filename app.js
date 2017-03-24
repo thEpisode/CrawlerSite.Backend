@@ -33,6 +33,7 @@ var grid = require('gridfs-stream');
 var emailjs = require('emailjs');
 var stripe = require('stripe')(cross.GetStripePrivateKey());
 var eventEmiter = require('events').EventEmitter;
+var geoip = require('maxmind');
 
 var dependencies = {
     express: express,
@@ -55,6 +56,7 @@ var dependencies = {
     mail: emailjs,
     stripe: stripe,
     cross: cross,
+    geoip: geoip,
     eventEmiter: eventEmiter
 }
 

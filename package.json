@@ -51,7 +51,8 @@
     "emailjs": "latest",
     "config": "^1.20.4",
     "stripe": "^4.15.0",
-    "uuid": "^3.0.1"
+    "uuid": "^3.0.1",
+    "maxmind": "^2.2.0"
   },
   "engine": "node 4.4.7",
   "scripts": {
