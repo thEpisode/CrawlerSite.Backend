@@ -221,9 +221,13 @@ function SiteController(dependencies) {
 
     var getAllSitesByUserId = function (data, callback) {
         _entity.GetModel().find({ "UsersId": data }, function (err, result) {
-            if (err) console.log(err);
-
-            callback(result);
+            if (err) {
+                console.log(err);
+                callback({ success: false, message: 'Something went wrong when getting your sites, try again.', result: null });
+            }
+            else {
+                callback({ success: true, message: 'GetAllSitesByUserId', result: result });
+            }
         })
     }
 
@@ -1756,11 +1760,11 @@ function SiteController(dependencies) {
                 _entity.GetModel().aggregate([
                     {
                         $match: {
-                            $and:[
-                                {ApiKey: { $in: data.ApiKeys }},
-                                {created_at: {$lt: new Date()}}
+                            $and: [
+                                { ApiKey: { $in: data.ApiKeys } },
+                                { created_at: { $lt: new Date() } }
                             ]
-                            
+
                         }
                     },
                     {

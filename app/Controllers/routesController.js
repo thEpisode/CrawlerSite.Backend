@@ -442,7 +442,7 @@ function Routes(dependencies) {
         //  (GET http://localhost:3000/api/Site/UserId)
         _apiRoutes.get('/Site/UserId/:UserId', function (req, res) {
             _database.Site().GetAllSitesByUserId(req.params.UserId, function (result) {
-                res.json({ success: true, message: 'UserId', result: result });
+                res.json(result);
             })
         });
 

@@ -1,6 +1,7 @@
 function UserController(dependencies) {
 
-    /// Dependencies   
+    /// Dependencies
+    var _database;
     var _mongoose;
     var _app;
     var _jwt;
@@ -11,6 +12,7 @@ function UserController(dependencies) {
     var _schema;
 
     var constructor = function () {
+        _database = dependencies.database;
         _mongoose = dependencies.mongoose;
         _schema = _mongoose.Schema;
         _app = dependencies.app;
@@ -66,14 +68,29 @@ function UserController(dependencies) {
     }
 
     var deleteUser = function (data, callback) {
-        _entity.GetModel().findOneAndRemove(data.UserId, function (err, result) {
-            if (err) {
-                console.log(err);
-                callback({ success: false, message: 'Something went wrong when updating password, try again.', result: null });
+        _database.Site().GetAllSitesByUserId(data.UserId, function (sitesResult) {
+
+
+            if (sitesResult.result.length > 0) {
+                for (var i = 0; i < sitesResult.result.length; i++) {
+                    if (sitesResult.result[i].UsersId.length == 1) {
+                        if (sitesResult.result[i].UsersId[0] == data.UserId) {
+                            _database.Site().DeleteSite(sitesResult.result[i]._id, function () { });
+                        }
+                    }
+                }
             }
 
-            callback({ success: true, message: 'ChangePasswordByUserId', result: result });
-        })
+            _entity.GetModel().findOneAndRemove(data.UserId, function (err, result) {
+                if (err) {
+                    console.log(err);
+                    callback({ success: false, message: 'Something went wrong when updating password, try again.', result: null });
+                }
+
+                callback({ success: true, message: 'ChangePasswordByUserId', result: result });
+            })
+        });
+
     }
 
     var changePasswordByUserId = function (data, callback) {
@@ -94,7 +111,7 @@ function UserController(dependencies) {
                         callback({ success: true, message: 'ChangePasswordByUserId', result: result });
                     })
                 }
-                else{
+                else {
                     callback({ success: false, message: 'Old password isn\'t valid, try again.', result: null });
                 }
             }
