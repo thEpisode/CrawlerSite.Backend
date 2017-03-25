@@ -40,6 +40,7 @@ function GeolocateController(dependencies) {
         if (_geolocator != undefined) {
             if (data.IP != undefined) {
                 var result = _geolocator.get(data.IP);
+                
                 if(result != null){
                     callback({ success: true, message: 'LocateIP', result: result });
                 }
