@@ -15,6 +15,98 @@ function StripeController(dependencies) {
         _stripe_pk = _cross.GetStripePrivateKey();
 
         _stripe = dependencies.stripe;
+
+        createInitialPlans()
+    }
+
+    var createInitialPlans = function (callback) {
+        _stripe.plans.retrieve('free', function (err, plan) {
+            if (err) {
+                if (err.statusCode == 404) {
+                    _stripe.plans.create({
+                        amount: 0,
+                        interval: 'month',
+                        name: 'Free',
+                        currency: 'usd',
+                        id: 'free',
+                        metadata: { description: 'This is a Free plan' },
+                    }, function (err, plan) {
+                        if (err) {
+                            _console.log(err, 'error')
+                        }
+                        else {
+                            _console.log('Plan Free created succesfuly', 'server-success');
+                        }
+                    })
+                }
+            }
+        });
+
+        _stripe.plans.retrieve('standard', function (err, plan) {
+            if (err) {
+                if (err.statusCode == 404) {
+                    _stripe.plans.create({
+                        amount: 1999,
+                        interval: 'month',
+                        name: 'Standard',
+                        currency: 'usd',
+                        id: 'standard',
+                        metadata: { description: 'This is a Standard plan' },
+                    }, function (err, plan) {
+                        if (err) {
+                            _console.log(err, 'error')
+                        }
+                        else {
+                            _console.log('Plan Standard created succesfuly', 'server-success');
+                        }
+                    })
+                }
+            }
+        });
+
+        _stripe.plans.retrieve('basic', function (err, plan) {
+            if (err) {
+                if (err.statusCode == 404) {
+                    _stripe.plans.create({
+                        amount: 999,
+                        interval: 'month',
+                        name: 'Basic',
+                        currency: 'usd',
+                        id: 'basic',
+                        metadata: { description: 'This is a basic plan' },
+                    }, function (err, plan) {
+                        if (err) {
+                            _console.log(err, 'error')
+                        }
+                        else {
+                            _console.log('Plan Basic created succesfuly', 'server-success');
+                        }
+                    })
+                }
+            }
+        });
+
+        _stripe.plans.retrieve('premium', function (err, plan) {
+            if (err) {
+                if (err.statusCode == 404) {
+                    _stripe.plans.create({
+                        amount: 2500,
+                        interval: 'month',
+                        name: 'Premium',
+                        currency: 'usd',
+                        id: 'premium',
+                        metadata: { description: 'This is a Premium plan' },
+                    }, function (err, plan) {
+                        if (err) {
+                            _console.log(err, 'error')
+                        }
+                        else {
+                            _console.log('Plan Premium created succesfuly', 'server-success');
+                        }
+                    })
+                }
+            }
+        });
     }
 
     var getAllPlans = function (callback) {
