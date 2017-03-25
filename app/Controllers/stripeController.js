@@ -15,6 +15,58 @@ function StripeController(dependencies) {
         _stripe_pk = _cross.GetStripePrivateKey();
 
         _stripe = dependencies.stripe;
+
+        createInitialPlans()
+    }
+
+    var createInitialPlans = function (callback) {
+        createPlan({ Id: 'free', Amount: 0, Interval: 'month', Name: 'Free', Currency: 'usd', Description: 'This is a Free plan' }, function (result) {
+            if(result.success == true){
+                _console.log('Plan Free created succesfuly', 'server-success');
+            }
+         });
+        createPlan({ Id: 'standard', Amount: 1999, Interval: 'month', Name: 'Standard', Currency: 'usd', Description: 'This is a Standard plan' }, function (result) {
+            if(result.success == true){
+                _console.log('Plan Standard created succesfuly', 'server-success');
+            }
+         });
+        createPlan({ Id: 'basic', Amount: 999, Interval: 'month', Name: 'Basic', Currency: 'usd', Description: 'This is a Basic plan' }, function (result) {
+            if(result.success == true){
+                _console.log('Plan Basic created succesfuly', 'server-success');
+            }
+         });
+        createPlan({ Id: 'premium', Amount: 2500, Interval: 'month', Name: 'Premium', Currency: 'usd', Description: 'This is a Premium plan' }, function (result) {
+            if(result.success == true){
+                _console.log('Plan Premium created succesfuly', 'server-success');
+            }
+         });
+    }
+
+    var createPlan = function (data, callback) {
+        _stripe.plans.retrieve(data.Id, function (err, plan) {
+            if (err) {
+                if (err.statusCode == 404) {
+                    _stripe.plans.create({
+                        amount: data.Amount,
+                        interval: data.Interval,
+                        name: data.Name,
+                        currency: data.Currency,
+                        id: data.Id,
+                        metadata: { description: data.Description },
+                    }, function (err, plan) {
+                        if (err) {
+                            callback({ success: false, message: 'Something went wrong when retrieving all plans, try again.', result: null });
+                        }
+                        else {
+                            callback({ success: true, message: 'CreatePlan', result: plan })
+                        }
+                    })
+                }
+            }
+            else {
+                callback({ success: false, message: 'Plan already exists, try with another plan.', result: null });
+            }
+        });
     }
 
     var getAllPlans = function (callback) {
