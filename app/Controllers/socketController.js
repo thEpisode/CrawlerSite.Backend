@@ -281,7 +281,7 @@ function Socket(dependencies) {
                             break;
                         case 'Movement':
                             _geolocate.Locate({ IP: socket.handshake.address }, function (geolocateResponse) {
-                                data.Values.Event.Location = geolocateResponse.result == null ? null : geolocateResponse.result;
+                                data.Values.Event.Location = geolocateResponse.success == false ? null : geolocateResponse.result;
 
                                 _database.Movement().CreateMovement(data.Values, function () {
                                     //console.log('Movement Saved');
@@ -293,7 +293,7 @@ function Socket(dependencies) {
                         case 'Scroll':
                             _geolocate.Locate({ IP: socket.handshake.address }, function (geolocateResponse) {
                                 data.Values.Event.Location = geolocateResponse.result == null ? null : geolocateResponse.result;
-                                
+
                                 _database.Scroll().CreateScroll(data.Values, function () {
                                     //console.log('Scroll Saved');
                                     _database.Site().IncreaseScrollHeatmaps({ ApiKey: data.Values.ApiKey }, function (response) { })
