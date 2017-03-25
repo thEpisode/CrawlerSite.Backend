@@ -7,6 +7,7 @@ function Socket(dependencies) {
     var _fileHandler;
     var _cross;
     var _uuid;
+    var _geolocate;
 
     const MAX_CLIENTS = 10;
 
@@ -20,6 +21,7 @@ function Socket(dependencies) {
         _fileHandler = dependencies.fileHandler;
         _cross = dependencies.cross;
         _uuid = dependencies.uuid;
+        _geolocate = dependencies.geolocateController;
 
         socketImplementation();
         _console.log('Socket module initialized', 'server-success');
@@ -123,7 +125,7 @@ function Socket(dependencies) {
         ratPoolNamespace.on('connection', function (socket) {
             _console.log('Socket connected to RAT pool: ' + socket.id, 'socket-message');
 
-            var connectionTimer = setInterval(function(){
+            var connectionTimer = setInterval(function () {
                 _database.Site().IncreaseRATTimeByApiKey({ ApiKey: socket.handshake.query.ApiKey }, function (response) { })
             }, 1000);
 
@@ -171,8 +173,8 @@ function Socket(dependencies) {
                 }
             })
 
-            socket.on('disconnect', function(){
-                
+            socket.on('disconnect', function () {
+
                 clearInterval(connectionTimer);
             })
         })
@@ -267,25 +269,37 @@ function Socket(dependencies) {
                 if (data.Command != undefined) {
                     switch (data.Command) {
                         case 'Click':
-                            _database.Click().CreateClick(data.Values, function () {
-                                //console.log('Click Saved');
-                                _database.Site().IncreaseClickHeatmaps({ ApiKey: data.Values.ApiKey }, function (response) { })
-                                _database.Site().IncreaseHeatmapClientsBehaviorByApiKey({ ApiKey: data.Values.ApiKey }, function (response) { })
-                            })
+                            _geolocate.Locate({ IP: socket.handshake.address }, function (geolocateResponse) {
+                                data.Values.Event.Location = geolocateResponse.result == null ? null : geolocateResponse.result;
+
+                                _database.Click().CreateClick(data.Values, function () {
+                                    //console.log('Click Saved');
+                                    _database.Site().IncreaseClickHeatmaps({ ApiKey: data.Values.ApiKey }, function (response) { })
+                                    _database.Site().IncreaseHeatmapClientsBehaviorByApiKey({ ApiKey: data.Values.ApiKey }, function (response) { })
+                                });
+                            });
                             break;
                         case 'Movement':
-                            _database.Movement().CreateMovement(data.Values, function () {
-                                //console.log('Movement Saved');
-                                _database.Site().IncreaseMovementHeatmaps({ ApiKey: data.Values.ApiKey }, function (response) { })
-                                _database.Site().IncreaseHeatmapClientsBehaviorByApiKey({ ApiKey: data.Values.ApiKey }, function (response) { })
-                            })
+                            _geolocate.Locate({ IP: socket.handshake.address }, function (geolocateResponse) {
+                                data.Values.Event.Location = geolocateResponse.success == false ? null : geolocateResponse.result;
+
+                                _database.Movement().CreateMovement(data.Values, function () {
+                                    //console.log('Movement Saved');
+                                    _database.Site().IncreaseMovementHeatmaps({ ApiKey: data.Values.ApiKey }, function (response) { })
+                                    _database.Site().IncreaseHeatmapClientsBehaviorByApiKey({ ApiKey: data.Values.ApiKey }, function (response) { })
+                                })
+                            });
                             break;
                         case 'Scroll':
-                            _database.Scroll().CreateScroll(data.Values, function () {
-                                //console.log('Scroll Saved');
-                                _database.Site().IncreaseScrollHeatmaps({ ApiKey: data.Values.ApiKey }, function (response) { })
-                                _database.Site().IncreaseHeatmapClientsBehaviorByApiKey({ ApiKey: data.Values.ApiKey }, function (response) { })
-                            })
+                            _geolocate.Locate({ IP: socket.handshake.address }, function (geolocateResponse) {
+                                data.Values.Event.Location = geolocateResponse.result == null ? null : geolocateResponse.result;
+
+                                _database.Scroll().CreateScroll(data.Values, function () {
+                                    //console.log('Scroll Saved');
+                                    _database.Site().IncreaseScrollHeatmaps({ ApiKey: data.Values.ApiKey }, function (response) { })
+                                    _database.Site().IncreaseHeatmapClientsBehaviorByApiKey({ ApiKey: data.Values.ApiKey }, function (response) { })
+                                })
+                            });
                             break;
                     }
                 }
