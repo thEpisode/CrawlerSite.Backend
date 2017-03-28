@@ -251,8 +251,6 @@ function Socket(dependencies) {
                 adminPoolNamespace.emit('Coplest.Flinger.RAT', { Command: 'UnsubscribeSocketToApiKey#Request', Values: { SocketId: socket.id, ApiKey: socket.ApiKey } });
             });
 
-            /// Request all insights queue
-            socket.emit('Coplest.Flinger.ServerEvent', { Command: 'InsightsQueue' });
 
             socket.on('Coplest.Flinger.AddApiKeyToSocket', function (data) {
                 if (data.ApiKey != undefined) {
@@ -264,6 +262,16 @@ function Socket(dependencies) {
                 }
             })
 
+            socket.on('Coplest.Flinger.ICanUseHeatmaps', function (data) {
+                /// Request all insights queue
+                socket.emit('Coplest.Flinger.ServerEvent', { Command: 'InsightsQueue' });
+            })
+
+            socket.on('Coplest.Flinger.CanISendData', function (data) {
+                _database.Site().CheckIfCanUseHeatmaps(data, function (result) {
+                    socket.emit('Coplest.Flinger.ServerEvent', { Command: 'CanUseHeatmaps', Values: result });
+                })
+            });
 
             socket.on('Coplest.Flinger.PushInsight', function (data) {
                 if (data.Command != undefined) {

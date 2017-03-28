@@ -8,6 +8,9 @@ function StripeController(dependencies) {
     /// Configuration
     var stripe_pk = '';
 
+    /// Properties
+    var _plans = [];
+
     var constructor = function () {
         _cross = dependencies.cross;
         _database = dependencies.database;
@@ -20,26 +23,87 @@ function StripeController(dependencies) {
     }
 
     var createInitialPlans = function (callback) {
-        createPlan({ Id: 'free', Amount: 0, Interval: 'month', Name: 'Free', Currency: 'usd', Description: 'This is a Free plan' }, function (result) {
-            if(result.success == true){
+        createPlan({
+            Id: 'free',
+            Amount: 0,
+            Interval:
+            'month',
+            Name: 'Free',
+            Currency: 'usd',
+            Metadata: {
+                description: 'This is a Free plan',
+                order: 0,
+                maxPageviews: 10,
+                maxRecordings: 50,
+                maxAnalyzedForms: 1,
+                maxMinutesRAT: 60,
+                maxSites: 1
+            }
+        }, function (result) {
+            if (result.success == true) {
                 _console.log('Plan Free created succesfuly', 'server-success');
             }
-         });
-        createPlan({ Id: 'standard', Amount: 1999, Interval: 'month', Name: 'Standard', Currency: 'usd', Description: 'This is a Standard plan' }, function (result) {
-            if(result.success == true){
-                _console.log('Plan Standard created succesfuly', 'server-success');
+        });
+        createPlan({
+            Id: 'basic',
+            Amount: 999,
+            Interval: 'month',
+            Name: 'Basic',
+            Currency: 'usd',
+            Metadata: {
+                description: 'This is a Basic plan',
+                order: 1,
+                maxPageviews: 2000,
+                maxRecordings: 500,
+                maxAnalyzedForms: 2,
+                maxMinutesRAT: 480,
+                maxSites: 5
             }
-         });
-        createPlan({ Id: 'basic', Amount: 999, Interval: 'month', Name: 'Basic', Currency: 'usd', Description: 'This is a Basic plan' }, function (result) {
-            if(result.success == true){
+        }, function (result) {
+            if (result.success == true) {
                 _console.log('Plan Basic created succesfuly', 'server-success');
             }
-         });
-        createPlan({ Id: 'premium', Amount: 2500, Interval: 'month', Name: 'Premium', Currency: 'usd', Description: 'This is a Premium plan' }, function (result) {
-            if(result.success == true){
+        });
+        createPlan({
+            Id: 'standard',
+            Amount: 1999,
+            Interval: 'month',
+            Name: 'Standard',
+            Currency: 'usd',
+            Metadata: {
+                Description: 'This is a Standard plan',
+                order: 2,
+                maxPageviews: 5000,
+                maxRecordings: 3500,
+                maxAnalyzedForms: 5,
+                maxMinutesRAT: 720,
+                maxSites: 0
+            }
+        }, function (result) {
+            if (result.success == true) {
+                _console.log('Plan Standard created succesfuly', 'server-success');
+            }
+        });
+        createPlan({
+            Id: 'premium',
+            Amount: 2500,
+            Interval: 'month',
+            Name: 'Premium',
+            Currency: 'usd',
+            Metadata: {
+                description: 'This is a Premium plan',
+                order: 3,
+                maxPageviews: 15000,
+                maxRecordings: 8000,
+                maxAnalyzedForms: 20,
+                maxMinutesRAT: 1440,
+                maxSites: 0
+            }
+        }, function (result) {
+            if (result.success == true) {
                 _console.log('Plan Premium created succesfuly', 'server-success');
             }
-         });
+        });
     }
 
     var createPlan = function (data, callback) {
@@ -52,7 +116,7 @@ function StripeController(dependencies) {
                         name: data.Name,
                         currency: data.Currency,
                         id: data.Id,
-                        metadata: { description: data.Description },
+                        metadata: data.Metadata,
                     }, function (err, plan) {
                         if (err) {
                             callback({ success: false, message: 'Something went wrong when retrieving all plans, try again.', result: null });
@@ -123,6 +187,7 @@ function StripeController(dependencies) {
                         customerData.SubscriptionId = subscription.id;
                         customerData.FirstNameCard = null;
                         customerData.LastNameCard = null;
+                        customerData.CurrentPlan = plan;
 
                         _database.User().UpdatePaymentData(customerData, function (result) {
                             if (result == null) {
@@ -174,6 +239,7 @@ function StripeController(dependencies) {
                                         userResult.SubscriptionId = subscription.id;
                                         userResult.FirstNameCard = customerData.Firstname;
                                         userResult.LastNameCard = customerData.Lastname;
+                                        userResult.CurrentPlan = plan;
 
                                         _database.User().UpdatePaymentData(userResult, function (result) {
                                             if (result == null) {
@@ -213,6 +279,7 @@ function StripeController(dependencies) {
                                     userResult.SubscriptionId = subscription.id;
                                     userResult.FirstNameCard = customerData.Firstname;
                                     userResult.LastNameCard = customerData.Lastname;
+                                    userResult.CurrentPlan = plan;
 
                                     _database.User().UpdatePaymentData(userResult, function (result) {
                                         if (result == null) {
@@ -250,6 +317,7 @@ function StripeController(dependencies) {
                             userResult.SubscriptionId = '';
                             userResult.FirstNameCard = '';
                             userResult.LastNameCard = '';
+                            userResult.CurrentPlan = {};
 
                             _database.User().UpdatePaymentData(userResult, function (result) {
                                 if (result == null) {
@@ -445,6 +513,7 @@ function StripeController(dependencies) {
         GetChargesByUserId: getChargesByUserId,
         ProcessWebhook: processWebhook,
         CreateInitialCustomer: createInitialCustomer,
+        CreatePlan: createPlan,
     }
 }
 

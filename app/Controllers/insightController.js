@@ -395,10 +395,10 @@ function InsightController(dependencies) {
         if (data.UserId != undefined && data.UserId != null) {
             if (data.UserId.length > 0) {
                 _database.Site().GetAllSitesByUserId(data.UserId, function (sitesResult) {
-                    if (sitesResult.length > 0) {
+                    if (sitesResult.result.length > 0) {
                         var apiKeys = [];
 
-                        sitesResult.forEach(function (value, index) {
+                        sitesResult.result.forEach(function (value, index) {
                             apiKeys.push(value.ApiKey);
                         });
 

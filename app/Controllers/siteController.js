@@ -1,6 +1,7 @@
 function SiteController(dependencies) {
 
-    /// Dependencies   
+    /// Dependencies
+    var _database;
     var _mongoose;
     var _uuid;
 
@@ -8,6 +9,7 @@ function SiteController(dependencies) {
     var _entity;
 
     var constructor = function () {
+        _database = dependencies.database;
         _mongoose = dependencies.mongoose;
         _uuid = dependencies.uuid;
 
@@ -399,21 +401,23 @@ function SiteController(dependencies) {
                 callback({ success: false, message: 'Something went wrong when updating insights, try again.', result: null });
             }
             else {
-                _entity.GetModel().findOneAndUpdate({ "ApiKey": data.ApiKey },
-                    {
-                        $set:
+                if (result != undefined && result != null) {
+                    _entity.GetModel().findOneAndUpdate({ "ApiKey": data.ApiKey },
                         {
-                            'Insights.Heatmaps.PageViewsLifeTime': ++(result.Insights.Heatmaps.PageViewsLifeTime),
-                            'Insights.Heatmaps.PageViewsPerMonth': ++(result.Insights.Heatmaps.PageViewsPerMonth),
-                        }
-                    }, { upsert: false }, function (err, result) {
-                        if (err) {
-                            console.log(err);
-                            callback({ success: false, message: 'Something went wrong when updating insights, try again.', result: null });
-                        }
-                        //console.log(result.Insights.Heatmaps)
-                        callback({ success: true, message: 'IncreasePageviewsHeatmapsInsights', result: result });
-                    });
+                            $set:
+                            {
+                                'Insights.Heatmaps.PageViewsLifeTime': ++(result.Insights.Heatmaps.PageViewsLifeTime),
+                                'Insights.Heatmaps.PageViewsPerMonth': ++(result.Insights.Heatmaps.PageViewsPerMonth),
+                            }
+                        }, { upsert: false }, function (err, result) {
+                            if (err) {
+                                console.log(err);
+                                callback({ success: false, message: 'Something went wrong when updating insights, try again.', result: null });
+                            }
+                            //console.log(result.Insights.Heatmaps)
+                            callback({ success: true, message: 'IncreasePageviewsHeatmapsInsights', result: result });
+                        });
+                }
             }
         });
     }
@@ -425,7 +429,7 @@ function SiteController(dependencies) {
                 callback({ success: false, message: 'Something went wrong when updating insights, try again.', result: null });
             }
             else {
-                if (siteResult != null) {
+                if (siteResult != undefined && siteResult != null) {
                     _entity.GetModel().findOneAndUpdate({ "ApiKey": data.ApiKey },
                         {
                             $set:
@@ -456,21 +460,23 @@ function SiteController(dependencies) {
                 callback({ success: false, message: 'Something went wrong when updating insights, try again.', result: null });
             }
             else {
-                _entity.GetModel().findOneAndUpdate({ "ApiKey": data.ApiKey },
-                    {
-                        $set:
+                if (result != undefined && result != null) {
+                    _entity.GetModel().findOneAndUpdate({ "ApiKey": data.ApiKey },
                         {
-                            'Insights.Heatmaps.ClickRegistersPerMonth': ++(result.Insights.Heatmaps.ClickRegistersPerMonth),
-                            'Insights.Heatmaps.ClickRegistersPerLifeTime': ++(result.Insights.Heatmaps.ClickRegistersPerLifeTime),
-                        }
-                    }, { upsert: false }, function (err, result) {
-                        if (err) {
-                            console.log(err);
-                            callback({ success: false, message: 'Something went wrong when updating insights, try again.', result: null });
-                        }
-                        //console.log(result.Insights.Heatmaps)
-                        callback({ success: true, message: 'IncreaseClickHeatmaps', result: result });
-                    });
+                            $set:
+                            {
+                                'Insights.Heatmaps.ClickRegistersPerMonth': ++(result.Insights.Heatmaps.ClickRegistersPerMonth),
+                                'Insights.Heatmaps.ClickRegistersPerLifeTime': ++(result.Insights.Heatmaps.ClickRegistersPerLifeTime),
+                            }
+                        }, { upsert: false }, function (err, result) {
+                            if (err) {
+                                console.log(err);
+                                callback({ success: false, message: 'Something went wrong when updating insights, try again.', result: null });
+                            }
+                            //console.log(result.Insights.Heatmaps)
+                            callback({ success: true, message: 'IncreaseClickHeatmaps', result: result });
+                        });
+                }
             }
         });
     }
@@ -750,20 +756,22 @@ function SiteController(dependencies) {
                 callback({ success: false, message: 'Something went wrong when updating insights, try again.', result: null });
             }
             else {
-                _entity.GetModel().findOneAndUpdate({ "ApiKey": data.ApiKey },
-                    {
-                        $set:
+                if (result != undefined && result != null) {
+                    _entity.GetModel().findOneAndUpdate({ "ApiKey": data.ApiKey },
                         {
-                            'Insights.RAT.UsersOnline': ++(result.Insights.RAT.UsersOnline),
-                        }
-                    }, { upsert: false }, function (err, result) {
-                        if (err) {
-                            console.log(err);
-                            callback({ success: false, message: 'Something went wrong when updating insights, try again.', result: null });
-                        }
-                        //console.log(result.Insights.Heatmaps)
-                        callback({ success: true, message: 'IncreaseUsersOnlineRAT', result: result });
-                    });
+                            $set:
+                            {
+                                'Insights.RAT.UsersOnline': ++(result.Insights.RAT.UsersOnline),
+                            }
+                        }, { upsert: false }, function (err, result) {
+                            if (err) {
+                                console.log(err);
+                                callback({ success: false, message: 'Something went wrong when updating insights, try again.', result: null });
+                            }
+                            //console.log(result.Insights.Heatmaps)
+                            callback({ success: true, message: 'IncreaseUsersOnlineRAT', result: result });
+                        });
+                }
             }
         });
     }
@@ -775,20 +783,22 @@ function SiteController(dependencies) {
                 callback({ success: false, message: 'Something went wrong when updating insights, try again.', result: null });
             }
             else {
-                _entity.GetModel().findOneAndUpdate({ "ApiKey": data.ApiKey },
-                    {
-                        $set:
+                if (result != undefined && result != null) {
+                    _entity.GetModel().findOneAndUpdate({ "ApiKey": data.ApiKey },
                         {
-                            'Insights.RAT.UsersOnline': --(result.Insights.RAT.UsersOnline),
-                        }
-                    }, { upsert: false }, function (err, result) {
-                        if (err) {
-                            console.log(err);
-                            callback({ success: false, message: 'Something went wrong when updating insights, try again.', result: null });
-                        }
-                        //console.log(result.Insights.Heatmaps)
-                        callback({ success: true, message: 'DecreaseUsersOnlineRAT', result: result });
-                    });
+                            $set:
+                            {
+                                'Insights.RAT.UsersOnline': --(result.Insights.RAT.UsersOnline),
+                            }
+                        }, { upsert: false }, function (err, result) {
+                            if (err) {
+                                console.log(err);
+                                callback({ success: false, message: 'Something went wrong when updating insights, try again.', result: null });
+                            }
+                            //console.log(result.Insights.Heatmaps)
+                            callback({ success: true, message: 'DecreaseUsersOnlineRAT', result: result });
+                        });
+                }
             }
         });
     }
@@ -1794,6 +1804,43 @@ function SiteController(dependencies) {
         }
     }
 
+    var checkIfCanUseHeatmaps = function (data, callback) {
+        _entity.GetModel().findOne({ "ApiKey": data.ApiKey }, function (err, siteResult) {
+            if (err) {
+                console.log(err);
+                callback({ success: false, message: 'Something went wrong when updating insights, try again.', result: null });
+            }
+            else {
+                if (siteResult != undefined && siteResult != null) {
+                    if(siteResult.UsersId.length > 0){
+                        _database.User().GetUserById(siteResult.UsersId[0], function(userResult){
+                            if(userResult != undefined && userResult != null){
+                                if(siteResult.Insights.Heatmaps.PageViewsPerMonth <= parseInt(userResult.CurrentPlan.metadata.maxPageviews)){
+                                    callback({ success: true, message: 'CheckIfCanUseHeatmaps', result: true });
+                                }
+                                else{
+                                    callback({ success: true, message: 'CheckIfCanUseHeatmaps', result: false });
+                                }
+                            }
+                            else{
+                                callback({ success: false, message: 'Something went wrong while retrieving data', result: null });
+                            }
+                        })
+                    }
+                    else{
+                        callback({ success: false, message: 'Something went wrong while retrieving data', result: null });
+                    }
+                }
+                else{
+                    callback({ success: false, message: 'Something went wrong while retrieving data', result: null });
+                }
+            }
+        })
+
+        
+        
+    }
+
     var getEntity = function () {
         return _entity;
     }
@@ -1863,6 +1910,7 @@ function SiteController(dependencies) {
         GetRecordsClientsBehaviorByApiKey: getRecordsClientsBehaviorByApiKey,
         GetRecordsClientsBehaviorByApiKeys: getRecordsClientsBehaviorByApiKeys,
         GetClientsBehaviorByApiKeys: getClientsBehaviorByApiKeys,
+        CheckIfCanUseHeatmaps: checkIfCanUseHeatmaps,
         Entity: getEntity
     }
 }

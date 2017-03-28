@@ -38,6 +38,7 @@ function UserController(dependencies) {
                         StripeToken: '',
                         CustomerId: '',
                         PlanId: '',
+                        CurrentPlan: {},
                         SubscriptionId: '',
                         FirstNameCard: '',
                         LastNameCard: '',
@@ -193,7 +194,17 @@ function UserController(dependencies) {
     }
 
     var updatePaymentData = function (data, callback) {
-        _entity.GetModel().findOneAndUpdate({ "_id": data._id }, { $set: { StripeToken: data.StripeToken, CustomerId: data.CustomerId, PlanId: data.PlanId, SubscriptionId: data.SubscriptionId, FirstNameCard: data.FirstNameCard, LastNameCard: data.LastNameCard } }, { upsert: false }, function (err, result) {
+        _entity.GetModel().findOneAndUpdate(
+            { "_id": data._id }, 
+            { $set: { 
+                StripeToken: data.StripeToken, 
+                CustomerId: data.CustomerId, 
+                PlanId: data.PlanId, 
+                SubscriptionId: data.SubscriptionId, 
+                FirstNameCard: data.FirstNameCard, 
+                LastNameCard: data.LastNameCard,
+                CurrentPlan: data.CurrentPlan
+            } }, { upsert: false }, function (err, result) {
             if (err) {
                 console.log(err);
                 callback(null);
