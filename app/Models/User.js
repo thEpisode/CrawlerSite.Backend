@@ -32,6 +32,7 @@ function User(dependencies) {
                 StripeToken: String,
                 CustomerId: String,
                 PlanId: String,
+                CurrentPlan: _schema.Types.Mixed,
                 SubscriptionId: String,
                 FirstNameCard: String,
                 LastNameCard: String,
@@ -45,7 +46,7 @@ function User(dependencies) {
                 AcceptTerms: Boolean,
                 State: Number,
                 Settings: [_schema.Types.Mixed],
-                
+
             },
             { timestamps: { createdAt: 'created_at' }, minimize: false, collection: 'User' }
         ));
