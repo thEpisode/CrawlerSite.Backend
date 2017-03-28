@@ -1794,6 +1794,10 @@ function SiteController(dependencies) {
         }
     }
 
+    var checkIfCanUseHeatmaps = function(data, callback){
+        callback({ success: true, message: 'CheckIfCanUseHeatmaps', result: false });
+    }
+
     var getEntity = function () {
         return _entity;
     }
@@ -1863,6 +1867,7 @@ function SiteController(dependencies) {
         GetRecordsClientsBehaviorByApiKey: getRecordsClientsBehaviorByApiKey,
         GetRecordsClientsBehaviorByApiKeys: getRecordsClientsBehaviorByApiKeys,
         GetClientsBehaviorByApiKeys: getClientsBehaviorByApiKeys,
+        CheckIfCanUseHeatmaps: checkIfCanUseHeatmaps,
         Entity: getEntity
     }
 }
