@@ -92,15 +92,15 @@ function UserController(dependencies) {
         });
     }
 
-    var deleteUserByUserId = function(data, callback){
+    var deleteUserByUserId = function (data, callback) {
         _entity.GetModel().findOneAndRemove({ "_id": data.UserId }, function (err, result) {
-                if (err) {
-                    console.log(err);
-                    callback({ success: false, message: 'Something went wrong when updating password, try again.', result: null });
-                }
+            if (err) {
+                console.log(err);
+                callback({ success: false, message: 'Something went wrong when updating password, try again.', result: null });
+            }
 
-                callback({ success: true, message: 'ChangePasswordByUserId', result: result });
-            })
+            callback({ success: true, message: 'ChangePasswordByUserId', result: result });
+        })
     }
 
     var changePasswordByUserId = function (data, callback) {
@@ -193,7 +193,7 @@ function UserController(dependencies) {
 
     var editUser = function (data, callback) {
 
-        _entity.GetModel().findOneAndUpdate({ "_id": data._id }, { $set: { Email: data.Email, FirstName: data.FirstName, LastName: data.LastName } }, { upsert: false }, function (err, result) {
+        _entity.GetModel().findOneAndUpdate({ "_id": data._id }, { $set: { Email: data.Email, FirstName: data.FirstName, LastName: data.LastName, City: data.City, Country: data.Country } }, { upsert: false }, function (err, result) {
             if (err) {
                 console.log(err);
                 callback(false);
@@ -205,23 +205,25 @@ function UserController(dependencies) {
 
     var updatePaymentData = function (data, callback) {
         _entity.GetModel().findOneAndUpdate(
-            { "_id": data._id }, 
-            { $set: { 
-                StripeToken: data.StripeToken, 
-                CustomerId: data.CustomerId, 
-                PlanId: data.PlanId, 
-                SubscriptionId: data.SubscriptionId, 
-                FirstNameCard: data.FirstNameCard, 
-                LastNameCard: data.LastNameCard,
-                CurrentPlan: data.CurrentPlan
-            } }, { upsert: false }, function (err, result) {
-            if (err) {
-                console.log(err);
-                callback(null);
-            }
+            { "_id": data._id },
+            {
+                $set: {
+                    StripeToken: data.StripeToken,
+                    CustomerId: data.CustomerId,
+                    PlanId: data.PlanId,
+                    SubscriptionId: data.SubscriptionId,
+                    FirstNameCard: data.FirstNameCard,
+                    LastNameCard: data.LastNameCard,
+                    CurrentPlan: data.CurrentPlan
+                }
+            }, { upsert: false }, function (err, result) {
+                if (err) {
+                    console.log(err);
+                    callback(null);
+                }
 
-            callback(result);
-        })
+                callback(result);
+            })
     }
 
     return {

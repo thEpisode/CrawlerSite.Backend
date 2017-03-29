@@ -486,7 +486,7 @@ function Routes(dependencies) {
         });
 
         // (POST http://localhost:3000/api/User/Edit)
-        _apiRoutes.post('/User/Edit', function (req, res) {
+        _apiRoutes.post('/User/EditByUserId', function (req, res) {
             _database.User().EditUser(req.body, function (result) {
                 res.json({ success: true, message: 'EditUser', result: result });
             })
