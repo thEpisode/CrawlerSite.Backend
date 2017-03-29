@@ -455,7 +455,7 @@ function Routes(dependencies) {
             })
         });
 
-        // (POST http://localhost:3000/api/User/Delete)
+        // (POST http://localhost:3000/api/Site/Delete)
         _apiRoutes.post('/Site/Delete', function (req, res) {
             _database.Site().DeleteSite(req.body, function (result) {
                 res.json({ success: true, message: 'DeleteSite', result: result });
@@ -481,7 +481,7 @@ function Routes(dependencies) {
         //  (GET http://localhost:3000/api/User)
         _apiRoutes.get('/User/All', function (req, res) {
             _database.User().GetAllUser(null, function (result) {
-                res.json({ success: true, message: 'GetAllUser', result: result });
+                res.json(result);
             })
         });
 
@@ -502,6 +502,13 @@ function Routes(dependencies) {
         // (POST http://localhost:3000/api/User/Delete)
         _apiRoutes.post('/User/DeleteAccountByUserId', function (req, res) {
             _database.User().DeleteAccountByUserId(req.body, function (result) {
+                res.json(result);
+            })
+        });
+
+        // (POST http://localhost:3000/api/User/DeleteByUserId)
+        _apiRoutes.post('/User/DeleteByUserId', function (req, res) {
+            _database.User().DeleteByUserId(req.body, function (result) {
                 res.json(result);
             })
         });

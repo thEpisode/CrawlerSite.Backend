@@ -68,8 +68,8 @@ function UserController(dependencies) {
         })
     }
 
-    var deleteUser = function (data, callback) {
-        _database.Site().GetAllSitesByUserId(data.UserId, function (sitesResult) {
+    var deleteAccountByUserId = function (data, callback) {
+        _database.Site().GetAllSitesByUserId({ "_id": data.UserId }, function (sitesResult) {
 
             if (sitesResult.result.length > 0) {
                 for (var i = 0; i < sitesResult.result.length; i++) {
@@ -90,7 +90,17 @@ function UserController(dependencies) {
                 callback({ success: true, message: 'ChangePasswordByUserId', result: result });
             })
         });
+    }
 
+    var deleteUserByUserId = function(data, callback){
+        _entity.GetModel().findOneAndRemove({ "_id": data.UserId }, function (err, result) {
+                if (err) {
+                    console.log(err);
+                    callback({ success: false, message: 'Something went wrong when updating password, try again.', result: null });
+                }
+
+                callback({ success: true, message: 'ChangePasswordByUserId', result: result });
+            })
     }
 
     var changePasswordByUserId = function (data, callback) {
@@ -217,7 +227,8 @@ function UserController(dependencies) {
     return {
         Initialize: constructor,
         CreateUser: createUser,
-        DeleteAccountByUserId: deleteUser,
+        DeleteAccountByUserId: deleteAccountByUserId,
+        DeleteByUserId: deleteUserByUserId,
         ChangePasswordByUserId: changePasswordByUserId,
         GetUserById: getUserById,
         GetUserByEmail: getUserByEmail,

@@ -33,7 +33,7 @@ function StripeController(dependencies) {
             Metadata: {
                 description: 'This is a Free plan',
                 order: 0,
-                maxPageviews: 10,
+                maxPageviews: 400,
                 maxRecordings: 50,
                 maxAnalyzedForms: 1,
                 maxMinutesRAT: 60,
