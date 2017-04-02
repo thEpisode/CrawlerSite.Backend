@@ -49,7 +49,7 @@ function IPController(dependencies) {
     }
 
     var getIPByApiKey = function (data, callback) {
-        _entity.GetModel().findOne({ "ApiKey": data }, function (err, result) {
+        _entity.GetModel().find({ "ApiKey": data.ApiKey }, function (err, result) {
             if (err) console.log(err);
 
             callback(result);

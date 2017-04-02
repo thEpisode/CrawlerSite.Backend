@@ -226,6 +226,34 @@ function UserController(dependencies) {
             })
     }
 
+    var checkIfHasNoPaymentMethodByUserId = function (data, callback) {
+        if (data.UserId != undefined) {
+            _entity.GetModel().findOne({ "_id": data.UserId }, function (err, result) {
+                if (err) {
+                    console.log(err);
+
+                    callback({success: false, message: 'Something went wrong while retrieving user', result: null});
+                }
+                else{
+                    if(result != undefined && result != null){
+                        if(result.StripeToken != undefined && result.StripeToken != null && result.StripeToken.length > 0){
+                            callback({ success: true, message: 'checkIfHasNoPaymentMethodByUserId', result: true });
+                        }
+                        else{
+                            callback({ success: true, message: 'checkIfHasNoPaymentMethodByUserId', result: false });
+                        }
+                    }
+                    else{
+                        callback({success: false, message: 'Something went wrong while retrieving user', result: null});
+                    }
+                }                
+            })
+        }
+        else{
+            callback({success: false, message: 'You must provide an UserId to use this API function', result: null});
+        }
+    }
+
     return {
         Initialize: constructor,
         CreateUser: createUser,
@@ -238,6 +266,7 @@ function UserController(dependencies) {
         GetAllUser: getAllUser,
         EditUser: editUser,
         UpdatePaymentData: updatePaymentData,
+        CheckIfHasNoPaymentMethodByUserId: checkIfHasNoPaymentMethodByUserId,
         Entity: getEntity
     }
 }

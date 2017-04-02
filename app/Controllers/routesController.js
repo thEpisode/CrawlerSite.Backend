@@ -251,7 +251,7 @@ function Routes(dependencies) {
 
         //  (GET http://localhost:3000/api/Ip/ApiKey/[KEY])
         _apiRoutes.get('/Ip/ApiKey/:ApiKey', function (req, res) {
-            _database.Ip().GetIPByApiKey(req.params.ApiKey, function (result) {
+            _database.Ip().GetIPByApiKey(req.params, function (result) {
                 res.json({ success: true, message: 'GetIPByApiKey', result: result });
             })
         });
@@ -509,6 +509,13 @@ function Routes(dependencies) {
         // (POST http://localhost:3000/api/User/DeleteByUserId)
         _apiRoutes.post('/User/DeleteByUserId', function (req, res) {
             _database.User().DeleteByUserId(req.body, function (result) {
+                res.json(result);
+            })
+        });
+
+        // (POST http://localhost:3000/api/User/CheckIfHasNoPaymentMethod)
+        _apiRoutes.post('/User/CheckIfHasNoPaymentMethodByUserId', function (req, res) {
+            _database.User().CheckIfHasNoPaymentMethodByUserId(req.body, function (result) {
                 res.json(result);
             })
         });
