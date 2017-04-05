@@ -90,9 +90,9 @@ function Socket(dependencies) {
                                     ratServiceNamespace.in(data.Values.RoomId).emit('Coplest.Flinger.Rat', { Command: 'TakeMyUserSocketId#Response', Values: { UserSocketId: data.Values.SocketId } });
                                 case 'SetRATEngine#Request':
                                     _console.log('_ratServiceNamespace Coplest.Flinger.RAT SetRATEngine#Request', 'socket-message');
-                                    ratServiceNamespace.emit('Coplest.Flinger.RAT', { Command: 'PrintCursor#Request', Values: { Size: 'normal' } })
-                                    socket.in(data.Values.RoomId).emit('Coplest.Flinger.RAT', { Command: 'SetInitialPositionCursor#Request', Values: { X: 0, Y: 0 } })
-                                    socket.in(data.Values.RoomId).emit('Coplest.Flinger.RAT', { Command: 'SetScreenshotInterval#Request', Values: { Interval: 500 } })
+                                    ratServiceNamespace.to(data.Values.RoomId).emit('Coplest.Flinger.RAT', { Command: 'PrintCursor#Request', Values: { Size: 'normal' } })
+                                    ratServiceNamespace.to(data.Values.RoomId).emit('Coplest.Flinger.RAT', { Command: 'SetInitialPositionCursor#Request', Values: { X: 0, Y: 0 } })
+                                    ratServiceNamespace.to(data.Values.RoomId).emit('Coplest.Flinger.RAT', { Command: 'SetScreenshotInterval#Request', Values: { Interval: 500 } })
                                     break;
                                 default:
                                     break;
