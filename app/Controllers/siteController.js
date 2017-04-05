@@ -803,28 +803,30 @@ function SiteController(dependencies) {
         });
     }
 
-    var increaseRATTimeByApiKey = function (data, callback) {
+    var increaseRATTimeByApiKey = function (data, callback) {   
         _entity.GetModel().findOne({ "ApiKey": data.ApiKey }, function (err, result) {
             if (err) {
                 console.log(err);
                 callback({ success: false, message: 'Something went wrong when updating insights, try again.', result: null });
             }
             else {
-                _entity.GetModel().findOneAndUpdate({ "ApiKey": data.ApiKey },
-                    {
-                        $set:
+                if (result != undefined && result != null) {
+                    _entity.GetModel().findOneAndUpdate({ "ApiKey": data.ApiKey },
                         {
-                            'Insights.RAT.SecondUsedLifeTime': ++(result.Insights.RAT.SecondUsedLifeTime),
-                            'Insights.RAT.SecondUsedPerMonth': ++(result.Insights.RAT.SecondUsedPerMonth),
-                        }
-                    }, { upsert: false }, function (err, result) {
-                        if (err) {
-                            console.log(err);
-                            callback({ success: false, message: 'Something went wrong when updating insights, try again.', result: null });
-                        }
-                        //console.log(result.Insights.Heatmaps)
-                        callback({ success: true, message: 'IncreaseUsersOnlineRAT', result: result });
-                    });
+                            $set:
+                            {
+                                'Insights.RAT.SecondUsedLifeTime': ++(result.Insights.RAT.SecondUsedLifeTime),
+                                'Insights.RAT.SecondUsedPerMonth': ++(result.Insights.RAT.SecondUsedPerMonth),
+                            }
+                        }, { upsert: false }, function (err, result) {
+                            if (err) {
+                                console.log(err);
+                                callback({ success: false, message: 'Something went wrong when updating insights, try again.', result: null });
+                            }
+                            //console.log(result.Insights.Heatmaps)
+                            callback({ success: true, message: 'IncreaseUsersOnlineRAT', result: result });
+                        });
+                }
             }
         });
     }
@@ -1812,33 +1814,33 @@ function SiteController(dependencies) {
             }
             else {
                 if (siteResult != undefined && siteResult != null) {
-                    if(siteResult.UsersId.length > 0){
-                        _database.User().GetUserById(siteResult.UsersId[0], function(userResult){
-                            if(userResult != undefined && userResult != null){
-                                if(siteResult.Insights.Heatmaps.PageViewsPerMonth <= parseInt(userResult.CurrentPlan.metadata.maxPageviews)){
+                    if (siteResult.UsersId.length > 0) {
+                        _database.User().GetUserById(siteResult.UsersId[0], function (userResult) {
+                            if (userResult != undefined && userResult != null) {
+                                if (siteResult.Insights.Heatmaps.PageViewsPerMonth <= parseInt(userResult.CurrentPlan.metadata.maxPageviews)) {
                                     callback({ success: true, message: 'CheckIfCanUseHeatmaps', result: true });
                                 }
-                                else{
+                                else {
                                     callback({ success: true, message: 'CheckIfCanUseHeatmaps', result: false });
                                 }
                             }
-                            else{
+                            else {
                                 callback({ success: false, message: 'Something went wrong while retrieving data', result: null });
                             }
                         })
                     }
-                    else{
+                    else {
                         callback({ success: false, message: 'Something went wrong while retrieving data', result: null });
                     }
                 }
-                else{
+                else {
                     callback({ success: false, message: 'Something went wrong while retrieving data', result: null });
                 }
             }
         })
 
-        
-        
+
+
     }
 
     var getEntity = function () {

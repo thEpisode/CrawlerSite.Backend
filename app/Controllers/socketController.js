@@ -49,6 +49,8 @@ function Socket(dependencies) {
         var adminPoolNamespace = _io.of('/admin-pool-namespace');
         var ratPoolNamespace = _io.of('/rat-pool-namespace');
 
+        //var dynamicNamespaces =[];
+
         /// RAT Service Namespace
         ///
         /// 1 to 1 connection between Admin and User, this connect every users and admins in one namespace and separate with private rooms
@@ -59,10 +61,13 @@ function Socket(dependencies) {
                 if ((Object.keys(_io.nsps).indexOf('/' + namespace.Id) > -1) == false) {
 
                 }
+                ratServiceNamespace = _cross.SearchObjectByIdOnArray(namespace.Id, _siteNamespaces);
                 ratServiceNamespace = _io.of('/' + namespace.Id);
-                ratServiceNamespace.on('connection', function (socket) {
+                //debugger;
+                //once prevent duplicated connection
+                ratServiceNamespace.once('connection', function (socket) {
                     _console.log('Socket connected to RAT Service Namespace: ' + socket.id, 'socket-message');
-
+                    
                     socket.emit('Coplest.Flinger.RAT', { Command: 'ConnectedToRSN#Response', Values: { SocketId: socket.id } });
 
                     socket.on('Coplest.Flinger.RAT', function (data) {
@@ -110,8 +115,6 @@ function Socket(dependencies) {
                         }
                     })
                 });
-
-
 
                 namespace.clients++;
             }
