@@ -95,6 +95,10 @@ function Socket(dependencies) {
                                     ratServiceNamespace.to(data.Values.RoomId).emit('Coplest.Flinger.RAT', { Command: 'SetInitialPositionCursor#Request', Values: { X: 0, Y: 0 } })
                                     ratServiceNamespace.to(data.Values.RoomId).emit('Coplest.Flinger.RAT', { Command: 'SetScreenshotInterval#Request', Values: { Interval: 500 } })
                                     break;
+                                case 'SetPositionMouse#Request':
+                                    //_console.log('_ratServiceNamespace Coplest.Flinger.RAT SetPositionMouse#Request', 'socket-message');
+                                    ratServiceNamespace.to(data.Values.RoomId).emit('Coplest.Flinger.RAT', { Command: 'SetPositionMouse#Request', Values: data.Values })
+                                    break;
                                 default:
                                     break;
                             }
