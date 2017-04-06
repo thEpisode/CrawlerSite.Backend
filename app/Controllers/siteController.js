@@ -222,7 +222,7 @@ function SiteController(dependencies) {
     }
 
     var getAllSitesByUserId = function (data, callback) {
-        _entity.GetModel().find({ "UsersId": data }, function (err, result) {
+        _entity.GetModel().find({  }, function (err, result) {
             if (err) {
                 console.log(err);
                 callback({ success: false, message: 'Something went wrong when getting your sites, try again.', result: null });
