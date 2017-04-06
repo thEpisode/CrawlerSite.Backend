@@ -1,7 +1,7 @@
 {
     "FlingerSecretJWT": "DremindIsCool",
     "MongoConnectionString": "mongodb://127.0.0.1:27017/Flinger",
-    "MongoConnectionString": "mongodb://mongo-test-crawler:hQPEFKiogk5AXcRW2Bj9kselbmMWoxWkQcKhrnk0TziNDi62X2uxu1kShI9Q9jxasdhwLIzCY1ueDLlBzWSs9g==@mongo-test-crawler.documents.azure.com:10250/?ssl=true",
+    "MongoConnectionString": "mongodb://crawlersite-db:THqka1w2FpfhcZVONWM36MnsAIrS72KjOgp5Ywlr3i7Kvrodjr1nhcr8slEvJLlTLSIzSmPI6yPl8FTU5ABy9w==@crawlersite-db.documents.azure.com:10250/?ssl=true",
     "MailUser": "info@akeog.com",
     "MailPassword": "7pzS/%JEkJ#B4?\\t",
     "MailDomain": "smtp.office365.com",
