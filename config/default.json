@@ -1,7 +1,6 @@
 {
     "FlingerSecretJWT": "DremindIsCool",
     "MongoConnectionString": "mongodb://127.0.0.1:27017/Flinger",
-    "MongoConnectionString": "mongodb://crawlersite-db:THqka1w2FpfhcZVONWM36MnsAIrS72KjOgp5Ywlr3i7Kvrodjr1nhcr8slEvJLlTLSIzSmPI6yPl8FTU5ABy9w==@crawlersite-db.documents.azure.com:10250/?ssl=true",
     "MailUser": "info@akeog.com",
     "MailPassword": "7pzS/%JEkJ#B4?\\t",
     "MailDomain": "smtp.office365.com",
