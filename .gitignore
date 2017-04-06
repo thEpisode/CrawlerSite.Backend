@@ -38,3 +38,4 @@ jspm_packages
 
 # Config files
 default.json
+config/default.json
