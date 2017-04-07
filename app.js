@@ -77,8 +77,18 @@ String.prototype.replaceAll = function (search, replacement) {
 // use body parser so we can get info from POST and/or URL parameters
 app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
 app.use(bodyParser.json()); // support json encoded bodies
-app.use(cors());
-
+// Settings for CORS
+app.use(cors({
+    'allowedHeaders': ['x-access-token', 'Content-Type'],
+    'exposedHeaders': ['x-access-token'],
+    'origin': '*',
+    'methods': 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    'preflightContinue': false,
+    'credentials': true
+}));
+app.options('*', cors())
+io.origins('*:*');
+io.set('origins', '*:*');
 // =======================
 // initialize modules =========
 // =======================
@@ -94,5 +104,5 @@ mainServer.Initialize(function () {
 // =======================
 // listening app =========
 // =======================
-io.listen(app.listen(cross.NormalizePort(process.env.PORT || port)));
+io.listen(app.listen(cross.NormalizePort(process.env.PORT || port)), { origins: '*' });
 console.log(dependencies.colors.green(' Flinger: ') + 'Listening on port ' + port);

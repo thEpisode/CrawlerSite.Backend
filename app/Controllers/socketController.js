@@ -99,6 +99,10 @@ function Socket(dependencies) {
                                     //_console.log('_ratServiceNamespace Coplest.Flinger.RAT SetPositionMouse#Request', 'socket-message');
                                     ratServiceNamespace.to(data.Values.RoomId).emit('Coplest.Flinger.RAT', { Command: 'SetPositionMouse#Request', Values: data.Values })
                                     break;
+                                case 'SetScrollDelta#Request':
+                                    //_console.log('_ratServiceNamespace Coplest.Flinger.RAT SetScrollDelta#Request', 'socket-message');
+                                    ratServiceNamespace.to(data.Values.RoomId).emit('Coplest.Flinger.RAT', { Command: 'SetScrollDelta#Request', Values: data.Values })
+                                    break;
                                 default:
                                     break;
                             }
