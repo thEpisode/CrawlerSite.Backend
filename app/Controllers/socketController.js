@@ -89,6 +89,10 @@ function Socket(dependencies) {
                                     _console.log('_ratServiceNamespace Coplest.Flinger.RAT TakeMyUserSocketId#Request', 'socket-message');
                                     ratServiceNamespace.in(data.Values.RoomId).emit('Coplest.Flinger.RAT', { Command: 'TakeMyUserSocketId#Response', Values: { RoomId: data.Values.RoomId } });
                                     break;
+                                case 'UserDenyControl#Response':
+                                    _console.log('_ratServiceNamespace Coplest.Flinger.RAT UserDenyControl#Request', 'socket-message');
+                                    ratServiceNamespace.in(data.Values.RoomId).emit('Coplest.Flinger.RAT', { Command: 'UserDenyControl#Response', Values: { RoomId: data.Values.RoomId } });
+                                    break;
                                 case 'UserAllowControl#Response':
                                     _console.log('_ratServiceNamespace Coplest.Flinger.RAT UserAllowControl#Request', 'socket-message');
                                     ratServiceNamespace.in(data.Values.RoomId).emit('Coplest.Flinger.RAT', { Command: 'UserAllowControl#Response', Values: { RoomId: data.Values.RoomId } });
