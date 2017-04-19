@@ -87,7 +87,16 @@ function Socket(dependencies) {
                                     break;
                                 case 'TakeMyUserSocketId#Request':
                                     _console.log('_ratServiceNamespace Coplest.Flinger.RAT TakeMyUserSocketId#Request', 'socket-message');
-                                    ratServiceNamespace.in(data.Values.RoomId).emit('Coplest.Flinger.Rat', { Command: 'TakeMyUserSocketId#Response', Values: { UserSocketId: data.Values.SocketId } });
+                                    ratServiceNamespace.in(data.Values.RoomId).emit('Coplest.Flinger.RAT', { Command: 'TakeMyUserSocketId#Response', Values: { RoomId: data.Values.RoomId } });
+                                    break;
+                                case 'UserAllowControl#Response':
+                                    _console.log('_ratServiceNamespace Coplest.Flinger.RAT UserAllowControl#Request', 'socket-message');
+                                    ratServiceNamespace.in(data.Values.RoomId).emit('Coplest.Flinger.RAT', { Command: 'UserAllowControl#Response', Values: { RoomId: data.Values.RoomId } });
+                                    break;
+                                case 'AdminAllowControl#Request':
+                                    _console.log('_ratServiceNamespace Coplest.Flinger.RAT AllowControl#Request', 'socket-message');
+                                    ratServiceNamespace.to(data.Values.RoomId).emit('Coplest.Flinger.RAT', { Command: 'AllowControl#Request', Values: { RoomId: data.Values.RoomId } });
+                                    break;
                                 case 'SetRATEngine#Request':
                                     _console.log('_ratServiceNamespace Coplest.Flinger.RAT SetRATEngine#Request', 'socket-message');
                                     ratServiceNamespace.to(data.Values.RoomId).emit('Coplest.Flinger.RAT', { Command: 'HideRealCursor#Request', Values: { } })
