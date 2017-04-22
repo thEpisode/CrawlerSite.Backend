@@ -67,7 +67,7 @@ function Socket(dependencies) {
                 //once prevent duplicated connection
                 ratServiceNamespace.once('connection', function (socket) {
                     _console.log('Socket connected to RAT Service Namespace: ' + socket.id, 'socket-message');
-                    
+
                     socket.emit('Coplest.Flinger.RAT', { Command: 'ConnectedToRSN#Response', Values: { SocketId: socket.id } });
 
                     socket.on('Coplest.Flinger.RAT', function (data) {
@@ -103,7 +103,7 @@ function Socket(dependencies) {
                                     break;
                                 case 'SetRATEngine#Request':
                                     _console.log('_ratServiceNamespace Coplest.Flinger.RAT SetRATEngine#Request', 'socket-message');
-                                    ratServiceNamespace.to(data.Values.RoomId).emit('Coplest.Flinger.RAT', { Command: 'HideRealCursor#Request', Values: { } })
+                                    ratServiceNamespace.to(data.Values.RoomId).emit('Coplest.Flinger.RAT', { Command: 'HideRealCursor#Request', Values: {} })
                                     ratServiceNamespace.to(data.Values.RoomId).emit('Coplest.Flinger.RAT', { Command: 'PrintCursor#Request', Values: { Size: 'normal' } })
                                     ratServiceNamespace.to(data.Values.RoomId).emit('Coplest.Flinger.RAT', { Command: 'SetInitialPositionCursor#Request', Values: { X: 0, Y: 0 } })
                                     ratServiceNamespace.to(data.Values.RoomId).emit('Coplest.Flinger.RAT', { Command: 'SetScreenshotInterval#Request', Values: { Interval: 1000 } })
@@ -234,7 +234,14 @@ function Socket(dependencies) {
                                 //console.log(_io.sockets.connected[keys[index]].ApiKey)
                                 if (_io.sockets.connected[keys[index]].ApiKey !== undefined) {
                                     if (_io.sockets.connected[keys[index]].ApiKey == data.Values.ApiKey) {
-                                        connectedSockets.push({ SocketId: _io.sockets.connected[keys[index]].id, ApiKey: data.Values.ApiKey })
+                                        try{
+                                            var socketClientInformation = JSON.parse(_io.sockets.connected[keys[index]].handshake.query.ClientInformation);
+                                            connectedSockets.push({ SocketId: _io.sockets.connected[keys[index]].id, ApiKey: data.Values.ApiKey, ClientInformation: socketClientInformation })
+                                        }
+                                        catch(e){
+                                            _console.log('Socket hasnt client information: ' + _io.sockets.connected[keys[index]].id, 'error');
+                                        }
+                                        
                                     }
                                 }
 
@@ -255,13 +262,13 @@ function Socket(dependencies) {
         ///
         /// All site Users will be connected in this pool and wait for any request
         userPoolNamespace.on('connection', function (socket) {
-            _console.log('Client connected: ' + socket.id, 'socket-message');
+            _console.log('Client connected: ' + socket.handshake.query.ClientInformation, 'socket-message');
 
             /// Add a pageview Heatmap Insights
             _database.Site().IncreasePageviewsHeatmaps({ ApiKey: socket.handshake.query.ApiKey }, function (response) { })
 
             _database.Site().IncreaseUsersOnlineRATByApiKey({ ApiKey: socket.handshake.query.ApiKey }, function (response) {
-                _usersconnectedClients.push({ SocketId: socket.id, ApiKey: socket.handshake.query.ApiKey })
+                _usersconnectedClients.push({ SocketId: socket.id, ApiKey: socket.handshake.query.ApiKey, ClientInformation: JSON.parse(socket.handshake.query.ClientInformation) })
             })
 
             /// Emit a welcome message to new connection
@@ -280,7 +287,7 @@ function Socket(dependencies) {
                     });
                 })
 
-                adminPoolNamespace.emit('Coplest.Flinger.RAT', { Command: 'UnsubscribeSocketToApiKey#Request', Values: { SocketId: socket.id, ApiKey: socket.ApiKey } });
+                adminPoolNamespace.emit('Coplest.Flinger.RAT', { Command: 'UnsubscribeSocketToApiKey#Request', Values: { SocketId: socket.id, ApiKey: socket.ApiKey, ClientInformation: JSON.parse(socket.handshake.query.ClientInformation) } });
             });
 
 
@@ -290,7 +297,7 @@ function Socket(dependencies) {
                     var connectedSocket = _io.sockets.connected[socket.id.split('#')[1]];
                     connectedSocket.ApiKey = data.ApiKey;
 
-                    adminPoolNamespace.emit('Coplest.Flinger.RAT', { Command: 'SubscribeSocketToApiKey#Request', Values: { SocketId: socket.id.split('#')[1], ApiKey: data.ApiKey } });
+                    adminPoolNamespace.emit('Coplest.Flinger.RAT', { Command: 'SubscribeSocketToApiKey#Request', Values: { SocketId: socket.id.split('#')[1], ApiKey: data.ApiKey, ClientInformation: JSON.parse(socket.handshake.query.ClientInformation) } });
                 }
             })
 
