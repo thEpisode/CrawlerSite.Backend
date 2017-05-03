@@ -25,7 +25,7 @@ function User(dependencies) {
             Admin: 0,
             Viewer: 1
         }
-
+ 
         _model = _mongoose.model('User', new _schema(
             {
                 _id: _schema.Types.ObjectId,
