@@ -48,8 +48,7 @@ function User(dependencies) {
                 Settings: [_schema.Types.Mixed],
                 ChangePasswordNextLogin: Boolean,
                 HasInvitationCode: Boolean,
-                InvitationCode: String,
-
+                ReferCode: String,
             },
             { timestamps: { createdAt: 'created_at' }, minimize: false, collection: 'User' }
         ));
