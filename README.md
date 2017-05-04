@@ -1,8 +1,8 @@
-# Flinger
+# Crawler Site [ ![Codeship Status for CrawlerSite/CrawlerSite.Backend](https://app.codeship.com/projects/7bcc6350-1248-0135-9dbc-4a1a20133278/status?branch=master)](https://app.codeship.com/projects/217002)
 easy way to truly understand your web and mobile site visitors. 
 
 ## Developing Mode
-You need execute some steps to develop in this project. Remember if you want to develop on Flinger (Fron and back) you need run first this project
+You need execute some steps to develop in this project. Remember if you want to develop on Crawler Site (Fron and back) you need run first this project
 
 ### Install MongoDB
 
@@ -23,8 +23,8 @@ Second, Now you need execute a Console in this path and execute following comman
 Create a file named "default.json" on /config/ folder
 
 {
-    "FlingerSecretJWT": "DremindIsCool",
-    "MongoConnectionString": "mongodb://127.0.0.1:27017/Flinger",
+    "Crawler SiteSecretJWT": "DremindIsCool",
+    "MongoConnectionString": "mongodb://127.0.0.1:27017/Crawler Site",
     "MailUser": "info@akeog.com",
     "MailPassword": "7pzS/%JEkJ#B4?\\t",
     "MailDomain": "smtp.office365.com",
