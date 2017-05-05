@@ -17,11 +17,14 @@ function SubscriptionController(dependencies) {
 
         var subscription = new _entity.GetModel()(
             {
-                Feature: data.Feature,
-                Subscription: data.Subscription,
-                Type: data.Type,
-                Description: data.Description,
-                State: data.State
+                CustomerId: data.CustomerId,
+                PlanId: data.PlanId,
+                CurrentPlan: data.CurrentPlan,
+                SubscriptionId: data.SubscriptionId,
+                State: _entity.GetStates().Active,
+                UsersId: [],
+                SitesId: [],
+                CreditCard: data.CreditCard._id,
             });
 
         subscription.save().then(function (err, result) {

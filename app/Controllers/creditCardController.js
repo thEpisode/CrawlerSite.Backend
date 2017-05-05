@@ -17,11 +17,10 @@ function CreditCardController(dependencies) {
 
         var creditCard = new _entity.GetModel()(
             {
-                Feature: data.Feature,
-                CreditCard: data.CreditCard,
-                Type: data.Type,
-                Description: data.Description,
-                State: data.State
+                CreditCardToken: data.CreditCardToken,
+                FirstNameCard: data.FirstNameCard,
+                LastNameCard: data.LastNameCard,
+                State: _entity.GetStates().Active,
             });
 
         creditCard.save().then(function (result) {
