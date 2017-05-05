@@ -21,6 +21,8 @@ function Database(dependencies) {
     var _frontendReview;
     var _grid;
     var _gridfs;
+    var _creditCard;
+    var _subscription;
 
     var constructor = function (callback) {
         _mongoose = dependencies.mongoose;
@@ -112,6 +114,13 @@ function Database(dependencies) {
 
         _user = require('./userController')(dependencies);
         _user.Initialize();
+
+        _creditCard = require('./creditCardController.js')(dependencies);
+        _creditCard.Initialize();
+        dependencies.CreditCardController = _creditCard;
+
+        _subscription = require('./subscriptionController.js')(dependencies);
+        _subscription.Initialize();
 
         _frontendReview = require('./frontendReviewController')(dependencies);
         _frontendReview.Initialize();
