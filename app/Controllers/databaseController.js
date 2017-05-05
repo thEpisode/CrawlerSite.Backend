@@ -172,6 +172,14 @@ function Database(dependencies) {
         return _frontendReview;
     }
 
+    var getCreditCardController = function(){
+        return _creditCard;
+    }
+
+    var getSubscriptionController = function(){
+        return _subscription;
+    }
+
     return {
         Initialize: constructor,
         IsConnected: isConnected,
@@ -185,6 +193,8 @@ function Database(dependencies) {
         Site: getSiteController,
         User: getUserController,
         FrontEndReview: getFrontEndReviewController,
+        GetCreditCardController: getCreditCardController,
+        GetSubscriptionController: getSubscriptionController,
         GetGridFS: getGridFS
     }
 }

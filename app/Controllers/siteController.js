@@ -21,7 +21,7 @@ function SiteController(dependencies) {
 
         var site = new _entity.GetModel()(
             {
-                UsersId: data.UsersId,
+                //UsersId: data.UsersId,
                 Name: data.Name,
                 Url: data.Url,
                 Tags: data.Tags,
@@ -172,9 +172,23 @@ function SiteController(dependencies) {
                 }
             });
 
-        site.save().then(function (result) {
-            // When database return a result call the return
-            callback(result);
+        site.save().then(function (siteResult) {
+            _database.GetSubscriptionController().GetSubscriptionByUserId({ UserId: data.UserId }, function (subscriptionResult) {
+                if (subscriptionResult !== undefined && subscriptionResult !== null) {
+                    _database.GetSubscriptionController().AddSiteToSubscription({SubscriptionId: subscriptionResult._id, SiteId: siteResult._id}, function(addUserToSubscriptionResult){
+                        if(addUserToSubscriptionResult !== undefined && addUserToSubscriptionResult !== null){
+                            callback({ success: true, message: 'CreateSite', result: siteResult });
+                        }
+                        else{
+                            callback({ success: false, message: addUserToSubscriptionResult.message, result: null });
+                        }
+                    })
+                }
+                else{
+                    callback({ success: false, message: subscriptionResult.message, result: null });
+                }
+            });
+
         })
     }
 
@@ -234,10 +248,8 @@ function SiteController(dependencies) {
     }
 
     var addUserToSite = function (data, callback) {
-        _entity.GetModel().findOneAndUpdate({ "_id": data.SiteId }, { $push: { "UsersId": data.UserId } }, { safe: true, upsert: false }, function (err, result) {
-            if (err) console.log(err);
-
-            callback(result)
+        _database.GetSubscriptionController().AddUserToSubscription(data, function (result) {
+            callback(result);
         })
     }
 
