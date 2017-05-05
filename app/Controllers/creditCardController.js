@@ -31,6 +31,32 @@ function CreditCardController(dependencies) {
         })
     }
 
+    var editCreditCard = function (data, callback) {
+        _entity.GetModel().findOneAndUpdate(
+            { "_id": data._id },
+            {
+                $set:
+                {
+                    CreditCardToken: data.CreditCardToken,
+                    FirstNameCard: data.FirstNameCard,
+                    LastNameCard: data.LastNameCard,
+                    State: data.State
+                }
+            },
+            {
+                upsert: false
+            },
+            function (err, result) {
+                if (err) {
+                    console.log(err);
+                    callback({ success: false, message: 'Something went wrong when editing your credit card, try again.', result: null });
+                }
+                else {
+                    callback({ success: true, message: 'EditCreditCard', result: result });
+                }
+            });
+    }
+
     var deleteCreditCard = function (data, callback) {
         _entity.GetModel().findOneAndRemove(data, function (err, result) {
             if (err) {
@@ -86,6 +112,7 @@ function CreditCardController(dependencies) {
     return {
         Initialize: constructor,
         CreateCreditCard: createCreditCard,
+        EditCreditCard: editCreditCard,
         DeleteCreditCard: deleteCreditCard,
         GetCreditCardById: getCreditCardById,
         GetCreditCardByFeature: getCreditCardByFeature,

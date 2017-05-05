@@ -14,7 +14,6 @@ function SubscriptionController(dependencies) {
     }
 
     var createSubscription = function (data, callback) {
-
         var subscription = new _entity.GetModel()(
             {
                 _id: _mongoose.Types.ObjectId(),
@@ -34,6 +33,33 @@ function SubscriptionController(dependencies) {
             console.log(err);
             callback({ success: false, message: 'Something went wrong when creating your subscription, try again.', result: null });
         });
+    }
+
+    var editSubscription = function (data, callback) {
+        _entity.GetModel().findOneAndUpdate(
+            { "_id": data._id },
+            {
+                $set:
+                {
+                    CustomerId: data.CustomerId,
+                    PlanId: data.PlanId,
+                    CurrentPlan: data.CurrentPlan,
+                    SubscriptionId: data.SubscriptionId,
+                    State: data.State
+                }
+            },
+            {
+                upsert: false
+            },
+            function (err, result) {
+                if (err) {
+                    console.log(err);
+                    callback({ success: false, message: 'Something went wrong when editing your credit card, try again.', result: null });
+                }
+                else {
+                    callback({ success: true, message: 'EditSubscription', result: result });
+                }
+            });
     }
 
     var deleteSubscription = function (data, callback) {
@@ -115,6 +141,7 @@ function SubscriptionController(dependencies) {
     return {
         Initialize: constructor,
         CreateSubscription: createSubscription,
+        EditSubscription: editSubscription,
         DeleteSubscription: deleteSubscription,
         GetSubscriptionById: getSubscriptionById,
         GetSubscriptionByUserId: getSubscriptionByUserId,

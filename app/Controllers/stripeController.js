@@ -161,6 +161,7 @@ function StripeController(dependencies) {
     }
 
     var createInitialCustomer = function (customerData, callback) {
+        //// Create a new customer with email
         _stripe.customers.create({
             email: customerData.Email,
         }, function (err, customer) {
@@ -171,6 +172,7 @@ function StripeController(dependencies) {
 
             getPlan('free', function (plan) {
                 if (plan != undefined && plan != null) {
+                    //// Create a new subscription for this customer
                     _stripe.subscriptions.create({
                         customer: customer.id,
                         plan: plan.id
@@ -232,23 +234,23 @@ function StripeController(dependencies) {
                                             callback({ success: false, message: 'Something went error occurred when subscribing customer in plan', result: null });
                                         }
 
-                                        //// Save customer on mongo
-                                        userResult.CustomerId = customer.id;
-                                        userResult.StripeToken = customerData.StripeToken;
-                                        userResult.PlanId = plan.id;
-                                        userResult.SubscriptionId = subscription.id;
-                                        userResult.FirstNameCard = customerData.Firstname;
-                                        userResult.LastNameCard = customerData.Lastname;
-                                        userResult.CurrentPlan = plan;
-
-                                        _database.User().UpdatePaymentData(userResult, function (result) {
-                                            if (result == null) {
-                                                callback({ success: false, message: 'Something went occurred wrong when update payment method, try again.', result: result });
+                                        //// Save credit card data
+                                        _database.CreditCard().EditCreditCard({ CreditCardToken: customerData.StripeToken, FirstNameCard: customerData.Firstname, LastNameCard: customerData.Lastname }, function (creditCardResult) {
+                                            if (creditCardResult !== undefined && creditCardResult.result !== null) {
+                                                //// Save subscription
+                                                _database.Subscription().EditSubscription({ CustomerId: customer.id, PlanId: plan.id, CurrentPlan: plan, SubscriptionId: subscription.id }, function (subscriptionResult) {
+                                                    if (subscriptionResult !== undefined && subscriptionResult.result !== null) {
+                                                        callback({ success: true, message: 'User saved succesfuly', result: subscriptionResult })
+                                                    }
+                                                    else {
+                                                        callback({ success: false, message: 'Something went occurred wrong when update payment method, try again.', result: null });
+                                                    }
+                                                })
                                             }
                                             else {
-                                                callback({ success: true, message: 'Payment saved succesfuly', result: result })
+                                                callback({ success: false, message: 'Something went occurred wrong when update payment method, try again.', result: null });
                                             }
-                                        })
+                                        });
                                     });
                                 }
                                 else {
@@ -272,21 +274,21 @@ function StripeController(dependencies) {
                                         callback({ success: false, message: err, result: null });
                                     }
 
-                                    //// Update customer on mongo
-                                    userResult.CustomerId = customerData.CustomerId;
-                                    userResult.StripeToken = customerData.StripeToken;
-                                    userResult.PlanId = plan.id;
-                                    userResult.SubscriptionId = subscription.id;
-                                    userResult.FirstNameCard = customerData.Firstname;
-                                    userResult.LastNameCard = customerData.Lastname;
-                                    userResult.CurrentPlan = plan;
-
-                                    _database.User().UpdatePaymentData(userResult, function (result) {
-                                        if (result == null) {
-                                            callback({ success: false, message: 'Something went occurred wrong, try again.', result: result });
+                                    //// Save credit card data
+                                    _database.CreditCard().EditCreditCard({ CreditCardToken: customerData.StripeToken, FirstNameCard: customerData.Firstname, LastNameCard: customerData.Lastname }, function (creditCardResult) {
+                                        if (creditCardResult !== undefined && creditCardResult.result !== null) {
+                                            //// Save subscription
+                                            _database.Subscription().EditSubscription({ CustomerId: customer.id, PlanId: plan.id, CurrentPlan: plan, SubscriptionId: subscription.id }, function (subscriptionResult) {
+                                                if (subscriptionResult !== undefined && subscriptionResult.result !== null) {
+                                                    callback({ success: true, message: 'User saved succesfuly', result: subscriptionResult })
+                                                }
+                                                else {
+                                                    callback({ success: false, message: 'Something went occurred wrong when update payment method, try again.', result: null });
+                                                }
+                                            })
                                         }
                                         else {
-                                            callback({ success: true, message: 'Payment saved succesfuly', result: result })
+                                            callback({ success: false, message: 'Something went occurred wrong when update payment method, try again.', result: null });
                                         }
                                     });
                                 }

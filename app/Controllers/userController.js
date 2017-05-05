@@ -192,7 +192,6 @@ function UserController(dependencies) {
     }
 
     var editUser = function (data, callback) {
-
         _entity.GetModel().findOneAndUpdate({ "_id": data._id }, { $set: { Email: data.Email, FirstName: data.FirstName, LastName: data.LastName, City: data.City, Country: data.Country } }, { upsert: false }, function (err, result) {
             if (err) {
                 console.log(err);
