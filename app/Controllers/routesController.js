@@ -715,6 +715,10 @@ function Routes(dependencies) {
             })
         });
 
+        _apiRoutes.post('/Payment/GetSubscriptionByUserId', function(req, res){
+            // Do something
+        })
+
         //  (GET http://localhost:3000/api/Plans/All)
         _apiRoutes.get('/Plans/All', function (req, res) {
             _stripe.GetAllPlans(function (result) {

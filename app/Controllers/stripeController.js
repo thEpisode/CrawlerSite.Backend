@@ -232,7 +232,7 @@ function StripeController(dependencies) {
                                 }
                                 else {
                                     //// Create a new subscription
-                                    getPlan(customerData.Plan, function (plan) {
+                                    getPlan(customerData.Plan, function (plan) { // <---- Llega nulo
                                         if (plan != undefined && plan != null) {
                                             _stripe.subscriptions.create({
                                                 customer: customer.id,
