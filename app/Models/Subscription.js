@@ -31,7 +31,9 @@ function Subscription(dependencies) {
                 CurrentPlan: _schema.Types.Mixed,
                 SubscriptionId: String,
                 State: Number,
-                CreditCard: [{ type: _schema.Types.ObjectId, ref: 'CreditCard' }]
+                UsersId: [{ type: _schema.Types.ObjectId, ref: 'User' }],
+                SitesId: [{ type: _schema.Types.ObjectId, ref: 'Site' }],
+                CreditCard: { type: _schema.Types.ObjectId, ref: 'CreditCard' },
             },
             { timestamps: { createdAt: 'created_at' }, minimize: false, collection: 'Subscription' }
         ));

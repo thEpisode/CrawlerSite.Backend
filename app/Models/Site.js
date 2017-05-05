@@ -21,7 +21,7 @@ function Site(dependencies) {
 
         _model = _mongoose.model('Site', new _schema(
             {
-                UsersId: [String],
+                //UsersId: [String],
                 Name: String,
                 Url: String,
                 Tags: [String],
