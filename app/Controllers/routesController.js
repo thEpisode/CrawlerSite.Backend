@@ -436,8 +436,8 @@ function Routes(dependencies) {
 
         //  (GET http://localhost:3000/api/Site/UserId)
         _apiRoutes.get('/Site/AddUserToSite/Site/:SiteId/User/:UserId', function (req, res) {
-            _database.Site().AddUserToSite({ SiteId: req.params.SiteId, UserId: req.params.UserId }, function (result) {
-                res.json({ success: true, message: 'UserId', result: result });
+            _database.Subscription().AddUserToSubscription({ SubscriptionId: req.params.SubscriptionId, UserId: req.params.UserId }, function (result) {
+                res.json(result);
             })
         });
 

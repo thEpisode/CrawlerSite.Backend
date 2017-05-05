@@ -247,12 +247,6 @@ function SiteController(dependencies) {
         })
     }
 
-    var addUserToSite = function (data, callback) {
-        _database.GetSubscriptionController().AddUserToSubscription(data, function (result) {
-            callback(result);
-        })
-    }
-
     var editSite = function (data, callback) {
         _entity.GetModel().findOneAndUpdate({ "_id": data._id }, { $set: { Url: data.Url, Name: data.Name, Tags: data.Tags } }, { upsert: false }, function (err, result) {
             if (err) {
@@ -1868,7 +1862,6 @@ function SiteController(dependencies) {
         GetSiteByApiKey: getSiteByApiKey,
         GetAllSite: getAllSite,
         GetAllSitesByUserId: getAllSitesByUserId,
-        AddUserToSite: addUserToSite,
         EditSite: editSite,
         WebCrawling: webCrawling,
         AddScreenshotToChild: addScreenshotToChild,

@@ -103,7 +103,7 @@ function SubscriptionController(dependencies) {
                 callback({ success: false, message: 'Something went wrong when adding your new site to your subscription, try again.', result: null });
             }
             else {
-                callback({ success: true, message: 'AddUserToSubscription', result: result });
+                callback({ success: true, message: 'AddSiteToSubscription', result: result });
             }
         });
     }

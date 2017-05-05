@@ -193,8 +193,8 @@ function Database(dependencies) {
         Site: getSiteController,
         User: getUserController,
         FrontEndReview: getFrontEndReviewController,
-        GetCreditCardController: getCreditCardController,
-        GetSubscriptionController: getSubscriptionController,
+        CreditCard: getCreditCardController,
+        Subscription: getSubscriptionController,
         GetGridFS: getGridFS
     }
 }
