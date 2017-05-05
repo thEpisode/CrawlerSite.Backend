@@ -182,19 +182,19 @@ function StripeController(dependencies) {
 
                         //// Save credit card data
                         _database.CreditCard().CreateCreditCard({ CreditCardToken: null, FirstNameCard: null, LastNameCard: null }, function (creditCardResult) {
-                            if (creditCardResult !== undefined && creditCardResult !== null) {
+                            if (creditCardResult !== undefined && creditCardResult.result !== null) {
                                 //// Save subscription
-                                _database.Subscription.CreateSubscription({ CustomerId: customer.id, PlanId: plan.id, CurrentPlan: plan, SubscriptionId: subscription.id }, function(subscriptionResult){
-                                    if(subscriptionResult !== undefined && subscriptionResult !== null){
-                                        callback({ success: true, message: 'User saved succesfuly', result: result })
+                                _database.Subscription().CreateSubscription({ CustomerId: customer.id, PlanId: plan.id, CurrentPlan: plan, SubscriptionId: subscription.id, CreditCard: creditCardResult.result }, function (subscriptionResult) {
+                                    if (subscriptionResult !== undefined && subscriptionResult.result !== null) {
+                                        callback({ success: true, message: 'User saved succesfuly', result: subscriptionResult })
                                     }
-                                    else{
-                                        callback({ success: false, message: 'Something went occurred wrong when update payment method, try again.', result: result });
+                                    else {
+                                        callback({ success: false, message: 'Something went occurred wrong when update payment method, try again.', result: null });
                                     }
                                 })
                             }
-                            else{
-                                callback({ success: false, message: 'Something went occurred wrong when update payment method, try again.', result: result });
+                            else {
+                                callback({ success: false, message: 'Something went occurred wrong when update payment method, try again.', result: null });
                             }
                         });
                     });

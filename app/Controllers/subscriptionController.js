@@ -17,6 +17,7 @@ function SubscriptionController(dependencies) {
 
         var subscription = new _entity.GetModel()(
             {
+                _id: _mongoose.Types.ObjectId(),
                 CustomerId: data.CustomerId,
                 PlanId: data.PlanId,
                 CurrentPlan: data.CurrentPlan,
@@ -27,15 +28,11 @@ function SubscriptionController(dependencies) {
                 CreditCard: data.CreditCard._id,
             });
 
-        subscription.save().then(function (err, result) {
-            // When database return a result call the return
-            if (err) {
-                console.log(err);
-                callback({ success: false, message: 'Something went wrong when creating your subscription, try again.', result: null });
-            }
-            else {
-                callback({ success: true, message: 'CreateSubscription', result: result });
-            }
+        subscription.save().then(function (result) {
+            callback({ success: true, message: 'CreateSubscription', result: result });
+        }, function (err) {
+            console.log(err);
+            callback({ success: false, message: 'Something went wrong when creating your subscription, try again.', result: null });
         });
     }
 

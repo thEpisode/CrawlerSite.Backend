@@ -14,23 +14,20 @@ function CreditCardController(dependencies) {
     }
 
     var createCreditCard = function (data, callback) {
-
         var creditCard = new _entity.GetModel()(
             {
+                _id: _mongoose.Types.ObjectId(),
                 CreditCardToken: data.CreditCardToken,
                 FirstNameCard: data.FirstNameCard,
                 LastNameCard: data.LastNameCard,
                 State: _entity.GetStates().Active,
             });
 
-        creditCard.save().then(function (err, result) {
-            if (err) {
-                console.log(err);
-                callback({ success: false, message: 'Something went wrong when creating your credit card, try again.', result: null });
-            }
-            else {
-                callback({ success: true, message: 'CreateCreditCard', result: result });
-            }
+        creditCard.save().then(function (result) {
+            callback({ success: true, message: 'CreateCreditCard', result: result });
+        }, function (err) {
+            console.log(err);
+            callback({ success: false, message: 'Something went wrong when creating your credit card, try again.', result: null });
         })
     }
 

@@ -29,13 +29,6 @@ function User(dependencies) {
         _model = _mongoose.model('User', new _schema(
             {
                 _id: _schema.Types.ObjectId,
-                StripeToken: String,
-                CustomerId: String,
-                PlanId: String,
-                CurrentPlan: _schema.Types.Mixed,
-                SubscriptionId: String,
-                FirstNameCard: String,
-                LastNameCard: String,
                 FirstName: String,
                 LastName: String,
                 Email: String,

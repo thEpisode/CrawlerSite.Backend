@@ -35,13 +35,6 @@ function UserController(dependencies) {
                 var user = new _entity.GetModel()(
                     {
                         _id: _mongoose.Types.ObjectId(),
-                        StripeToken: '',
-                        CustomerId: '',
-                        PlanId: '',
-                        CurrentPlan: {},
-                        SubscriptionId: '',
-                        FirstNameCard: '',
-                        LastNameCard: '',
                         FirstName: data.FirstName,
                         LastName: data.LastName,
                         Email: data.Email,
