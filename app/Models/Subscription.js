@@ -3,6 +3,7 @@ function Subscription(dependencies) {
     /// Dependencies
     var _mongoose;
     var _schema;
+    var _creditCard;
 
     /// Properties
     var _model;
@@ -11,10 +12,15 @@ function Subscription(dependencies) {
     var constructor = function () {
         _mongoose = dependencies.mongoose;
         _schema = _mongoose.Schema;
+        _creditCard = dependencies.CreditCardController;
 
         _states = {
             Inactive: 0,
-            Active: 1
+            Active: 1,
+            Trialing: 2,
+            Past_due: 3,
+            Canceled: 4,
+            Unpaid: 5
         }
 
         _model = _mongoose.model('Subscription', new _schema(
@@ -24,7 +30,8 @@ function Subscription(dependencies) {
                 PlanId: String,
                 CurrentPlan: _schema.Types.Mixed,
                 SubscriptionId: String,
-                State: Number
+                State: Number,
+                CreditCard: [{ type: _schema.Types.ObjectId, ref: 'CreditCard' }]
             },
             { timestamps: { createdAt: 'created_at' }, minimize: false, collection: 'Subscription' }
         ));

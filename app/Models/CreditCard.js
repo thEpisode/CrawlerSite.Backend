@@ -1,4 +1,4 @@
-function Subscription(dependencies) {
+function CreditCard(dependencies) {
 
     /// Dependencies
     var _mongoose;
@@ -17,7 +17,7 @@ function Subscription(dependencies) {
             Active: 1
         }
 
-        _model = _mongoose.model('Subscription', new _schema(
+        _model = _mongoose.model('CreditCard', new _schema(
             {
                 _id: _schema.Types.ObjectId,
                 CreditCardToken: String,
@@ -25,7 +25,7 @@ function Subscription(dependencies) {
                 LastNameCard: String,
                 State: Number
             },
-            { timestamps: { createdAt: 'created_at' }, minimize: false, collection: 'Subscription' }
+            { timestamps: { createdAt: 'created_at' }, minimize: false, collection: 'CreditCard' }
         ));
     }
 
@@ -44,4 +44,4 @@ function Subscription(dependencies) {
     }
 }
 
-module.exports = Subscription;
+module.exports = CreditCard;
