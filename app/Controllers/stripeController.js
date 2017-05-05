@@ -180,23 +180,23 @@ function StripeController(dependencies) {
                             callback({ success: false, message: 'Something went error occurred when subscribing customer in plan', result: null });
                         }
 
-                        //// Save customer on mongo
-                        customerData.CustomerId = customer.id;
-                        customerData.StripeToken = null;
-                        customerData.PlanId = plan.id;
-                        customerData.SubscriptionId = subscription.id;
-                        customerData.FirstNameCard = null;
-                        customerData.LastNameCard = null;
-                        customerData.CurrentPlan = plan;
-
-                        _database.User().UpdatePaymentData(customerData, function (result) {
-                            if (result == null) {
+                        //// Save credit card data
+                        _database.CreditCard().CreateCreditCard({ CreditCardToken: null, FirstNameCard: null, LastNameCard: null }, function (creditCardResult) {
+                            if (creditCardResult !== undefined && creditCardResult !== null) {
+                                //// Save subscription
+                                _database.Subscription.CreateSubscription({ CustomerId: customer.id, PlanId: plan.id, CurrentPlan: plan, SubscriptionId: subscription.id }, function(subscriptionResult){
+                                    if(subscriptionResult !== undefined && subscriptionResult !== null){
+                                        callback({ success: true, message: 'User saved succesfuly', result: result })
+                                    }
+                                    else{
+                                        callback({ success: false, message: 'Something went occurred wrong when update payment method, try again.', result: result });
+                                    }
+                                })
+                            }
+                            else{
                                 callback({ success: false, message: 'Something went occurred wrong when update payment method, try again.', result: result });
                             }
-                            else {
-                                callback({ success: true, message: 'User saved succesfuly', result: result })
-                            }
-                        })
+                        });
                     });
                 }
             });

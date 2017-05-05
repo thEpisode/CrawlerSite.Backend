@@ -210,29 +210,6 @@ function UserController(dependencies) {
         })
     }
 
-    var updatePaymentData = function (data, callback) {
-        _entity.GetModel().findOneAndUpdate(
-            { "_id": data._id },
-            {
-                $set: {
-                    StripeToken: data.StripeToken,
-                    CustomerId: data.CustomerId,
-                    PlanId: data.PlanId,
-                    SubscriptionId: data.SubscriptionId,
-                    FirstNameCard: data.FirstNameCard,
-                    LastNameCard: data.LastNameCard,
-                    CurrentPlan: data.CurrentPlan
-                }
-            }, { upsert: false }, function (err, result) {
-                if (err) {
-                    console.log(err);
-                    callback(null);
-                }
-
-                callback(result);
-            })
-    }
-
     var checkIfHasNoPaymentMethodByUserId = function (data, callback) {
         if (data.UserId != undefined) {
             _entity.GetModel().findOne({ "_id": data.UserId }, function (err, result) {
@@ -272,7 +249,6 @@ function UserController(dependencies) {
         GetUserByCredentials: getUserByCredentials,
         GetAllUser: getAllUser,
         EditUser: editUser,
-        UpdatePaymentData: updatePaymentData,
         CheckIfHasNoPaymentMethodByUserId: checkIfHasNoPaymentMethodByUserId,
         Entity: getEntity
     }
