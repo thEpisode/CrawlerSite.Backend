@@ -380,24 +380,22 @@ function StripeController(dependencies) {
     }
 
     var getCustomerByUserId = function (customerData, callback) {
-        _database.User().GetUserById(customerData.UserId, function (userResult) {
-            if (userResult != null) {
-                _stripe.customers.retrieve(
-                    userResult.CustomerId,
-                    function (err, customer) {
-                        if (err) {
-                            console.log(err);
-                            callback({ success: false, message: 'Something went wrong when retrieving customer, try again.', result: null });
-                        }
-
-                        callback({ success: true, message: 'GetCustomerByUserId', result: customer });
+        if (customerData.CustomerId !== undefined) {
+            _stripe.customers.retrieve(
+                customerData.CustomerId,
+                function (err, customer) {
+                    if (err) {
+                        console.log(err);
+                        callback({ success: false, message: 'Something went wrong when retrieving customer, try again.', result: null });
                     }
-                );
-            }
-            else {
-                callback({ success: false, message: 'User not found, try again.', result: null });
-            }
-        });
+
+                    callback({ success: true, message: 'GetCustomerByUserId', result: customer });
+                }
+            );
+        }
+        else{
+            callback({ success: false, message: 'Please provide a customer id, try again.', result: null });
+        }
     }
 
     var getChargesByUserId = function (customerData, callback) {
