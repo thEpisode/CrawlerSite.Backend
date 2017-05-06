@@ -35,7 +35,7 @@ function Routes(dependencies) {
         _stripe = dependencies.stripeController;
         _mail = dependencies.mailController;
         _geolocate = dependencies.geolocateController;
-        _notificationHub = dependencies.notificationHub
+        _notificationHub = dependencies.notificationHub;
 
         createAPI();
 
@@ -710,13 +710,15 @@ function Routes(dependencies) {
 
         //  (POST http://localhost:3000/api/Payment/Subscription/Cancel)
         _apiRoutes.post('/Payment/Subscription/Cancel', function (req, res) {
-            _stripe.CancelSubscription()(req.body, function (result) {
+            _stripe.CancelSubscription(req.body, function (result) {
                 res.json(result);
             })
         });
 
         _apiRoutes.post('/Payment/GetSubscriptionByUserId', function(req, res){
-            // Do something
+            _database.Subscription().GetSubscriptionByUserId(req.body, function(result){
+                res.json(result);
+            })
         })
 
         //  (GET http://localhost:3000/api/Plans/All)
