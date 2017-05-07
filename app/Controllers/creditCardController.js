@@ -40,7 +40,7 @@ function CreditCardController(dependencies) {
                     CreditCardToken: data.CreditCardToken,
                     FirstNameCard: data.FirstNameCard,
                     LastNameCard: data.LastNameCard,
-                    State: data.State
+                    State: data.State == undefined ? _entity.GetStates().Active : data.State
                 }
             },
             {

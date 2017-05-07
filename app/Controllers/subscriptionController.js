@@ -19,6 +19,7 @@ function SubscriptionController(dependencies) {
         var subscription = new _entity.GetModel()(
             {
                 _id: _mongoose.Types.ObjectId(),
+                Email: data.Email,
                 CustomerId: data.CustomerId,
                 PlanId: data.PlanId,
                 CurrentPlan: data.CurrentPlan,

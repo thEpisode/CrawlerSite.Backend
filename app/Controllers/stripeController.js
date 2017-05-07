@@ -186,7 +186,7 @@ function StripeController(dependencies) {
                         _database.CreditCard().CreateCreditCard({ CreditCardToken: null, FirstNameCard: null, LastNameCard: null }, function (creditCardResult) {
                             if (creditCardResult !== undefined && creditCardResult.result !== null) {
                                 //// Save subscription
-                                _database.Subscription().CreateSubscription({ CustomerId: customer.id, PlanId: plan.id, CurrentPlan: plan, SubscriptionId: subscription.id, CreditCard: creditCardResult.result }, function (subscriptionResult) {
+                                _database.Subscription().CreateSubscription({ CustomerId: customer.id, PlanId: plan.id, CurrentPlan: plan, SubscriptionId: subscription.id, CreditCard: creditCardResult.result, Email: customerData.Email }, function (subscriptionResult) {
                                     if (subscriptionResult !== undefined && subscriptionResult.result !== null) {
                                         _database.Subscription().AddUserToSubscription({ SubscriptionId: subscriptionResult.result._id, UserId: customerData._id }, function (addUserToSubscriptionResult) {
                                             if (addUserToSubscriptionResult !== undefined && addUserToSubscriptionResult.result !== null) {
@@ -218,56 +218,40 @@ function StripeController(dependencies) {
         _database.User().GetUserByEmail(customerData.Email, function (userResult) {
             if (userResult != null) {
                 _database.Subscription().GetSubscriptionByUserId({ UserId: userResult._id }, function (subscriptionResult) {
-                    // if user has not a customer id
+                    // if user has not a credit card token
                     if (subscriptionResult.result.CreditCard.CreditCardToken == null) {
-                        /// Create a customer in Stripe
-                        _stripe.customers.update(subscriptionResult.result.CustomerId,
-                            {
-                                description: customerData.Description,
-                                source: customerData.StripeToken // obtained with Stripe.js
-                            }, function (err, customer) {
-                                if (err) {
-                                    console.log(err);
-                                    callback({ success: false, message: 'Something went error occurred when creating customer', result: null });
-                                }
-                                else {
-                                    //// Create a new subscription
-                                    getPlan(customerData.Plan, function (plan) { // <---- Llega nulo
-                                        if (plan != undefined && plan != null) {
-                                            _stripe.subscriptions.create({
-                                                customer: customer.id,
-                                                plan: plan.id
-                                            }, function (err, subscription) {
-                                                if (err) {
-                                                    console.log(err);
-                                                    callback({ success: false, message: 'Something went error occurred when subscribing customer in plan', result: null });
-                                                }
-
-                                                //// Save credit card data
-                                                _database.CreditCard().EditCreditCard({ CreditCardToken: customerData.StripeToken, FirstNameCard: customerData.Firstname, LastNameCard: customerData.Lastname }, function (creditCardResult) {
-                                                    if (creditCardResult !== undefined && creditCardResult.result !== null) {
-                                                        //// Save subscription
-                                                        _database.Subscription().EditSubscription({ CustomerId: customer.id, PlanId: plan.id, CurrentPlan: plan, SubscriptionId: subscription.id }, function (subscriptionResult) {
-                                                            if (subscriptionResult !== undefined && subscriptionResult.result !== null) {
-                                                                callback({ success: true, message: 'User saved succesfuly', result: subscriptionResult })
-                                                            }
-                                                            else {
-                                                                callback({ success: false, message: 'Something went occurred wrong when update payment method, try again.', result: null });
-                                                            }
-                                                        })
+                        getPlan(customerData.Plan, function (plan) {
+                            /// Create a customer in Stripe
+                            _stripe.customers.update(subscriptionResult.result.CustomerId,
+                                {
+                                    description: customerData.Description,
+                                    source: customerData.StripeToken // obtained with Stripe.js
+                                }, function (err, customer) {
+                                    if (err) {
+                                        console.log(err);
+                                        callback({ success: false, message: 'Something went error occurred when creating customer', result: null });
+                                    }
+                                    else {
+                                        //// Save credit card data
+                                        _database.CreditCard().EditCreditCard({ _id: subscriptionResult.result.CreditCard, CreditCardToken: customerData.StripeToken, FirstNameCard: customerData.Firstname, LastNameCard: customerData.Lastname }, function (creditCardResult) {
+                                            if (creditCardResult !== undefined && creditCardResult.result !== null) {
+                                                //// Save subscription
+                                                _database.Subscription().EditSubscription({ CustomerId: customer.id, PlanId: plan.id, CurrentPlan: plan, SubscriptionId: subscriptionResult.SubscriptionId }, function (subscriptionResult) {
+                                                    if (subscriptionResult !== undefined && subscriptionResult.result !== null) {
+                                                        callback({ success: true, message: 'User saved succesfuly', result: subscriptionResult })
                                                     }
                                                     else {
                                                         callback({ success: false, message: 'Something went occurred wrong when update payment method, try again.', result: null });
                                                     }
-                                                });
-                                            });
-                                        }
-                                        else {
-                                            callback({ success: false, message: 'Something went occurred wrong, try again.', result: result });
-                                        }
-                                    });
-                                }
-                            });
+                                                })
+                                            }
+                                            else {
+                                                callback({ success: false, message: 'Something went occurred wrong when update payment method, try again.', result: null });
+                                            }
+                                        });
+                                    }
+                                });
+                        });
                     }
                     // if exist retrieve the customer
                     else {
@@ -284,10 +268,10 @@ function StripeController(dependencies) {
                                         }
                                         else {
                                             //// Save credit card data
-                                            _database.CreditCard().EditCreditCard({ CreditCardToken: customerData.StripeToken, FirstNameCard: customerData.Firstname, LastNameCard: customerData.Lastname }, function (creditCardResult) {
+                                            _database.CreditCard().EditCreditCard({ _id: subscriptionResult.result.CreditCard, CreditCardToken: customerData.StripeToken, FirstNameCard: customerData.Firstname, LastNameCard: customerData.Lastname }, function (creditCardResult) {
                                                 if (creditCardResult !== undefined && creditCardResult.result !== null) {
                                                     //// Save subscription
-                                                    _database.Subscription().EditSubscription({ CustomerId: customer.id, PlanId: plan.id, CurrentPlan: plan, SubscriptionId: subscription.id }, function (subscriptionResult) {
+                                                    _database.Subscription().EditSubscription({ CustomerId: subscriptionResult.CustomerId, PlanId: plan.id, CurrentPlan: plan, SubscriptionId: subscriptionResult.SubscriptionId }, function (subscriptionResult) {
                                                         if (subscriptionResult !== undefined && subscriptionResult.result !== null) {
                                                             callback({ success: true, message: 'User saved succesfuly', result: subscriptionResult })
                                                         }
@@ -303,9 +287,6 @@ function StripeController(dependencies) {
                                         }
                                     }
                                 );
-                            }
-                            else {
-                                callback({ success: false, message: 'Something went occurred wrong, try again.', result: null });
                             }
                         });
                     }
@@ -393,7 +374,7 @@ function StripeController(dependencies) {
                 }
             );
         }
-        else{
+        else {
             callback({ success: false, message: 'Please provide a customer id, try again.', result: null });
         }
     }

@@ -26,6 +26,7 @@ function Subscription(dependencies) {
         _model = _mongoose.model('Subscription', new _schema(
             {
                 _id: _schema.Types.ObjectId,
+                Email: String,
                 CustomerId: String,
                 PlanId: String,
                 CurrentPlan: _schema.Types.Mixed,
