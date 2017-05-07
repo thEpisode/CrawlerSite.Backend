@@ -32,6 +32,7 @@ function CreditCardController(dependencies) {
     }
 
     var editCreditCard = function (data, callback) {
+        var creditCardState = data.State == undefined ? _entity.GetStates().Active : data.State;
         _entity.GetModel().findOneAndUpdate(
             { "_id": data._id },
             {
@@ -40,7 +41,7 @@ function CreditCardController(dependencies) {
                     CreditCardToken: data.CreditCardToken,
                     FirstNameCard: data.FirstNameCard,
                     LastNameCard: data.LastNameCard,
-                    State: data.State == undefined ? _entity.GetStates().Active : data.State
+                    State: creditCardState
                 }
             },
             {

@@ -39,6 +39,7 @@ function SubscriptionController(dependencies) {
     }
 
     var editSubscription = function (data, callback) {
+        var state = data.State == undefined ? _entity.GetStates().Active : data.state;
         _entity.GetModel().findOneAndUpdate(
             { "_id": data._id },
             {
@@ -48,7 +49,7 @@ function SubscriptionController(dependencies) {
                     PlanId: data.PlanId,
                     CurrentPlan: data.CurrentPlan,
                     SubscriptionId: data.SubscriptionId,
-                    State: data.State
+                    State: state
                 }
             },
             {
