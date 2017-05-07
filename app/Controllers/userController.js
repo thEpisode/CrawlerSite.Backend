@@ -35,13 +35,6 @@ function UserController(dependencies) {
                 var user = new _entity.GetModel()(
                     {
                         _id: _mongoose.Types.ObjectId(),
-                        StripeToken: '',
-                        CustomerId: '',
-                        PlanId: '',
-                        CurrentPlan: {},
-                        SubscriptionId: '',
-                        FirstNameCard: '',
-                        LastNameCard: '',
                         FirstName: data.FirstName,
                         LastName: data.LastName,
                         Email: data.Email,
@@ -199,7 +192,6 @@ function UserController(dependencies) {
     }
 
     var editUser = function (data, callback) {
-
         _entity.GetModel().findOneAndUpdate({ "_id": data._id }, { $set: { Email: data.Email, FirstName: data.FirstName, LastName: data.LastName, City: data.City, Country: data.Country } }, { upsert: false }, function (err, result) {
             if (err) {
                 console.log(err);
@@ -210,56 +202,7 @@ function UserController(dependencies) {
         })
     }
 
-    var updatePaymentData = function (data, callback) {
-        _entity.GetModel().findOneAndUpdate(
-            { "_id": data._id },
-            {
-                $set: {
-                    StripeToken: data.StripeToken,
-                    CustomerId: data.CustomerId,
-                    PlanId: data.PlanId,
-                    SubscriptionId: data.SubscriptionId,
-                    FirstNameCard: data.FirstNameCard,
-                    LastNameCard: data.LastNameCard,
-                    CurrentPlan: data.CurrentPlan
-                }
-            }, { upsert: false }, function (err, result) {
-                if (err) {
-                    console.log(err);
-                    callback(null);
-                }
-
-                callback(result);
-            })
-    }
-
-    var checkIfHasNoPaymentMethodByUserId = function (data, callback) {
-        if (data.UserId != undefined) {
-            _entity.GetModel().findOne({ "_id": data.UserId }, function (err, result) {
-                if (err) {
-                    console.log(err);
-
-                    callback({ success: false, message: 'Something went wrong while retrieving user', result: null });
-                }
-                else {
-                    if (result != undefined && result != null) {
-                        if (result.StripeToken != undefined && result.StripeToken != null && result.StripeToken.length > 0) {
-                            callback({ success: true, message: 'checkIfHasNoPaymentMethodByUserId', result: true });
-                        }
-                        else {
-                            callback({ success: true, message: 'checkIfHasNoPaymentMethodByUserId', result: false });
-                        }
-                    }
-                    else {
-                        callback({ success: false, message: 'Something went wrong while retrieving user', result: null });
-                    }
-                }
-            })
-        }
-        else {
-            callback({ success: false, message: 'You must provide an UserId to use this API function', result: null });
-        }
-    }
+    
 
     return {
         Initialize: constructor,
@@ -272,8 +215,6 @@ function UserController(dependencies) {
         GetUserByCredentials: getUserByCredentials,
         GetAllUser: getAllUser,
         EditUser: editUser,
-        UpdatePaymentData: updatePaymentData,
-        CheckIfHasNoPaymentMethodByUserId: checkIfHasNoPaymentMethodByUserId,
         Entity: getEntity
     }
 }

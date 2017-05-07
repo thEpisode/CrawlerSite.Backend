@@ -21,7 +21,7 @@ function SiteController(dependencies) {
 
         var site = new _entity.GetModel()(
             {
-                UsersId: data.UsersId,
+                //UsersId: data.UsersId,
                 Name: data.Name,
                 Url: data.Url,
                 Tags: data.Tags,
@@ -172,9 +172,23 @@ function SiteController(dependencies) {
                 }
             });
 
-        site.save().then(function (result) {
-            // When database return a result call the return
-            callback(result);
+        site.save().then(function (siteResult) {
+            _database.Subscription().GetSubscriptionByUserId({ UserId: data.UserId }, function (subscriptionResult) {
+                if (subscriptionResult !== undefined && subscriptionResult !== null) {
+                    _database.Subscription().AddSiteToSubscription({SubscriptionId: subscriptionResult.result._id, SiteId: siteResult._id}, function(addUserToSubscriptionResult){
+                        if(addUserToSubscriptionResult !== undefined && addUserToSubscriptionResult !== null){
+                            callback({ success: true, message: 'CreateSite', result: siteResult });
+                        }
+                        else{
+                            callback({ success: false, message: addUserToSubscriptionResult.message, result: null });
+                        }
+                    })
+                }
+                else{
+                    callback({ success: false, message: subscriptionResult.message, result: null });
+                }
+            });
+
         })
     }
 
@@ -222,22 +236,8 @@ function SiteController(dependencies) {
     }
 
     var getAllSitesByUserId = function (data, callback) {
-        _entity.GetModel().find({ "UsersId": { $elemMatch: { $eq: data.UserId } } }, function (err, result) {
-            if (err) {
-                console.log(err);
-                callback({ success: false, message: 'Something went wrong when getting your sites, try again.', result: null });
-            }
-            else {
-                callback({ success: true, message: 'GetAllSitesByUserId', result: result });
-            }
-        })
-    }
-
-    var addUserToSite = function (data, callback) {
-        _entity.GetModel().findOneAndUpdate({ "_id": data.SiteId }, { $push: { "UsersId": data.UserId } }, { safe: true, upsert: false }, function (err, result) {
-            if (err) console.log(err);
-
-            callback(result)
+        _database.Subscription().GetAllSitesOfSubscriptionByUserId(data, function (result) {
+            callback(result);
         })
     }
 
@@ -1838,9 +1838,6 @@ function SiteController(dependencies) {
                 }
             }
         })
-
-
-
     }
 
     var getEntity = function () {
@@ -1856,7 +1853,6 @@ function SiteController(dependencies) {
         GetSiteByApiKey: getSiteByApiKey,
         GetAllSite: getAllSite,
         GetAllSitesByUserId: getAllSitesByUserId,
-        AddUserToSite: addUserToSite,
         EditSite: editSite,
         WebCrawling: webCrawling,
         AddScreenshotToChild: addScreenshotToChild,

@@ -35,7 +35,7 @@ function Routes(dependencies) {
         _stripe = dependencies.stripeController;
         _mail = dependencies.mailController;
         _geolocate = dependencies.geolocateController;
-        _notificationHub = dependencies.notificationHub
+        _notificationHub = dependencies.notificationHub;
 
         createAPI();
 
@@ -409,7 +409,7 @@ function Routes(dependencies) {
         //  (POST http://localhost:3000/api/Site/Create)
         _apiRoutes.post('/Site/Create', function (req, res) {
             _database.Site().CreateSite(req.body, function (result) {
-                res.json({ success: true, message: 'CreateSite', result: result });
+                res.json(result);
             })
         });
 
@@ -436,8 +436,8 @@ function Routes(dependencies) {
 
         //  (GET http://localhost:3000/api/Site/UserId)
         _apiRoutes.get('/Site/AddUserToSite/Site/:SiteId/User/:UserId', function (req, res) {
-            _database.Site().AddUserToSite({ SiteId: req.params.SiteId, UserId: req.params.UserId }, function (result) {
-                res.json({ success: true, message: 'UserId', result: result });
+            _database.Subscription().AddUserToSubscription({ SubscriptionId: req.params.SubscriptionId, UserId: req.params.UserId }, function (result) {
+                res.json(result);
             })
         });
 
@@ -514,8 +514,8 @@ function Routes(dependencies) {
         });
 
         // (POST http://localhost:3000/api/User/CheckIfHasNoPaymentMethod)
-        _apiRoutes.post('/User/CheckIfHasNoPaymentMethodByUserId', function (req, res) {
-            _database.User().CheckIfHasNoPaymentMethodByUserId(req.body, function (result) {
+        _apiRoutes.post('/Payment/CheckIfHasNoPaymentMethodByUserId', function (req, res) {
+            _database.CreditCard().CheckIfHasNoPaymentMethodByUserId(req.body, function (result) {
                 res.json(result);
             })
         });
@@ -710,10 +710,16 @@ function Routes(dependencies) {
 
         //  (POST http://localhost:3000/api/Payment/Subscription/Cancel)
         _apiRoutes.post('/Payment/Subscription/Cancel', function (req, res) {
-            _stripe.CancelSubscription()(req.body, function (result) {
+            _stripe.CancelSubscription(req.body, function (result) {
                 res.json(result);
             })
         });
+
+        _apiRoutes.post('/Payment/GetSubscriptionByUserId', function(req, res){
+            _database.Subscription().GetSubscriptionByUserId(req.body, function(result){
+                res.json(result);
+            })
+        })
 
         //  (GET http://localhost:3000/api/Plans/All)
         _apiRoutes.get('/Plans/All', function (req, res) {
