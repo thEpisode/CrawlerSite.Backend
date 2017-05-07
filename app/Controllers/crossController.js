@@ -5,7 +5,7 @@ function Cross(dependencies) {
     var _mailgunDomain = '';
     var _stripePK = '';
 
-    var setSettings = function(){
+    var setSettings = function () {
         setFlingerSecretJWT(dependencies.config.FlingerSecretJWT);
         setMongoConnectionString(dependencies.config.MongoConnectionString);
         setMailUser(dependencies.config.MailUser);
@@ -83,11 +83,11 @@ function Cross(dependencies) {
         return _mailUser;
     }
 
-    var setMailPassword = function(password){
+    var setMailPassword = function (password) {
         _mailPassword = password;
     }
 
-    var getMailPassword = function(){
+    var getMailPassword = function () {
         return _mailPassword;
     }
 
@@ -99,28 +99,34 @@ function Cross(dependencies) {
         return _mailDomain;
     }
 
-    var setMailPort = function(port){
+    var setMailPort = function (port) {
         _mailPort = port;
     }
 
-    var getMailPort = function(port){
+    var getMailPort = function (port) {
         return _mailPort;
     }
 
-    var setMailEncryption = function(encryption){
+    var setMailEncryption = function (encryption) {
         _mailEncription = encryption
     }
 
-    var getMailEncryption = function(){
+    var getMailEncryption = function () {
         return _mailEncription;
     }
 
-    var setStripePrivateKey = function(privateKey){
+    var setStripePrivateKey = function (privateKey) {
         _stripePK = privateKey;
     }
 
-    var getStripePrivateKey = function(){
+    var getStripePrivateKey = function () {
         return _stripePK;
+    }
+
+    var randomStringGenerator = function (length, prefix) {
+        // Convert it to base 36 (numbers + letters), and grab the first 9 characters
+        // after the decimal.
+        return (prefix == undefined ? '' : prefix) + Math.random().toString(36).substr(2, (length == undefined ? 5 : length));
     }
 
     return {
@@ -136,6 +142,8 @@ function Cross(dependencies) {
         GetMailPort: getMailPort,
         GetMailEncryption: getMailEncryption,
         GetStripePrivateKey: getStripePrivateKey,
+        GetVoucherId: voucherIdGenerator,
+        GetRandomString: randomStringGenerator,
     }
 }
 

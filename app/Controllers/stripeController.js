@@ -494,6 +494,14 @@ function StripeController(dependencies) {
         });
     }
 
+    var generateDiscountVoucher = function(data, callback){'eb-'
+        _cross.RandomStringGenerator(data.voucherLength, data.prefix);
+    }
+
+    var verifyDiscountVoucher = function(data, callback){
+        // Do something
+    }
+
     return {
         Initialize: constructor,
         GetPlan: getPlan,
@@ -506,6 +514,8 @@ function StripeController(dependencies) {
         ProcessWebhook: processWebhook,
         CreateInitialCustomer: createInitialCustomer,
         CreatePlan: createPlan,
+        GenerateDiscountVoucher: generateDiscountVoucher,
+        VerifyDiscountVoucher: verifyDiscountVoucher,
     }
 }
 
