@@ -114,6 +114,18 @@ function SubscriptionController(dependencies) {
         });
     }
 
+    var getAllSitesOfSubscriptionByUserId = function (data, callback) {
+        _entity.GetModel().findOne({ "UsersId": { $elemMatch: { $eq: data.UserId } } }).populate("SitesId").exec(function (err, subscriptionResult) {
+            if (err) {
+                console.log(err);
+                callback({ success: false, message: 'Something went wrong when getting your sites, try again.', result: null });
+            }
+            else {
+                callback({ success: true, message: 'GetAllSitesOfSubscriptionByUserId', result: subscriptionResult.SitesId });
+            }
+        });
+    }
+
     var addUserToSubscription = function (data, callback) {
         _entity.GetModel().findOneAndUpdate({ "_id": data.SubscriptionId }, { $push: { "UsersId": data.UserId } }, { safe: true, upsert: false }, function (err, result) {
             if (err) {
@@ -127,7 +139,7 @@ function SubscriptionController(dependencies) {
     }
 
     var addSiteToSubscription = function (data, callback) {
-        _entity.GetModel().findOneAndUpdate({ "_id": data.SubscriptionId }, { $push: { "SitesId": { $each: data.SiteId } } }, { safe: true, upsert: false }, function (err, result) {
+        _entity.GetModel().findOneAndUpdate({ "_id": data.SubscriptionId }, { $push: { "SitesId": data.SiteId } }, { safe: true, upsert: false }, function (err, result) {
             if (err) {
                 console.log(err);
                 callback({ success: false, message: 'Something went wrong when adding your new site to your subscription, try again.', result: null });
@@ -150,6 +162,7 @@ function SubscriptionController(dependencies) {
         GetSubscriptionById: getSubscriptionById,
         GetSubscriptionByUserId: getSubscriptionByUserId,
         GetAllSubscription: getAllSubscription,
+        GetAllSitesOfSubscriptionByUserId: getAllSitesOfSubscriptionByUserId,
         AddUserToSubscription: addUserToSubscription,
         AddSiteToSubscription: addSiteToSubscription,
         Entity: getEntity

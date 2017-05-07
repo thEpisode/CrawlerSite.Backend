@@ -409,7 +409,7 @@ function Routes(dependencies) {
         //  (POST http://localhost:3000/api/Site/Create)
         _apiRoutes.post('/Site/Create', function (req, res) {
             _database.Site().CreateSite(req.body, function (result) {
-                res.json({ success: true, message: 'CreateSite', result: result });
+                res.json(result);
             })
         });
 
