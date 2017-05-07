@@ -494,12 +494,24 @@ function StripeController(dependencies) {
         });
     }
 
-    var generateDiscountVoucher = function(data, callback){'eb-'
+    var generateDiscountVoucher = function (data, callback) {
+        'eb-'
         _cross.RandomStringGenerator(data.voucherLength, data.prefix);
     }
 
-    var verifyDiscountVoucher = function(data, callback){
-        // Do something
+    var verifyDiscountVoucher = function (data, callback) {
+        _stripe.coupons.retrieve(
+            data.VoucherId,
+            function (err, coupon) {
+                if(err){
+                    // Not exist coupon
+                    callback({ success: false, message: 'Voucher not exist', result: false });
+                }
+                else{
+                    callback({ success: true, message: 'VerifyDiscountVoucher', result: true });
+                }
+            }
+        );
     }
 
     return {

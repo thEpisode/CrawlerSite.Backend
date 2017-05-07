@@ -126,7 +126,7 @@ function Cross(dependencies) {
     var randomStringGenerator = function (length, prefix) {
         // Convert it to base 36 (numbers + letters), and grab the first 9 characters
         // after the decimal.
-        return (prefix == undefined ? '' : prefix) + Math.random().toString(36).substr(2, (length == undefined ? 5 : length));
+        return (prefix == undefined ? 'csv-' : prefix) + Math.random().toString(36).substr(2, (length == undefined ? 5 : length));
     }
 
     return {
