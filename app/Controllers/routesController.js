@@ -721,6 +721,24 @@ function Routes(dependencies) {
             })
         })
 
+        _apiRoutes.post('/Payment/Voucher/VerifyVoucher', function(req, res){
+           _database.Voucher().VerifyByStripeId(req.body, function(result){
+               res.json(result)
+           });
+        });
+
+        _apiRoutes.post('/Payment/Voucher/Generate', function(req, res){
+           _database.Voucher().CreateVoucher(req.body, function(result){
+               res.json(result)
+           });
+        })
+
+        _apiRoutes.post('/Payment/Voucher/GetByStripeId', function(req, res){
+           _database.Voucher().GetVoucherByStripeId(req.body, function(result){
+               res.json(result)
+           });
+        })
+
         //  (GET http://localhost:3000/api/Plans/All)
         _apiRoutes.get('/Plans/All', function (req, res) {
             _stripe.GetAllPlans(function (result) {

@@ -514,6 +514,21 @@ function StripeController(dependencies) {
         );
     }
 
+    var getDiscountVoucher = function(data, callback){
+        _stripe.coupons.retrieve(
+            data.VoucherId,
+            function (err, coupon) {
+                if(err){
+                    // Not exist coupon
+                    callback({ success: false, message: 'Voucher not exist', result: null });
+                }
+                else{
+                    callback({ success: true, message: 'VerifyDiscountVoucher', result: coupon });
+                }
+            }
+        );
+    }
+
     return {
         Initialize: constructor,
         GetPlan: getPlan,
@@ -528,6 +543,7 @@ function StripeController(dependencies) {
         CreatePlan: createPlan,
         GenerateDiscountVoucher: generateDiscountVoucher,
         VerifyDiscountVoucher: verifyDiscountVoucher,
+        GetDiscountVoucher: getDiscountVoucher,
     }
 }
 
