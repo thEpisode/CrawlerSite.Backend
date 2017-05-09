@@ -121,10 +121,16 @@ function SubscriptionController(dependencies) {
                 callback({ success: false, message: 'Something went wrong when getting your sites, try again.', result: null });
             }
             else {
-                if(subscriptionResult !== undefined && subscriptionResult !== null){
-                    if(subscriptionResult.SitesId != undefined && subscriptionResult.SitesId !== null){
+                if (subscriptionResult !== undefined && subscriptionResult !== null) {
+                    if (subscriptionResult.SitesId != undefined && subscriptionResult.SitesId !== null) {
                         callback({ success: true, message: 'GetAllSitesOfSubscriptionByUserId', result: subscriptionResult.SitesId });
                     }
+                    else {
+                        callback({ success: false, message: 'You haven\'t sites, create one first', result: null });
+                    }
+                }
+                else {
+                    callback({ success: false, message: 'You haven\'t sites, create one first', result: null });
                 }
             }
         });

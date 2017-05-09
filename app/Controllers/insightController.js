@@ -395,137 +395,146 @@ function InsightController(dependencies) {
         if (data.UserId != undefined && data.UserId != null) {
             if (data.UserId.length > 0) {
                 _database.Site().GetAllSitesByUserId(data.UserId, function (sitesResult) {
-                    if (sitesResult.result.length > 0) {
-                        var apiKeys = [];
+                    if (sitesResult != undefined && sitesResult != null) {
+                        if (sitesResult.success === true) {
+                            if (sitesResult.result.length > 0) {
+                                var apiKeys = [];
 
-                        sitesResult.result.forEach(function (value, index) {
-                            apiKeys.push(value.ApiKey);
-                        });
+                                sitesResult.result.forEach(function (value, index) {
+                                    apiKeys.push(value.ApiKey);
+                                });
 
-                        _database.Site().GetAvailableChartsByApiKey(apiKeys[0], function (availableResult) {
-                            "use strict";
-                            if (availableResult.success == true && availableResult.result != undefined) {
-                                // simple event-driven state machine
-                                const sm = new _eventEmiter();
+                                _database.Site().GetAvailableChartsByApiKey(apiKeys[0], function (availableResult) {
+                                    "use strict";
+                                    if (availableResult.success == true && availableResult.result != undefined) {
+                                        // simple event-driven state machine
+                                        const sm = new _eventEmiter();
 
-                                let RequestCharts = availableResult.result;
+                                        let RequestCharts = availableResult.result;
 
-                                // running state
-                                let context = {
-                                    tasks: 0,    // number of total tasks
-                                    active: 0,    // number of active tasks
-                                    results: []    // task results
-                                };
+                                        // running state
+                                        let context = {
+                                            tasks: 0,    // number of total tasks
+                                            active: 0,    // number of active tasks
+                                            results: []    // task results
+                                        };
 
-                                const next = (result) => { // must be called when each task chain completes
+                                        const next = (result) => { // must be called when each task chain completes
 
-                                    if (result != undefined && result != null) { // preserve result of task chain
-                                        context.results.push(result);
+                                            if (result != undefined && result != null) { // preserve result of task chain
+                                                context.results.push(result);
+                                            }
+                                            else {
+                                                context.results.push({ success: false, message: 'Chart not available', result: result });
+                                            }
+
+                                            // decrement the number of running tasks
+                                            context.active -= 1;
+
+                                            // when all tasks complete, trigger done state
+                                            if (!context.active) {
+                                                sm.emit('done');
+                                            }
+                                        };
+
+                                        // operational states
+                                        // start state - initializes context
+                                        sm.on('start', (charts) => {
+                                            const len = charts.length;
+
+                                            if (len > 0) {
+                                                context.tasks = len;              // total number of tasks
+                                                context.active = len;             // number of active tasks
+
+                                                sm.emit('forEachCharts', charts);    // go to next state
+                                            }
+                                            else {
+                                                context.tasks = 0;
+                                                context.active = 0;
+                                                sm.emit('done');
+                                            }
+                                        });
+
+                                        // start processing of each path
+                                        sm.on('forEachCharts', (charts) => {
+                                            charts.forEach((chart) => sm.emit('getChart', chart));
+                                        });
+
+                                        // read contents from path
+                                        sm.on('getChart', (chart) => {
+                                            switch (chart.toLowerCase()) {
+                                                case 'PageViewsPerMonth'.toLowerCase():
+                                                    _database.Site().GetPageViewsHeatmapsByApiKeys({ ApiKeys: apiKeys }, function (result) {
+                                                        sm.emit('digestContent', result);
+                                                    })
+                                                    break;
+                                                case 'RATUsersOnline'.toLowerCase():
+                                                    _database.Site().GetRATUsersOnlineByApiKeys({ ApiKeys: apiKeys }, function (result) {
+                                                        sm.emit('digestContent', result);
+                                                    })
+                                                    break;
+                                                case 'WebFormsIssues'.toLowerCase():
+                                                    _database.Site().GetFormIssuesByApiKeys({ ApiKeys: apiKeys }, function (result) {
+                                                        sm.emit('digestContent', result);
+                                                    })
+                                                    break;
+                                                case 'SecondsUsedPerMonth'.toLowerCase():
+                                                    _database.Site().GetTotalSecondsRecordsByApiKeys({ ApiKeys: apiKeys }, function (result) {
+                                                        sm.emit('digestContent', result);
+                                                    })
+                                                    break;
+                                                case 'UsersBehavior'.toLowerCase():
+                                                    _database.Site().GetClientsBehaviorByApiKeys({ ApiKeys: apiKeys }, function (result) {
+                                                        sm.emit('digestContent', result);
+                                                    })
+                                                    break;
+                                                case 'WebFormsIssues'.toLowerCase():
+                                                default:
+                                                    sm.emit('digestContent', null);
+                                                    break;
+                                            }
+                                        });
+
+                                        // compute length of path contents
+                                        sm.on('digestContent', (content) => {
+                                            next(content);
+                                        });
+
+                                        // when processing is complete
+                                        sm.on('done', () => {
+                                            if (context.tasks > 0 && context.active === 0) {
+                                                callback({ success: true, message: 'GetDashboardInsightsByApiKey', result: context.results })
+                                            }
+                                            else {
+                                                callback({ success: false, message: 'GetDashboardInsightsByApiKey', result: null })
+                                            }
+                                        });
+
+                                        // error state
+                                        sm.on('error', (err) => { throw err; });
+
+                                        // ======================================================
+                                        // start processing - ok, let's go
+                                        // ======================================================
+                                        sm.emit('start', RequestCharts);
                                     }
                                     else {
-                                        context.results.push({ success: false, message: 'Chart not available', result: result });
-                                    }
-
-                                    // decrement the number of running tasks
-                                    context.active -= 1;
-
-                                    // when all tasks complete, trigger done state
-                                    if (!context.active) {
-                                        sm.emit('done');
-                                    }
-                                };
-
-                                // operational states
-                                // start state - initializes context
-                                sm.on('start', (charts) => {
-                                    const len = charts.length;
-
-                                    if (len > 0) {
-                                        context.tasks = len;              // total number of tasks
-                                        context.active = len;             // number of active tasks
-
-                                        sm.emit('forEachCharts', charts);    // go to next state
-                                    }
-                                    else {
-                                        context.tasks = 0;
-                                        context.active = 0;
-                                        sm.emit('done');
+                                        callback({ success: false, message: 'We haven\'t available charts at this moment', result: null });
                                     }
                                 });
-
-                                // start processing of each path
-                                sm.on('forEachCharts', (charts) => {
-                                    charts.forEach((chart) => sm.emit('getChart', chart));
-                                });
-
-                                // read contents from path
-                                sm.on('getChart', (chart) => {
-                                    switch (chart.toLowerCase()) {
-                                        case 'PageViewsPerMonth'.toLowerCase():
-                                            _database.Site().GetPageViewsHeatmapsByApiKeys({ ApiKeys: apiKeys }, function (result) {
-                                                sm.emit('digestContent', result);
-                                            })
-                                            break;
-                                        case 'RATUsersOnline'.toLowerCase():
-                                            _database.Site().GetRATUsersOnlineByApiKeys({ ApiKeys: apiKeys }, function (result) {
-                                                sm.emit('digestContent', result);
-                                            })
-                                            break;
-                                        case 'WebFormsIssues'.toLowerCase():
-                                            _database.Site().GetFormIssuesByApiKeys({ ApiKeys: apiKeys }, function (result) {
-                                                sm.emit('digestContent', result);
-                                            })
-                                            break;
-                                        case 'SecondsUsedPerMonth'.toLowerCase():
-                                            _database.Site().GetTotalSecondsRecordsByApiKeys({ ApiKeys: apiKeys }, function (result) {
-                                                sm.emit('digestContent', result);
-                                            })
-                                            break;
-                                        case 'UsersBehavior'.toLowerCase():
-                                            _database.Site().GetClientsBehaviorByApiKeys({ ApiKeys: apiKeys }, function (result) {
-                                                sm.emit('digestContent', result);
-                                            })
-                                            break;
-                                        case 'WebFormsIssues'.toLowerCase():
-                                        default:
-                                            sm.emit('digestContent', null);
-                                            break;
-                                    }
-                                });
-
-                                // compute length of path contents
-                                sm.on('digestContent', (content) => {
-                                    next(content);
-                                });
-
-                                // when processing is complete
-                                sm.on('done', () => {
-                                    if (context.tasks > 0 && context.active === 0) {
-                                        callback({ success: true, message: 'GetDashboardInsightsByApiKey', result: context.results })
-                                    }
-                                    else {
-                                        callback({ success: false, message: 'GetDashboardInsightsByApiKey', result: null })
-                                    }
-                                });
-
-                                // error state
-                                sm.on('error', (err) => { throw err; });
-
-                                // ======================================================
-                                // start processing - ok, let's go
-                                // ======================================================
-                                sm.emit('start', RequestCharts);
                             }
                             else {
-                                callback({ success: false, message: 'We haven\'t available charts at this moment', result: null });
+                                callback({ success: true, message: 'GetDashboardInsightsByApiKey', result: null })
                             }
-                        });
+                        }
+                        else {
+                            callback(sitesResult)
+                        }
                     }
-                    else{
-                        callback({ success: true, message: 'GetDashboardInsightsByApiKey', result: null })
+                    else {
+                        callback(sitesResult)
                     }
                 })
-
             }
             else {
                 callback({ success: false, message: 'DashboardInsightsByApiKeys', result: null })
