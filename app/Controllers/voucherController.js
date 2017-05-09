@@ -16,22 +16,24 @@ function VoucherController(dependencies) {
     }
 
     var createVoucher = function (data, callback) {
+        _stripeController.GenerateDiscountVoucher(data, function (voucher) {
+            var voucher = new _entity.GetModel()(
+                {
+                    _id: _mongoose.Types.ObjectId(),
+                    StripeData: voucher.result,
+                    State: _entity.GetStates().Unremeeded,
+                    VoucherId: voucher.result.id
+                });
 
-        var voucher = new _entity.GetModel()(
-            {
-                _id: _mongoose.Types.ObjectId(),
-                StripeData: data.StripeData,
-                State: _entity.GetStates().Unremeeded,
-                VoucherId: data.VoucherId
+            voucher.save().then(function (result) {
+                // When database return a result call the return
+                callback({ success: true, message: 'CreateVoucher', result: result });
+            }, function (err) {
+                console.log(err);
+                callback({ success: false, message: 'Something went wrong when creating your voucher, try again.', result: null });
             });
+        })
 
-        voucher.save().then(function (result) {
-            // When database return a result call the return
-            callback({ success: true, message: 'CreateVoucher', result: result });
-        }, function (err) {
-            console.log(err);
-            callback({ success: false, message: 'Something went wrong when creating your voucher, try again.', result: null });
-        });
     }
 
     var deleteVoucher = function (data, callback) {
@@ -115,11 +117,11 @@ function VoucherController(dependencies) {
                             callback(result);
                         });
                     }
-                    else{
+                    else {
                         callback({ success: false, message: 'Your voucher not exist, just copy and paste from our email.', result: null });
                     }
                 }
-                else{
+                else {
                     callback({ success: false, message: 'Your voucher not exist, just copy and paste from our email.', result: null });
                 }
             }

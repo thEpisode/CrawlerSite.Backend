@@ -495,34 +495,48 @@ function StripeController(dependencies) {
     }
 
     var generateDiscountVoucher = function (data, callback) {
-        'eb-'
-        _cross.RandomStringGenerator(data.voucherLength, data.prefix);
+        _stripe.coupons.create({
+            duration: 'once',
+            amount_off: data.Amount,
+            metadata: {
+                Email: data.Email
+            },
+            id: _cross.RandomStringGenerator(data.Length, data.Prefix),
+        }, function (err, coupon) {
+            if (err) {
+                // Not exist coupon
+                callback({ success: false, message: 'Something was wrong while creating your voucher', result: false });
+            }
+            else {
+                callback({ success: true, message: 'GenerateDiscountVoucher', result: coupon });
+            }
+        });
     }
 
     var verifyDiscountVoucher = function (data, callback) {
         _stripe.coupons.retrieve(
             data.VoucherId,
             function (err, coupon) {
-                if(err){
+                if (err) {
                     // Not exist coupon
                     callback({ success: false, message: 'Voucher not exist', result: false });
                 }
-                else{
+                else {
                     callback({ success: true, message: 'VerifyDiscountVoucher', result: true });
                 }
             }
         );
     }
 
-    var getDiscountVoucher = function(data, callback){
+    var getDiscountVoucher = function (data, callback) {
         _stripe.coupons.retrieve(
             data.VoucherId,
             function (err, coupon) {
-                if(err){
+                if (err) {
                     // Not exist coupon
                     callback({ success: false, message: 'Voucher not exist', result: null });
                 }
-                else{
+                else {
                     callback({ success: true, message: 'GetDiscountVoucher', result: coupon });
                 }
             }
