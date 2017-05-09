@@ -23,7 +23,7 @@ function Voucher(dependencies) {
         _model = _mongoose.model('Voucher', new _schema(
             {
                 _id: _schema.Types.ObjectId,
-                StripeData: String,
+                StripeData: _schema.Types.Mixed,
                 State: Number,
                 SubscriptionId: { type: _schema.Types.ObjectId, ref: 'Subscription' },
             },

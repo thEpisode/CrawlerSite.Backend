@@ -121,7 +121,11 @@ function SubscriptionController(dependencies) {
                 callback({ success: false, message: 'Something went wrong when getting your sites, try again.', result: null });
             }
             else {
-                callback({ success: true, message: 'GetAllSitesOfSubscriptionByUserId', result: subscriptionResult.SitesId });
+                if(subscriptionResult !== undefined && subscriptionResult !== null){
+                    if(subscriptionResult.SitesId != undefined && subscriptionResult.SitesId !== null){
+                        callback({ success: true, message: 'GetAllSitesOfSubscriptionByUserId', result: subscriptionResult.SitesId });
+                    }
+                }
             }
         });
     }

@@ -498,13 +498,14 @@ function StripeController(dependencies) {
         _stripe.coupons.create({
             duration: 'once',
             amount_off: data.Amount,
+            currency: data.Currency,
             metadata: {
                 Email: data.Email
             },
-            id: _cross.RandomStringGenerator(data.Length, data.Prefix),
+            id: _cross.GetRandomString(data.Length, data.Prefix),
         }, function (err, coupon) {
             if (err) {
-                // Not exist coupon
+                console.log(err)
                 callback({ success: false, message: 'Something was wrong while creating your voucher', result: false });
             }
             else {
