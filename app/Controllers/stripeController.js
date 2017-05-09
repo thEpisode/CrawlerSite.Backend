@@ -519,6 +519,7 @@ function StripeController(dependencies) {
             data.VoucherId,
             function (err, coupon) {
                 if (err) {
+                    console.log(err)
                     // Not exist coupon
                     callback({ success: false, message: 'Voucher not exist', result: false });
                 }

@@ -105,7 +105,7 @@ function VoucherController(dependencies) {
 
     var verifyByStripeId = function (data, callback) {
         /// Verify if exist in database
-        _entity.GetModel().findOne({ "StripeData.id": data.id }, function (err, voucherResult) {
+        _entity.GetModel().findOne({ "StripeData.id": data.VoucherId }, function (err, voucherResult) {
             if (err) {
                 console.log(err);
                 callback({ success: false, message: 'Something went wrong when retrieving your voucher, try again.', result: null });
@@ -113,7 +113,7 @@ function VoucherController(dependencies) {
             else {
                 if (voucherResult !== undefined && voucherResult !== null) {
                     if (voucherResult.StripeData.id !== undefined && voucherResult.StripeData.id !== null) {
-                        _stripeController.VerifyDiscountVoucher(voucherResult.StripeData.id, function (result) {
+                        _stripeController.VerifyDiscountVoucher({VoucherId: voucherResult.StripeData.id}, function (result) {
                             callback(result);
                         });
                     }
