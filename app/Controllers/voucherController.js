@@ -4,6 +4,7 @@ function VoucherController(dependencies) {
     var _mongoose;
     var _stripeController;
     var _notificationHubController;
+    var _database;
 
     /// Properties
     var _entity;
@@ -12,6 +13,7 @@ function VoucherController(dependencies) {
         _mongoose = dependencies.mongoose;
         _stripeController = dependencies.stripeController;
         _notificationHubController = dependencies.notificationHub;
+        _database = dependencies.database;
 
         _entity = require('../Models/Voucher')(dependencies);
         _entity.Initialize();
@@ -28,21 +30,9 @@ function VoucherController(dependencies) {
                 });
 
             voucher.save().then(function (result) {
-                _notificationHubController.Send({
-                    IsEmail: true,
-                    EmailData: {
-                        Subject: 'Crawler Site Discount Voucher',
-                        From: 'Crawler Site Billing <admin@crawlersite.com>',
-                        To: data.Email,
-                        Text: 'Your voucher is: ' + result.StripeData.id,
-                        ComposedTitle: 'Crawler Site Discount Voucher',
-                        ComposedBody: 'Your voucher is: <b>' + result.StripeData.id + '</b>',
-                        ComposedUrlAction: 'https://www.crawlersite.com',
-                        ComposedTextAction: 'Open Crawler Site',
-                    }
-                }, function(result){
-                    //
-                })
+                // Voucher was sent only for email attached
+                sendVoucher(data.StripeData.id, function (notificationResult) {/* Voucher was sent */ });
+
                 // When database return a result call the return
                 callback({ success: true, message: 'CreateVoucher', result: result });
             }, function (err) {
@@ -51,6 +41,45 @@ function VoucherController(dependencies) {
             });
         })
 
+    }
+
+    var sendVoucher = function (data, callback) {
+        _database.User().GetUserByEmail(data.Email, function (userResult) {
+            if (userResult != undefined && userResult != null) {
+                if (userResult.result != undefined && userResult.result != null) {
+                    _notificationHubController.Send({
+                        IsEmail: true,
+                        IsInApp: true,
+                        EmailData: {
+                            Subject: 'Crawler Site Discount Voucher',
+                            From: 'Crawler Site Billing <admin@crawlersite.com>',
+                            To: userResult.result.Email,
+                            Text: 'Your voucher is: ' + tokenResult.StripeData.id,
+                            ComposedTitle: 'Crawler Site Discount Voucher',
+                            ComposedBody: 'Your voucher is: <b>' + tokenResult.StripeData.id + '</b>',
+                            ComposedUrlAction: 'https://www.crawlersite.com',
+                            ComposedTextAction: 'Open Crawler Site',
+                        },
+                        InAppData: {
+                            UserId: userResult.result.UserId,
+                            ShortMessage: 'You have a discount voucher!',
+                            LongMessage: 'Your voucher is: <b>' + tokenResult.StripeData.id + '</b>',
+                            Uri: '/Billing/',
+                            Type: _notificationHubController.GetNotificationTypes().Billing,
+                            State: _notificationHubController.GetNotificationStates().Unread,
+                        }
+                    }, function (result) {
+                        callback(result);
+                    });
+                }
+                else{
+                    callback({ success: false, message: 'Something went wrong while sending your voucher, try again.', result: null });
+                }
+            }
+            else{
+                callback({ success: false, message: 'Something went wrong while sending your voucher, try again.', result: null });
+            }
+        });
     }
 
     var deleteVoucher = function (data, callback) {
