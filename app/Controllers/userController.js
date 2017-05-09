@@ -139,10 +139,14 @@ function UserController(dependencies) {
     }
 
     var getUserByEmail = function (data, callback) {
-
         _entity.GetModel().findOne({ "Email": data }, function (err, result) {
-            if (err) console.log(err);
-            callback(result);
+            if(err){
+                console.log(err);
+                callback({ success: false, message: 'Something went wrong while retrieving user, try again.', result: null });
+            }
+            else{
+                callback({ success: true, message: 'GetUserByEmail', result: result });
+            }
         })
     }
 

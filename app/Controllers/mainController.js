@@ -42,6 +42,9 @@ function FlingerServer(dependencies) {
         _mailController = require('./mailController')(dependencies);
         dependencies.mailController = _mailController;
 
+        _notificationHubController = require('./notificationHubController')(dependencies);
+        dependencies.notificationHub = _notificationHubController;
+
         /// Stripe controller
         _stripeController = require('./stripeController')(dependencies);
         dependencies.stripeController = _stripeController;
@@ -51,9 +54,6 @@ function FlingerServer(dependencies) {
                 _geolocateController.Initialize(function (geolocateResult) {
                     if (geolocateResult == true) {
                         dependencies.gridfs = _databaseController.GetGridFS();
-
-                        _notificationHubController = require('./notificationHubController')(dependencies);
-                        dependencies.notificationHub = _notificationHubController;
 
                         /// Insights controller
                         _insightController = require('./insightController')(dependencies);
@@ -76,7 +76,7 @@ function FlingerServer(dependencies) {
 
                         _console.log('Server initialized', 'server-success');
                     }
-                    else{
+                    else {
                         _console.log('Exiting from server app', 'error');
                         process.exit(0);
                     }

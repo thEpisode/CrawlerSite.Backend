@@ -57,7 +57,8 @@ var dependencies = {
     stripe: stripe,
     cross: cross,
     geoip: geoip,
-    eventEmiter: eventEmiter
+    eventEmiter: eventEmiter,
+    root: __dirname,
 }
 
 console.log(dependencies.colors.green(' Flinger: ') + 'Libs imported');

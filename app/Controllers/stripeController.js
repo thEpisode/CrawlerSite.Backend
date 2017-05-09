@@ -216,8 +216,8 @@ function StripeController(dependencies) {
 
         // Find in mongo user by email
         _database.User().GetUserByEmail(customerData.Email, function (userResult) {
-            if (userResult != null) {
-                _database.Subscription().GetSubscriptionByUserId({ UserId: userResult._id }, function (subscriptionResult) {
+            if (userResult.result != undefined && userResult.result != null) {
+                _database.Subscription().GetSubscriptionByUserId({ UserId: userResult.result._id }, function (subscriptionResult) {
                     // if user has not a credit card token
                     if (subscriptionResult.result.CreditCard.CreditCardToken == null) {
                         getPlan(customerData.Plan, function (plan) {
@@ -300,20 +300,20 @@ function StripeController(dependencies) {
 
     var cancelSubscription = function (customerData, callback) {
         _database.User().GetUserByEmail(customerData.Email, function (userResult) {
-            if (userResult != null) {
-                if (userResult.CustomerId != undefined && userResult.CustomerId.length > 0) {
+            if (userResult.result !== undefined && userResult.result != null) {
+                if (userResult.result.CustomerId != undefined && userResult.result.CustomerId.length > 0) {
                     _stripe.subscriptions.del(
                         customerData.CustomerId,
                         function (err, confirmation) {
                             //// Update customer on mongo
-                            userResult.CustomerId = "";
-                            userResult.PlanId = "";
-                            userResult.SubscriptionId = '';
-                            userResult.FirstNameCard = '';
-                            userResult.LastNameCard = '';
-                            userResult.CurrentPlan = {};
+                            userResult.result.CustomerId = "";
+                            userResult.result.PlanId = "";
+                            userResult.result.SubscriptionId = '';
+                            userResult.result.FirstNameCard = '';
+                            userResult.result.LastNameCard = '';
+                            userResult.result.CurrentPlan = {};
 
-                            _database.User().UpdatePaymentData(userResult, function (result) {
+                            _database.User().UpdatePaymentData(userResult.result, function (result) {
                                 if (result == null) {
                                     callback({ success: false, message: 'Something went occurred wrong when update payment data, try again.', result: result });
                                 }
@@ -330,10 +330,10 @@ function StripeController(dependencies) {
 
     var changePlan = function (customerData, callback) {
         _database.User().GetUserById(customerData.UserId, function (userResult) {
-            if (userResult != null) {
-                if (userResult.CustomerId.length != 0) {
+            if (userResult.result != undefined && userResult.result != null) {
+                if (userResult.result.CustomerId.length != 0) {
                     _stripe.subscriptions.update(
-                        userResult.SubscriptionId,
+                        userResult.result.SubscriptionId,
                         { plan: customerData.PlanId },
                         function (err, subscription) {
                             if (err) {
@@ -341,8 +341,8 @@ function StripeController(dependencies) {
                                 callback({ success: false, message: err, result: null });
                             }
 
-                            userResult.PlanId = customerData.PlanId;
-                            _database.User().UpdatePaymentData(userResult, function (result) {
+                            userResult.result.PlanId = customerData.PlanId;
+                            _database.User().UpdatePaymentData(userResult.result, function (result) {
                                 if (result == null) {
                                     callback({ success: false, message: 'Something went occurred wrong when updating data, try again.', result: result });
                                 }

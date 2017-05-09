@@ -18,6 +18,7 @@ function MailController(dependencies) {
         _cross = dependencies.cross;
 
         _fs = dependencies.fs;
+        _path = dependencies.path;
 
         _mailUser = _cross.GetMailUser();
         _mailPassword = _cross.GetMailPassword();
@@ -32,7 +33,7 @@ function MailController(dependencies) {
             password: _mailPassword,
             host: _mailDomain,
             port: _mailPort,
-            tls: { ciphers: "SSLv3" }
+            ssl: true
         });
     }
 
@@ -59,8 +60,8 @@ function MailController(dependencies) {
         composeWithBasicTemplate(emailData, function (emailDataTemplate) {
             var message = {
                 text: emailData.Text,
-                from: (!!emailData.From) ? emailData.From : "Crawler Site Team <info@akeog.com>",
-                to: emailData.To, //"Camilo <camilo.rodriguez@akeog.com>"
+                from: (!!emailData.From) ? emailData.From : "Crawler Site Team <info@crawlersite.com>",
+                to: emailData.To, //Better format: "Camilo <camilo.rodriguez@akeog.com>"
                 cc: emailData.CC,
                 subject: emailData.Subject,
                 attachment:
@@ -81,7 +82,8 @@ function MailController(dependencies) {
     }
 
     var composeWithBasicTemplate = function (emailData, callback) {
-        _fs.readFile('../../email_templates/basic.html', 'utf8', function (err, data) {
+        var path = _path.join(dependencies.root, "email_templates/");
+        _fs.readFile(path + 'basic.html', 'utf8', function (err, data) {
             if (err) {
                 console.log(err);
 

@@ -474,7 +474,7 @@ function Routes(dependencies) {
         //  (GET http://localhost:3000/api/User/Email/username@domain.com)
         _apiRoutes.get('/User/Email/:Email', function (req, res) {
             _database.User().GetUserByEmail(req.params.Email, function (result) {
-                res.json({ success: true, message: 'GetUserByEmail', result: result });
+                res.json(result);
             })
         });
 

@@ -9,7 +9,7 @@ function NotificationHubController(dependencies) {
 
     var constructor = function () {
         _cross = dependencies.cross;
-        _mail = dependencies.mail;
+        _mail = dependencies.mailController;
         _database = dependencies.database;
     }
 

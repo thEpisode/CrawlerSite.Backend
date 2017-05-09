@@ -3,6 +3,7 @@ function VoucherController(dependencies) {
     /// Dependencies   
     var _mongoose;
     var _stripeController;
+    var _notificationHubController;
 
     /// Properties
     var _entity;
@@ -10,6 +11,7 @@ function VoucherController(dependencies) {
     var constructor = function () {
         _mongoose = dependencies.mongoose;
         _stripeController = dependencies.stripeController;
+        _notificationHubController = dependencies.notificationHub;
 
         _entity = require('../Models/Voucher')(dependencies);
         _entity.Initialize();
@@ -26,6 +28,21 @@ function VoucherController(dependencies) {
                 });
 
             voucher.save().then(function (result) {
+                _notificationHubController.Send({
+                    IsEmail: true,
+                    EmailData: {
+                        Subject: 'Crawler Site Discount Voucher',
+                        From: 'Crawler Site Billing <admin@crawlersite.com>',
+                        To: data.Email,
+                        Text: 'Your voucher is: ' + result.StripeData.id,
+                        ComposedTitle: 'Crawler Site Discount Voucher',
+                        ComposedBody: 'Your voucher is: <b>' + result.StripeData.id + '</b>',
+                        ComposedUrlAction: 'https://www.crawlersite.com',
+                        ComposedTextAction: 'Open Crawler Site',
+                    }
+                }, function(result){
+                    //
+                })
                 // When database return a result call the return
                 callback({ success: true, message: 'CreateVoucher', result: result });
             }, function (err) {
@@ -113,7 +130,7 @@ function VoucherController(dependencies) {
             else {
                 if (voucherResult !== undefined && voucherResult !== null) {
                     if (voucherResult.StripeData.id !== undefined && voucherResult.StripeData.id !== null) {
-                        _stripeController.VerifyDiscountVoucher({VoucherId: voucherResult.StripeData.id}, function (result) {
+                        _stripeController.VerifyDiscountVoucher({ VoucherId: voucherResult.StripeData.id }, function (result) {
                             callback(result);
                         });
                     }
