@@ -142,7 +142,6 @@ function Cross(dependencies) {
         GetMailPort: getMailPort,
         GetMailEncryption: getMailEncryption,
         GetStripePrivateKey: getStripePrivateKey,
-        GetVoucherId: voucherIdGenerator,
         GetRandomString: randomStringGenerator,
     }
 }

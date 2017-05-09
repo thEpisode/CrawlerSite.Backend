@@ -60,6 +60,13 @@ function Routes(dependencies) {
             })
         });
 
+        //
+        _apiRoutes.post('/Payment/Voucher/VerifyVoucher', function(req, res){
+           _database.Voucher().VerifyByStripeId(req.body, function(result){
+               res.json(result)
+           });
+        });
+
         //  (GET http://localhost:3000/api/Site/DiscoveryMode/[KEY])
         _apiRoutes.get('/Site/DiscoveryMode/:ApiKey', function (req, res) {
             _database.Site().GetSiteByApiKey(req.params.ApiKey, function (result) {
@@ -141,7 +148,7 @@ function Routes(dependencies) {
         /// Middleware
         /// -------------------------
         //  To verify a token
-        /*_apiRoutes.use(function (req, res, next) {
+        _apiRoutes.use(function (req, res, next) {
             // check header or url parameters or post parameters for token
             var token = req.body.token || req.query.token || req.headers['x-access-token'];
 
@@ -170,7 +177,7 @@ function Routes(dependencies) {
                 });
 
             }
-        });*/
+        });
 
         
         /// Welcome
@@ -720,12 +727,6 @@ function Routes(dependencies) {
                 res.json(result);
             })
         })
-
-        _apiRoutes.post('/Payment/Voucher/VerifyVoucher', function(req, res){
-           _database.Voucher().VerifyByStripeId(req.body, function(result){
-               res.json(result)
-           });
-        });
 
         _apiRoutes.post('/Payment/Voucher/Generate', function(req, res){
            _database.Voucher().CreateVoucher(req.body, function(result){

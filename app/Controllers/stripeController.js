@@ -523,7 +523,7 @@ function StripeController(dependencies) {
                     callback({ success: false, message: 'Voucher not exist', result: null });
                 }
                 else{
-                    callback({ success: true, message: 'VerifyDiscountVoucher', result: coupon });
+                    callback({ success: true, message: 'GetDiscountVoucher', result: coupon });
                 }
             }
         );

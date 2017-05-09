@@ -115,6 +115,12 @@ function VoucherController(dependencies) {
                             callback(result);
                         });
                     }
+                    else{
+                        callback({ success: false, message: 'Your voucher not exist, just copy and paste from our email.', result: null });
+                    }
+                }
+                else{
+                    callback({ success: false, message: 'Your voucher not exist, just copy and paste from our email.', result: null });
                 }
             }
         });
