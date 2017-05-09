@@ -18,6 +18,7 @@ function UserController(dependencies) {
         _app = dependencies.app;
         _jwt = dependencies.jwt;
         _stripeController = dependencies.stripeController;
+        _cross = dependencies.cross;
 
         _entity = require('../Models/User')(dependencies);
         _entity.Initialize();
@@ -45,7 +46,9 @@ function UserController(dependencies) {
                         AcceptTerms: data.AcceptTerms,
                         State: data.State,
                         Settings: [],
-
+                        ChangePasswordNextLogin: data.ChangePasswordNextLogin != undefined ? data.ChangePasswordNextLogin : false,
+                        HasInvitationCode: false,
+                        ReferCode: _cross.GetRandomString(5, 'ref-'),
                     });
 
                 user.save().then(function (result) {
@@ -140,11 +143,11 @@ function UserController(dependencies) {
 
     var getUserByEmail = function (data, callback) {
         _entity.GetModel().findOne({ "Email": data }, function (err, result) {
-            if(err){
+            if (err) {
                 console.log(err);
                 callback({ success: false, message: 'Something went wrong while retrieving user, try again.', result: null });
             }
-            else{
+            else {
                 callback({ success: true, message: 'GetUserByEmail', result: result });
             }
         })
@@ -203,10 +206,20 @@ function UserController(dependencies) {
             }
 
             callback(result);
-        })
+        });
     }
 
-    
+    var setHasInvitationCode = function (data, callback) {
+        _entity.GetModel().findOneAndUpdate({ "Email": data.Email }, { $set: { HasInvitationCode: data.HasInvitationCode } }, { upsert: false }, function (err, result) {
+            if (err) {
+                console.log(err);
+                callback({ success: false, message: 'Something went wrong while updating your voucher, try again.', result: null });
+            }
+            else{
+                callback({ success: true, message: 'SetHasInvitationCode', result: result });
+            }
+        });
+    }
 
     return {
         Initialize: constructor,
@@ -219,6 +232,7 @@ function UserController(dependencies) {
         GetUserByCredentials: getUserByCredentials,
         GetAllUser: getAllUser,
         EditUser: editUser,
+        SetHasInvitationCode: setHasInvitationCode,
         Entity: getEntity
     }
 }

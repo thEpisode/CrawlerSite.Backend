@@ -20,21 +20,25 @@ function VoucherController(dependencies) {
     }
 
     var createVoucher = function (data, callback) {
-        _stripeController.GenerateDiscountVoucher(data, function (voucher) {
+        _stripeController.GenerateDiscountVoucher(data, function (voucherResult) {
             var voucher = new _entity.GetModel()(
                 {
                     _id: _mongoose.Types.ObjectId(),
-                    StripeData: voucher.result,
+                    StripeData: voucherResult.result,
                     State: _entity.GetStates().Unremeeded,
-                    VoucherId: voucher.result.id
+                    VoucherId: voucherResult.result.id
                 });
 
             voucher.save().then(function (result) {
                 // Voucher was sent only for email attached
-                sendVoucher(data.StripeData.id, function (notificationResult) {/* Voucher was sent */ });
+                sendVoucher(result.StripeData, function (notificationResult) {
+                    _database.User().SetHasInvitationCode({ Email: result.StripeData.metadata.Email, HasInvitationCode: true }, function (changedUserResult) {
+                        // When database return a result call the return
+                        callback({ success: true, message: 'CreateVoucher', result: result });
+                    })
+                });
 
-                // When database return a result call the return
-                callback({ success: true, message: 'CreateVoucher', result: result });
+
             }, function (err) {
                 console.log(err);
                 callback({ success: false, message: 'Something went wrong when creating your voucher, try again.', result: null });
@@ -44,7 +48,7 @@ function VoucherController(dependencies) {
     }
 
     var sendVoucher = function (data, callback) {
-        _database.User().GetUserByEmail(data.Email, function (userResult) {
+        _database.User().GetUserByEmail(data.metadata.Email, function (userResult) {
             if (userResult != undefined && userResult != null) {
                 if (userResult.result != undefined && userResult.result != null) {
                     _notificationHubController.Send({
@@ -54,16 +58,16 @@ function VoucherController(dependencies) {
                             Subject: 'Crawler Site Discount Voucher',
                             From: 'Crawler Site Billing <admin@crawlersite.com>',
                             To: userResult.result.Email,
-                            Text: 'Your voucher is: ' + tokenResult.StripeData.id,
+                            Text: 'Your voucher is: ' + data.id,
                             ComposedTitle: 'Crawler Site Discount Voucher',
-                            ComposedBody: 'Your voucher is: <b>' + tokenResult.StripeData.id + '</b>',
+                            ComposedBody: 'Your voucher is: <b>' + data.id + '</b>',
                             ComposedUrlAction: 'https://www.crawlersite.com',
                             ComposedTextAction: 'Open Crawler Site',
                         },
                         InAppData: {
-                            UserId: userResult.result.UserId,
+                            UserId: userResult.result._id,
                             ShortMessage: 'You have a discount voucher!',
-                            LongMessage: 'Your voucher is: <b>' + tokenResult.StripeData.id + '</b>',
+                            LongMessage: 'Your voucher is: <b>' + data.id + '</b>',
                             Uri: '/Billing/',
                             Type: _notificationHubController.GetNotificationTypes().Billing,
                             State: _notificationHubController.GetNotificationStates().Unread,
@@ -72,11 +76,25 @@ function VoucherController(dependencies) {
                         callback(result);
                     });
                 }
-                else{
-                    callback({ success: false, message: 'Something went wrong while sending your voucher, try again.', result: null });
+                else {
+                    _notificationHubController.Send({
+                        IsEmail: true,
+                        EmailData: {
+                            Subject: 'Crawler Site Discount Voucher',
+                            From: 'Crawler Site Billing <admin@crawlersite.com>',
+                            To: data.metadata.Email,
+                            Text: 'Your voucher is: ' + data.id,
+                            ComposedTitle: 'Crawler Site Discount Voucher',
+                            ComposedBody: 'Welcome to Crawler Site and your have a voucher: <b>' + data.id + '</b>. Redeem the code and feel the power of data.',
+                            ComposedUrlAction: 'https://www.crawlersite.com',
+                            ComposedTextAction: 'Open Crawler Site',
+                        }
+                    }, function (result) {
+                        callback(result);
+                    });
                 }
             }
-            else{
+            else {
                 callback({ success: false, message: 'Something went wrong while sending your voucher, try again.', result: null });
             }
         });

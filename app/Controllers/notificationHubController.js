@@ -52,11 +52,11 @@ function NotificationHubController(dependencies) {
     }
 
     var getNotificationTypes = function () {
-        return _database.Notification().GetTypes();
+        return _database.Notification().Entity().GetTypes();
     }
 
     var getNotificationStates = function () {
-        return _database.Notification().GetStates();
+        return _database.Notification().Entity().GetStates();
     }
 
     return {
