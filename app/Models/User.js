@@ -40,7 +40,7 @@ function User(dependencies) {
                 State: Number,
                 Settings: [_schema.Types.Mixed],
                 ChangePasswordNextLogin: Boolean,
-                HasInvitationCode: Boolean,
+                HasCouponCode: Boolean,
                 ReferCode: String,
             },
             { timestamps: { createdAt: 'created_at' }, minimize: false, collection: 'User' }

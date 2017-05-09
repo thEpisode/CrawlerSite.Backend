@@ -154,6 +154,34 @@ function SubscriptionController(dependencies) {
         });
     }
 
+    var checkIfHasNoPaymentMethodByUserId = function (data, callback) {
+        if (data.UserId != undefined) {
+            _entity.GetModel().findOne({ "UsersId": { $elemMatch: { $eq: data.UserId } } }).populate("CreditCard").exec(function (err, subscriptionResult) {
+                if (err) {
+                    console.log(err);
+
+                    callback({ success: false, message: 'Something went wrong while retrieving user', result: null });
+                }
+                else {
+                    if (subscriptionResult != undefined && subscriptionResult != null) {
+                        if (subscriptionResult.CreditCard.CreditCardToken != undefined && subscriptionResult.CreditCard.CreditCardToken != null && subscriptionResult.CreditCard.CreditCardToken.length > 0) {
+                            callback({ success: true, message: 'checkIfHasNoPaymentMethodByUserId', result: true });
+                        }
+                        else {
+                            callback({ success: true, message: 'checkIfHasNoPaymentMethodByUserId', result: false });
+                        }
+                    }
+                    else {
+                        callback({ success: false, message: 'Something went wrong while retrieving user', result: null });
+                    }
+                }
+            })
+        }
+        else {
+            callback({ success: false, message: 'You must provide an UserId to use this API function', result: null });
+        }
+    }
+
     var getEntity = function () {
         return _entity;
     }
@@ -169,6 +197,7 @@ function SubscriptionController(dependencies) {
         GetAllSitesOfSubscriptionByUserId: getAllSitesOfSubscriptionByUserId,
         AddUserToSubscription: addUserToSubscription,
         AddSiteToSubscription: addSiteToSubscription,
+        CheckIfHasNoPaymentMethodByUserId: checkIfHasNoPaymentMethodByUserId,
         Entity: getEntity
     }
 }

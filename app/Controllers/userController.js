@@ -47,7 +47,7 @@ function UserController(dependencies) {
                         State: data.State,
                         Settings: [],
                         ChangePasswordNextLogin: data.ChangePasswordNextLogin != undefined ? data.ChangePasswordNextLogin : false,
-                        HasInvitationCode: false,
+                        HasCouponCode: false,
                         ReferCode: _cross.GetRandomString(5, 'ref-'),
                     });
 
@@ -209,14 +209,14 @@ function UserController(dependencies) {
         });
     }
 
-    var setHasInvitationCode = function (data, callback) {
-        _entity.GetModel().findOneAndUpdate({ "Email": data.Email }, { $set: { HasInvitationCode: data.HasInvitationCode } }, { upsert: false }, function (err, result) {
+    var setHasCouponCode = function (data, callback) {
+        _entity.GetModel().findOneAndUpdate({ "Email": data.Email }, { $set: { HasCouponCode: data.HasCouponCode } }, { upsert: false }, function (err, result) {
             if (err) {
                 console.log(err);
                 callback({ success: false, message: 'Something went wrong while updating your voucher, try again.', result: null });
             }
             else{
-                callback({ success: true, message: 'SetHasInvitationCode', result: result });
+                callback({ success: true, message: 'SetHasCouponCode', result: result });
             }
         });
     }
@@ -232,7 +232,7 @@ function UserController(dependencies) {
         GetUserByCredentials: getUserByCredentials,
         GetAllUser: getAllUser,
         EditUser: editUser,
-        SetHasInvitationCode: setHasInvitationCode,
+        SetHasCouponCode: setHasCouponCode,
         Entity: getEntity
     }
 }

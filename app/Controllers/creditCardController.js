@@ -106,34 +106,6 @@ function CreditCardController(dependencies) {
         })
     }
 
-    var checkIfHasNoPaymentMethodByUserId = function (data, callback) {
-        if (data.UserId != undefined) {
-            _entity.GetModel().findOne({ "_id": data.UserId }, function (err, result) {
-                if (err) {
-                    console.log(err);
-
-                    callback({ success: false, message: 'Something went wrong while retrieving user', result: null });
-                }
-                else {
-                    if (result != undefined && result != null) {
-                        if (result.CreditCardToken != undefined && result.CreditCardToken != null && result.CreditCardToken.length > 0) {
-                            callback({ success: true, message: 'checkIfHasNoPaymentMethodByUserId', result: true });
-                        }
-                        else {
-                            callback({ success: true, message: 'checkIfHasNoPaymentMethodByUserId', result: false });
-                        }
-                    }
-                    else {
-                        callback({ success: false, message: 'Something went wrong while retrieving user', result: null });
-                    }
-                }
-            })
-        }
-        else {
-            callback({ success: false, message: 'You must provide an UserId to use this API function', result: null });
-        }
-    }
-
     var getEntity = function () {
         return _entity;
     }
@@ -146,7 +118,6 @@ function CreditCardController(dependencies) {
         GetCreditCardById: getCreditCardById,
         GetCreditCardByFeature: getCreditCardByFeature,
         GetAllCreditCard: getAllCreditCard,
-        CheckIfHasNoPaymentMethodByUserId: checkIfHasNoPaymentMethodByUserId,
         Entity: getEntity
     }
 }

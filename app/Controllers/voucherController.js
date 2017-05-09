@@ -32,7 +32,7 @@ function VoucherController(dependencies) {
             voucher.save().then(function (result) {
                 // Voucher was sent only for email attached
                 sendVoucher(result.StripeData, function (notificationResult) {
-                    _database.User().SetHasInvitationCode({ Email: result.StripeData.metadata.Email, HasInvitationCode: true }, function (changedUserResult) {
+                    _database.User().SetHasCouponCode({ Email: result.StripeData.metadata.Email, HasCouponCode: true }, function (changedUserResult) {
                         // When database return a result call the return
                         callback({ success: true, message: 'CreateVoucher', result: result });
                     })

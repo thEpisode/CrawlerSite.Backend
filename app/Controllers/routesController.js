@@ -522,7 +522,7 @@ function Routes(dependencies) {
 
         // (POST http://localhost:3000/api/User/CheckIfHasNoPaymentMethod)
         _apiRoutes.post('/Payment/CheckIfHasNoPaymentMethodByUserId', function (req, res) {
-            _database.CreditCard().CheckIfHasNoPaymentMethodByUserId(req.body, function (result) {
+            _database.Subscription().CheckIfHasNoPaymentMethodByUserId(req.body, function (result) {
                 res.json(result);
             })
         });
