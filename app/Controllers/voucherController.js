@@ -192,6 +192,10 @@ function VoucherController(dependencies) {
         });
     }
 
+    var redeemVoucher = function(data, callback){
+        
+    }
+
     var getEntity = function () {
         return _entity;
     }

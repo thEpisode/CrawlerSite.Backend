@@ -545,6 +545,13 @@ function StripeController(dependencies) {
         );
     }
 
+    var redeemVoucher = function(data, callback){
+       /* _stripe.subscriptions.update(
+            data.SubscriptionId,
+            coupon: '',
+        )*/
+    }
+
     return {
         Initialize: constructor,
         GetPlan: getPlan,
