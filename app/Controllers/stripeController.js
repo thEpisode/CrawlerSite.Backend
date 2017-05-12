@@ -545,11 +545,20 @@ function StripeController(dependencies) {
         );
     }
 
-    var redeemVoucher = function(data, callback){
-       /* _stripe.subscriptions.update(
+    var redeemVoucher = function (data, callback) {
+        _stripe.subscriptions.update(
             data.SubscriptionId,
-            coupon: '',
-        )*/
+            { coupon: data.VoucherId },
+            function(err, subscription){
+                if (err) {
+                    // Not exist coupon
+                    callback({ success: false, message: 'Something was wrong while redeeming your discount voucher', result: null });
+                }
+                else {
+                    callback({ success: true, message: 'RedeemVoucher', result: subscription });
+                }
+            }
+        )
     }
 
     return {

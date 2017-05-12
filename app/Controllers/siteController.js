@@ -175,16 +175,16 @@ function SiteController(dependencies) {
         site.save().then(function (siteResult) {
             _database.Subscription().GetSubscriptionByUserId({ UserId: data.UserId }, function (subscriptionResult) {
                 if (subscriptionResult !== undefined && subscriptionResult !== null) {
-                    _database.Subscription().AddSiteToSubscription({SubscriptionId: subscriptionResult.result._id, SiteId: siteResult._id}, function(addUserToSubscriptionResult){
-                        if(addUserToSubscriptionResult !== undefined && addUserToSubscriptionResult !== null){
+                    _database.Subscription().AddSiteToSubscription({ SubscriptionId: subscriptionResult.result._id, SiteId: siteResult._id }, function (addUserToSubscriptionResult) {
+                        if (addUserToSubscriptionResult !== undefined && addUserToSubscriptionResult !== null) {
                             callback({ success: true, message: 'CreateSite', result: siteResult });
                         }
-                        else{
+                        else {
                             callback({ success: false, message: addUserToSubscriptionResult.message, result: null });
                         }
                     })
                 }
-                else{
+                else {
                     callback({ success: false, message: subscriptionResult.message, result: null });
                 }
             });
@@ -1814,22 +1814,27 @@ function SiteController(dependencies) {
             }
             else {
                 if (siteResult != undefined && siteResult != null) {
-                    if (siteResult.UsersId.length > 0) {
-                        _database.User().GetUserById(siteResult.UsersId[0], function (userResult) {
-                            if (userResult != undefined && userResult != null) {
-                                if (siteResult.Insights.Heatmaps.PageViewsPerMonth <= parseInt(userResult.CurrentPlan.metadata.maxPageviews)) {
-                                    callback({ success: true, message: 'CheckIfCanUseHeatmaps', result: true });
+                    if (siteResult.UsersId != undefined && siteResult.UserId != null) {
+                        if (siteResult.UsersId.length > 0) {
+                            _database.User().GetUserById(siteResult.UsersId[0], function (userResult) {
+                                if (userResult != undefined && userResult != null) {
+                                    if (siteResult.Insights.Heatmaps.PageViewsPerMonth <= parseInt(userResult.CurrentPlan.metadata.maxPageviews)) {
+                                        callback({ success: true, message: 'CheckIfCanUseHeatmaps', result: true });
+                                    }
+                                    else {
+                                        callback({ success: true, message: 'CheckIfCanUseHeatmaps', result: false });
+                                    }
                                 }
                                 else {
-                                    callback({ success: true, message: 'CheckIfCanUseHeatmaps', result: false });
+                                    callback({ success: false, message: 'Something went wrong while retrieving data', result: null });
                                 }
-                            }
-                            else {
-                                callback({ success: false, message: 'Something went wrong while retrieving data', result: null });
-                            }
-                        })
+                            })
+                        }
+                        else {
+                            callback({ success: false, message: 'Something went wrong while retrieving data', result: null });
+                        }
                     }
-                    else {
+                    else{
                         callback({ success: false, message: 'Something went wrong while retrieving data', result: null });
                     }
                 }
