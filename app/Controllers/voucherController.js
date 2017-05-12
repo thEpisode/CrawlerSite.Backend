@@ -192,8 +192,15 @@ function VoucherController(dependencies) {
         });
     }
 
-    var redeemVoucher = function(data, callback){
-        
+    var redeemVoucher = function (data, callback) {
+        if (data.VoucherId != undefined && data.VoucherId != null) {
+            _stripeController.RedeemVoucher({ VoucherId: data.VoucherId }, function (result) {
+                callback(result);
+            })
+        }
+        else{
+            callback({ success: false, message: 'Something was wrong while redeeming your discount voucher', result: null });
+        }
     }
 
     var getEntity = function () {
@@ -209,6 +216,7 @@ function VoucherController(dependencies) {
         GetVoucherBySubscriptionId: getVoucherBySubscriptionId,
         GetAllVoucher: getAllVoucher,
         VerifyByStripeId: verifyByStripeId,
+        RedeemVoucher: redeemVoucher,
         Entity: getEntity
     }
 }

@@ -551,7 +551,6 @@ function StripeController(dependencies) {
             { coupon: data.VoucherId },
             function(err, subscription){
                 if (err) {
-                    // Not exist coupon
                     callback({ success: false, message: 'Something was wrong while redeeming your discount voucher', result: null });
                 }
                 else {
@@ -576,6 +575,7 @@ function StripeController(dependencies) {
         GenerateDiscountVoucher: generateDiscountVoucher,
         VerifyDiscountVoucher: verifyDiscountVoucher,
         GetDiscountVoucher: getDiscountVoucher,
+        RedeemVoucher: redeemVoucher,
     }
 }
 
