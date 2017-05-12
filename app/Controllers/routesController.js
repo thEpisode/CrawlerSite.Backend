@@ -740,6 +740,12 @@ function Routes(dependencies) {
            });
         })
 
+        _apiRoutes.post('/Payment/Voucher/Redeem', function(req, res){
+            _database.Voucher().RedeemVoucher(req.body, function(result){
+                res.json(result);
+            })
+        })
+
         //  (GET http://localhost:3000/api/Plans/All)
         _apiRoutes.get('/Plans/All', function (req, res) {
             _stripe.GetAllPlans(function (result) {
