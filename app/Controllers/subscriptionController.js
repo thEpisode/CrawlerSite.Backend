@@ -188,6 +188,46 @@ function SubscriptionController(dependencies) {
         }
     }
 
+    var checkIfCanUseHeatmaps = function (data, callback) {//<------- CHANGE FOR SECURE RESULT
+        callback({ success: true, message: 'CheckIfCanUseHeatmaps', result: true });
+        /*_entity.GetModel().findOne({ "ApiKey": data.ApiKey }, function (err, siteResult) {
+            if (err) {
+                console.log(err);
+                callback({ success: false, message: 'Something went wrong when updating insights, try again.', result: null });
+            }
+            else {
+                if (siteResult != undefined && siteResult != null) {
+                    if (siteResult.UsersId != undefined && siteResult.UserId != null) {
+                        if (siteResult.UsersId.length > 0) {
+                            _database.User().GetUserById(siteResult.UsersId[0], function (userResult) {
+                                if (userResult != undefined && userResult != null) {
+                                    if (siteResult.Insights.Heatmaps.PageViewsPerMonth <= parseInt(userResult.CurrentPlan.metadata.maxPageviews)) {
+                                        callback({ success: true, message: 'CheckIfCanUseHeatmaps', result: true });
+                                    }
+                                    else {
+                                        callback({ success: true, message: 'CheckIfCanUseHeatmaps', result: false });
+                                    }
+                                }
+                                else {
+                                    callback({ success: false, message: 'Something went wrong while retrieving data', result: null });
+                                }
+                            })
+                        }
+                        else {
+                            callback({ success: false, message: 'Something went wrong while retrieving data', result: null });
+                        }
+                    }
+                    else {
+                        callback({ success: false, message: 'Something went wrong while retrieving data', result: null });
+                    }
+                }
+                else {
+                    callback({ success: false, message: 'Something went wrong while retrieving data', result: null });
+                }
+            }
+        })*/
+    }
+
     var getEntity = function () {
         return _entity;
     }
@@ -204,6 +244,7 @@ function SubscriptionController(dependencies) {
         AddUserToSubscription: addUserToSubscription,
         AddSiteToSubscription: addSiteToSubscription,
         CheckIfHasNoPaymentMethodByUserId: checkIfHasNoPaymentMethodByUserId,
+        CheckIfCanUseHeatmaps: checkIfCanUseHeatmaps,
         Entity: getEntity
     }
 }

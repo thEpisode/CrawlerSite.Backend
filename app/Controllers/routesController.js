@@ -765,34 +765,29 @@ function Routes(dependencies) {
         _apiRoutes.get('/Insights/HeatmapScreenshot/ApiKey/:ApiKey/Pathname/:Pathname', function (req, res) {
             _insights.HeatmapScreenshot(req.params.ApiKey, req.params.Pathname, function (file) {
                 file.pipe(res);
-                //res.json({ message: 'HeatmapData', result: result})
             })
         });
 
         _apiRoutes.post('/Insights/DashboardByApiKey', function (req, res) {
             _insights.DashboardInsightsByApiKey(req.body, function (result) {
-               
                 res.json(result)
             })
         });
 
         _apiRoutes.post('/Insights/DashboardInsightsByApiKeys', function (req, res) {
             _insights.DashboardInsightsByApiKeys(req.body, function (result) {
-               
                 res.json(result)
             })
         });
 
         _apiRoutes.get('/Insights/DashboardInsightsByUserId/:UserId', function (req, res) {
             _insights.DashboardInsightsByUserId(req.params, function (result) {
-               
                 res.json(result)
             })
         });
 
         _apiRoutes.get('/GeoLocate/LocateByIp/:IP', function (req, res) {
             _geolocate.Locate(req.params, function (result) {
-               
                 res.json(result);
             })
         });
@@ -800,7 +795,6 @@ function Routes(dependencies) {
         _apiRoutes.get('/GeoLocate/Locate/', function (req, res) {
             var ip =  req.ip;debugger;
             _geolocate.Locate({IP: ip}, function (result) {
-               
                 res.json(result);
             })
         });

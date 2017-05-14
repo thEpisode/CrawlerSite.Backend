@@ -307,7 +307,7 @@ function Socket(dependencies) {
             })
 
             socket.on('Coplest.Flinger.CanISendData', function (data) {
-                _database.Site().CheckIfCanUseHeatmaps(data, function (result) {
+                _database.Subscription().CheckIfCanUseHeatmaps(data, function (result) {
                     socket.emit('Coplest.Flinger.ServerEvent', { Command: 'CanUseHeatmaps', Values: result });
                 })
             });
