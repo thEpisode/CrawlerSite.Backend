@@ -57,32 +57,42 @@ function UserController(dependencies) {
                     user.save().then(function (userResult) {
                         // When database return any result call the "return" named callback
                         _stripeController.CreateInitialCustomer(userResult, function (stripeResult) {
-                            // If has voucher
-                            if (data.VoucherId != undefined && data.VoucherId != '') {
-                                _stripeController.RedeemVoucher({ SubscriptionId: stripeResult.SubscriptionId }, function (redeemResult) {
-                                    if (redeemResult != undefined && redeemResult != null) {
-                                        if (redeemResult.success == true) {
-                                            _entity.GetModel().findOneAndUpdate({ "_id": userResult._id }, { $set: { HasCouponCode: true } }, { upsert: false }, function (err, result) {
-                                                if (err) {
-                                                    console.log(err);
+                            if (stripeResult != undefined && stripeResult != null) {
+                                if (stripeResult.success == true) {
+                                    // If has voucher
+                                    if (data.VoucherId != undefined && data.VoucherId != '') {
+                                        _stripeController.RedeemVoucher({ SubscriptionId: stripeResult.result.SubscriptionId, VoucherId: data.VoucherId }, function (redeemResult) {
+                                            if (redeemResult != undefined && redeemResult != null) {
+                                                if (redeemResult.success == true) {
+                                                    _entity.GetModel().findOneAndUpdate({ "_id": userResult._id }, { $set: { HasCouponCode: true } }, { upsert: false }, function (err, result) {
+                                                        if (err) {
+                                                            console.log(err);
+                                                            callback({ success: false, message: 'Something was wrong while creating user', result: null });
+                                                        }
+                                                        else {
+                                                            callback({ success: true, message: 'RedeemVoucher', result: stripeResult });
+                                                        }
+                                                    });
+                                                }
+                                                else {
                                                     callback({ success: false, message: 'Something was wrong while creating user', result: null });
                                                 }
-                                                else{
-                                                    callback({ success: true, message: 'RedeemVoucher', result: stripeResult });
-                                                }
-                                            });
-                                        }
-                                        else {
-                                            callback({ success: false, message: 'Something was wrong while creating user', result: null });
-                                        }
+                                            }
+                                            else {
+                                                callback({ success: false, message: 'Something was wrong while creating user', result: null });
+                                            }
+                                        })
                                     }
                                     else {
-                                        callback({ success: false, message: 'Something was wrong while creating user', result: null });
+                                        callback({ success: true, message: 'RedeemVoucher', result: stripeResult });
                                     }
-                                })
+                                }
+                                else {
+                                    callback({ success: false, message: 'Something was wrong while creating user', result: null });
+                                }
                             }
-                            else {
-                                callback({ success: true, message: 'RedeemVoucher', result: stripeResult });
+                            else{
+                                callback({ success: false, message: 'Something was wrong while creating user', result: null });
                             }
                         });
                     }, function (err) {

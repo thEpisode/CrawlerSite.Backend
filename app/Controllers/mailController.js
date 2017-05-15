@@ -40,7 +40,7 @@ function MailController(dependencies) {
     var sendBasic = function (emailData, callback) {
         var message = {
             text: emailData.Text,
-            from: (!!emailData.From) ? emailData.From : "Crawler Site Team <info@akeog.com>",
+            from: (!!emailData.From) ? emailData.From : "Crawler Site Team <" + _mailUser + ">",
             to: emailData.To, //"Camilo <camilo.rodriguez@akeog.com>"
             cc: emailData.CC,
             subject: emailData.Subject,
@@ -60,7 +60,7 @@ function MailController(dependencies) {
         composeWithBasicTemplate(emailData, function (emailDataTemplate) {
             var message = {
                 text: emailData.Text,
-                from: (!!emailData.From) ? emailData.From : "Crawler Site Team <info@crawlersite.com>",
+                from: (!!emailData.From) ? emailData.From : "Crawler Site Team  <" + _mailUser + ">",
                 to: emailData.To, //Better format: "Camilo <camilo.rodriguez@akeog.com>"
                 cc: emailData.CC,
                 subject: emailData.Subject,

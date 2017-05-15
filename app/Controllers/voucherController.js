@@ -56,7 +56,6 @@ function VoucherController(dependencies) {
                         IsInApp: true,
                         EmailData: {
                             Subject: 'Crawler Site Discount Voucher',
-                            From: 'Crawler Site Billing <admin@crawlersite.com>',
                             To: userResult.result.Email,
                             Text: 'Your voucher is: ' + data.id,
                             ComposedTitle: 'Crawler Site Discount Voucher',
@@ -81,11 +80,10 @@ function VoucherController(dependencies) {
                         IsEmail: true,
                         EmailData: {
                             Subject: 'Crawler Site Discount Voucher',
-                            From: 'Crawler Site Billing <admin@crawlersite.com>',
                             To: data.metadata.Email,
                             Text: 'Your voucher is: ' + data.id,
                             ComposedTitle: 'Crawler Site Discount Voucher',
-                            ComposedBody: 'Welcome to Crawler Site and your have a voucher: <b>' + data.id + '</b>. Redeem the code and feel the power of data.',
+                            ComposedBody: 'Welcome to Crawler Site and your have a voucher: <b>' + data.id + '</b><br>Redeem the code and feel free of cost.',
                             ComposedUrlAction: 'https://www.crawlersite.com',
                             ComposedTextAction: 'Open Crawler Site',
                         }
