@@ -25,8 +25,8 @@ Create a file named "default.json" on /config/ folder
 {
     "FlingerSecretJWT": "DremindIsCool",
     "MongoConnectionString": "mongodb://127.0.0.1:27017/Flinger",
-    "MailUser": "admin@crawlersite.com",
-    "MailPassword": "zmverify.zoho.com",
+    "MailUser": "developer@crawlersite.com",
+    "MailPassword": "umm63DouoNWVcVAjmlSB",
     "MailDomain": "smtp.zoho.com",
     "MailPort": "465",
     "MailEncryption": "STARTTLS",
