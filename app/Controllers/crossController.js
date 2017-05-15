@@ -4,12 +4,18 @@ function Cross(dependencies) {
     var _mailgunApiKey = '';
     var _mailgunDomain = '';
     var _stripePK = '';
+    var _notificationMailUser = '';
+    var _notificationMailPassword = '';
+    var _debuggingMailUser = '';
+    var _debuggingMailPassword = '';
 
     var setSettings = function () {
         setFlingerSecretJWT(dependencies.config.FlingerSecretJWT);
         setMongoConnectionString(dependencies.config.MongoConnectionString);
-        setMailUser(dependencies.config.MailUser);
-        setMailPassword(dependencies.config.MailPassword);
+        setMailUser(dependencies.config.NotificationMailUser);
+        setMailPassword(dependencies.config.NotificationMailPassword);
+        setDebuggingMailPassword(dependencies.config.DebugMailPassword);
+        setDebuggingMailUser(dependencies.config.DebugMailUser);
         setMailDomain(dependencies.config.MailDomain);
         setMailPort(dependencies.config.MailPort);
         setMailEncryption(dependencies.config.MailEncryption);
@@ -76,19 +82,35 @@ function Cross(dependencies) {
     }
 
     var setMailUser = function (user) {
-        _mailUser = user;
+        _notificationMailUser = user;
     }
 
     var getMailUser = function () {
-        return _mailUser;
+        return _notificationMailUser;
     }
 
     var setMailPassword = function (password) {
-        _mailPassword = password;
+        _notificationMailPassword = password;
     }
 
     var getMailPassword = function () {
-        return _mailPassword;
+        return _notificationMailPassword;
+    }
+
+    var setDebuggingMailUser = function(user){
+        _debuggingMailUser = user;
+    }
+
+    var getDebuggingMailUser = function(){
+        return _debuggingMailUser;
+    }
+
+    var setDebuggingMailPassword = function(password){
+        _debuggingMailPassword = password;
+    }
+
+    var getDebuggingMailPassword = function(){
+        return _debuggingMailPassword;
     }
 
     var setMailDomain = function (domain) {
@@ -138,6 +160,8 @@ function Cross(dependencies) {
         NormalizePort: normalizePort,
         GetMailUser: getMailUser,
         GetMailPassword: getMailPassword,
+        GetDebuggingMailUser: getDebuggingMailUser,
+        GetDebuggingMailPassword: getDebuggingMailPassword,
         GetMailDomain: getMailDomain,
         GetMailPort: getMailPort,
         GetMailEncryption: getMailEncryption,

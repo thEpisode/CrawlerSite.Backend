@@ -61,6 +61,7 @@ function UserController(dependencies) {
                                 if (stripeResult.success == true) {
                                     // If has voucher
                                     if (data.VoucherId != undefined && data.VoucherId != '') {
+                                        // Redeem voucher and validate it
                                         _stripeController.RedeemVoucher({ SubscriptionId: stripeResult.result.SubscriptionId, VoucherId: data.VoucherId }, function (redeemResult) {
                                             if (redeemResult != undefined && redeemResult != null) {
                                                 if (redeemResult.success == true) {

@@ -23,10 +23,12 @@ Second, Now you need execute a Console in this path and execute following comman
 Create a file named "default.json" on /config/ folder
 
 {
-    "FlingerSecretJWT": "DremindIsCool",
+    "FlingerSecretJWT": "CrawlerSiteIsCool",
     "MongoConnectionString": "mongodb://127.0.0.1:27017/Flinger",
-    "MailUser": "developer@crawlersite.com",
-    "MailPassword": "umm63DouoNWVcVAjmlSB",
+    "NotificationMailUser": "developer@crawlersite.com",
+    "NotificationMailPassword": "umm63DouoNWVcVAjmlSB",
+    "DebugMailUser": "developer@crawlersite.com",
+    "DebugMailPassword": "umm63DouoNWVcVAjmlSB",
     "MailDomain": "smtp.zoho.com",
     "MailPort": "465",
     "MailEncryption": "STARTTLS",
