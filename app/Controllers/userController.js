@@ -64,15 +64,7 @@ function UserController(dependencies) {
                                         _stripeController.RedeemVoucher({ SubscriptionId: stripeResult.result.SubscriptionId, VoucherId: data.VoucherId }, function (redeemResult) {
                                             if (redeemResult != undefined && redeemResult != null) {
                                                 if (redeemResult.success == true) {
-                                                    _entity.GetModel().findOneAndUpdate({ "_id": userResult._id }, { $set: { HasCouponCode: true } }, { upsert: false }, function (err, result) {
-                                                        if (err) {
-                                                            console.log(err);
-                                                            callback({ success: false, message: 'Something was wrong while creating user', result: null });
-                                                        }
-                                                        else {
-                                                            callback({ success: true, message: 'RedeemVoucher', result: stripeResult });
-                                                        }
-                                                    });
+                                                    callback({ success: true, message: 'RedeemVoucher', result: stripeResult });
                                                 }
                                                 else {
                                                     callback({ success: false, message: 'Something was wrong while creating user', result: null });
