@@ -190,7 +190,7 @@ function StripeController(dependencies) {
                                     if (subscriptionResult !== undefined && subscriptionResult.result !== null) {
                                         _database.Subscription().AddUserToSubscription({ SubscriptionId: subscriptionResult.result._id, UserId: customerData._id }, function (addUserToSubscriptionResult) {
                                             if (addUserToSubscriptionResult !== undefined && addUserToSubscriptionResult.result !== null) {
-                                                callback({ success: true, message: 'User saved succesfuly', result: subscriptionResult });
+                                                callback({ success: true, message: 'User saved succesfuly', result: subscriptionResult.result });
                                             }
                                             else {
                                                 callback({ success: false, message: 'Something went occurred wrong while creating user, try again.', result: null });

@@ -27,41 +27,72 @@ function UserController(dependencies) {
     var createUser = function (data, callback) {
 
         _entity.GetModel().findOne({ "Email": data.Email }, function (err, user) {
-            if (err) console.log(err);
-
-            if (user != null) {
-                callback({ success: false, message: 'This email is already registered' });
+            if (err) {
+                console.log(err);
+                callback({ success: false, message: 'Something was wrong while creating user' });
             }
             else {
-                var user = new _entity.GetModel()(
-                    {
-                        _id: _mongoose.Types.ObjectId(),
-                        FirstName: data.FirstName,
-                        LastName: data.LastName,
-                        Email: data.Email,
-                        Password: data.Password,
-                        Work: data.Work,
-                        City: data.City,
-                        Country: data.Country,
-                        AcceptTerms: data.AcceptTerms,
-                        State: data.State,
-                        Settings: [],
-                        ChangePasswordNextLogin: data.ChangePasswordNextLogin != undefined ? data.ChangePasswordNextLogin : false,
-                        HasCouponCode: false,
-                        ReferCode: _cross.GetRandomString(5, 'ref-'),
-                    });
+                if (user != null) {
+                    callback({ success: false, message: 'This email is already registered' });
+                }
+                else {
+                    var user = new _entity.GetModel()(
+                        {
+                            _id: _mongoose.Types.ObjectId(),
+                            FirstName: data.FirstName,
+                            LastName: data.LastName,
+                            Email: data.Email,
+                            Password: data.Password,
+                            Work: data.Work,
+                            City: data.City,
+                            Country: data.Country,
+                            AcceptTerms: data.AcceptTerms,
+                            State: data.State,
+                            Settings: [],
+                            ChangePasswordNextLogin: data.ChangePasswordNextLogin != undefined ? data.ChangePasswordNextLogin : false,
+                            HasCouponCode: data.VoucherId != undefined && data.VoucherId != '' ? true : false,
+                            ReferCode: _cross.GetRandomString(5, 'ref-'),
+                        });
 
-                user.save().then(function (result) {
-                    // When database return any result call the "return" named callback
-                    _stripeController.CreateInitialCustomer(result, function (stripeResult) {
-                        callback(stripeResult);
-                    });
-                }, function (err) {
-                    console.log('Error while saving:')
-                    console.log(err)
-                })
+                    user.save().then(function (userResult) {
+                        // When database return any result call the "return" named callback
+                        _stripeController.CreateInitialCustomer(userResult, function (stripeResult) {
+                            // If has voucher
+                            if (data.VoucherId != undefined && data.VoucherId != '') {
+                                _stripeController.RedeemVoucher({ SubscriptionId: stripeResult.SubscriptionId }, function (redeemResult) {
+                                    if (redeemResult != undefined && redeemResult != null) {
+                                        if (redeemResult.success == true) {
+                                            _entity.GetModel().findOneAndUpdate({ "_id": userResult._id }, { $set: { HasCouponCode: true } }, { upsert: false }, function (err, result) {
+                                                if (err) {
+                                                    console.log(err);
+                                                    callback({ success: false, message: 'Something was wrong while creating user', result: null });
+                                                }
+                                                else{
+                                                    callback({ success: true, message: 'RedeemVoucher', result: stripeResult });
+                                                }
+                                            });
+                                        }
+                                        else {
+                                            callback({ success: false, message: 'Something was wrong while creating user', result: null });
+                                        }
+                                    }
+                                    else {
+                                        callback({ success: false, message: 'Something was wrong while creating user', result: null });
+                                    }
+                                })
+                            }
+                            else {
+                                callback({ success: true, message: 'RedeemVoucher', result: stripeResult });
+                            }
+                        });
+                    }, function (err) {
+                        console.log('Error while saving: ')
+                        console.log(err);
+                        callback({ success: false, message: 'Something was wrong while creating user', result: null });
+                    })
+                }
             }
-        })
+        });
     }
 
     var deleteAccountByUserId = function (data, callback) {
@@ -215,7 +246,7 @@ function UserController(dependencies) {
                 console.log(err);
                 callback({ success: false, message: 'Something went wrong while updating your voucher, try again.', result: null });
             }
-            else{
+            else {
                 callback({ success: true, message: 'SetHasCouponCode', result: result });
             }
         });
