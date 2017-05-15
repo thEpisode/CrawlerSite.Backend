@@ -1,6 +1,7 @@
 function ScrollController(dependencies) {
 
     /// Dependencies   
+    var _console;
     var _mongoose;
 
     /// Properties
@@ -41,7 +42,9 @@ function ScrollController(dependencies) {
 
     var getScrollById = function (data, callback) {
         _entity.GetModel().findOne({ "_id": data }, function (err, result) {
-            if (err) console.log(err);
+            if (err) {
+                _console.log(err, 'error');
+            }
 
             callback(result);
         })
@@ -49,7 +52,9 @@ function ScrollController(dependencies) {
 
     var getScrollByApiKey = function (data, callback) {
         _entity.GetModel().findOne({ "ApiKey": data }, function (err, result) {
-            if (err) console.log(err);
+            if (err) {
+                _console.log(err, 'error');
+            }
 
             callback(result);
         })
@@ -57,13 +62,15 @@ function ScrollController(dependencies) {
 
     var getAllScroll = function (data, callback) {
         _entity.GetModel().find({}, function (err, result) {
-            if (err) console.log(err);
+            if (err) {
+                _console.log(err, 'error');
+            }
 
             callback(result);
         })
     }
 
-    var getInsight = function (ApiKey, MinWidth, MaxWidth, MaxTime,Flash, Browser, OperatingSystem, Cookies, Location, Endpoint, callback) {
+    var getInsight = function (ApiKey, MinWidth, MaxWidth, MaxTime, Flash, Browser, OperatingSystem, Cookies, Location, Endpoint, callback) {
         var query = {};
 
         if (ApiKey != 'null') { query['ApiKey'] = ApiKey; }
@@ -78,8 +85,10 @@ function ScrollController(dependencies) {
 
         _mongoose.connection.db.collection('Scroll').find({
             query
-        }).toArray(function (err, result){
-            if(err) console.log(err);
+        }).toArray(function (err, result) {
+            if (err){
+                _console.log(err, 'error');
+            }
 
             callback(result);
         });

@@ -1,6 +1,7 @@
 function VoucherController(dependencies) {
 
     /// Dependencies   
+    var _console;
     var _mongoose;
     var _stripeController;
     var _notificationHubController;
@@ -40,7 +41,7 @@ function VoucherController(dependencies) {
 
 
             }, function (err) {
-                console.log(err);
+                _console.log(err, 'error');
                 callback({ success: false, message: 'Something went wrong when creating your voucher, try again.', result: null });
             });
         })
@@ -101,7 +102,7 @@ function VoucherController(dependencies) {
     var deleteVoucher = function (data, callback) {
         _entity.GetModel().findOneAndRemove(data, function (err, result) {
             if (err) {
-                console.log(err);
+                _console.log(err, 'error');
                 callback({ success: false, message: 'Something went wrong when deleting your voucher, try again.', result: null });
             }
             else {
@@ -113,7 +114,7 @@ function VoucherController(dependencies) {
     var getVoucherById = function (data, callback) {
         _entity.GetModel().findOne({ "_id": data._id }, function (err, result) {
             if (err) {
-                console.log(err);
+                _console.log(err, 'error');
                 callback({ success: false, message: 'Something went wrong when retrieving your voucher, try again.', result: null });
             }
             else {
@@ -126,7 +127,7 @@ function VoucherController(dependencies) {
         /// Verify if exist in database
         _entity.GetModel().findOne({ "StripeData.id": data.id }, function (err, voucherResult) {
             if (err) {
-                console.log(err);
+                _console.log(err, 'error');
                 callback({ success: false, message: 'Something went wrong when retrieving your voucher, try again.', result: null });
             }
             else {
@@ -144,7 +145,7 @@ function VoucherController(dependencies) {
     var getVoucherBySubscriptionId = function (data, callback) {
         _entity.GetModel().find({ "VoucherId": data.VoucherId }, function (err, result) {
             if (err) {
-                console.log(err);
+                _console.log(err, 'error');
                 callback({ success: false, message: 'Something went wrong when retrieving your voucher, try again.', result: null });
             }
             else {
@@ -156,7 +157,7 @@ function VoucherController(dependencies) {
     var getAllVoucher = function (data, callback) {
         _entity.GetModel().find({}, function (err, result) {
             if (err) {
-                console.log(err);
+                _console.log(err, 'error');
                 callback({ success: false, message: 'Something went wrong when retrieving your vouchers, try again.', result: null });
             }
             else {
@@ -169,7 +170,7 @@ function VoucherController(dependencies) {
         /// Verify if exist in database
         _entity.GetModel().findOne({ "StripeData.id": data.VoucherId }, function (err, voucherResult) {
             if (err) {
-                console.log(err);
+                _console.log(err, 'error');
                 callback({ success: false, message: 'Something went wrong when retrieving your voucher, try again.', result: null });
             }
             else {

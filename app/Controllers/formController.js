@@ -1,6 +1,7 @@
 function FormController(dependencies) {
 
-    /// Dependencies   
+    /// Dependencies  
+    var _console; 
     var _mongoose;
 
     /// Properties
@@ -38,7 +39,9 @@ function FormController(dependencies) {
 
     var getFormById = function (data, callback) {
         _entity.GetModel().findOne({ "_id": data }, function (err, result) {
-            if (err) console.log(err);
+            if (err){
+                _console.log(err, 'error');
+            }
 
             callback(result);
         })
@@ -46,7 +49,9 @@ function FormController(dependencies) {
 
     var getFormByApiKey = function (data, callback) {
         _entity.GetModel().findOne({ "ApiKey": data }, function (err, result) {
-            if (err) console.log(err);
+            if (err){
+                _console.log(err, 'error');
+            }
 
             callback(result);
         })
@@ -54,7 +59,9 @@ function FormController(dependencies) {
 
     var getAllForm = function (data, callback) {
         _entity.GetModel().find({}, function (err, result) {
-            if (err) console.log(err);
+            if (err){
+                _console.log(err, 'error');
+            }
 
             callback(result);
         })

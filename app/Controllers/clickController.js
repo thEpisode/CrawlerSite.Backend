@@ -1,6 +1,7 @@
 function ClickController(dependencies) {
 
-    /// Dependencies   
+    /// Dependencies  
+    var _console; 
     var _mongoose;
 
     /// Properties
@@ -42,7 +43,9 @@ function ClickController(dependencies) {
 
     var getClickById = function (data, callback) {
         _entity.GetModel().findOne({ "_id": data }, function (err, result) {
-            if (err) console.log(err);
+            if (err){
+                _console.log(err, 'error');
+            } 
 
             callback(result);
         })
@@ -50,7 +53,9 @@ function ClickController(dependencies) {
 
     var getClickByApiKey = function (data, callback) {
         _entity.GetModel().findOne({ "ApiKey": data }, function (err, result) {
-            if (err) console.log(err);
+            if (err){
+                _console.log(err, 'error');
+            } 
 
             callback(result);
         })
@@ -58,7 +63,9 @@ function ClickController(dependencies) {
 
     var getAllClick = function (data, callback) {
         _entity.GetModel().find({}, function (err, result) {
-            if (err) console.log(err);
+            if (err){
+                _console.log(err, 'error');
+            } 
 
             callback(result);
         })
@@ -80,7 +87,9 @@ function ClickController(dependencies) {
         _mongoose.connection.db.collection('Click').find({
             query
         }).toArray(function (err, result){
-            if(err) console.log(err);
+            if (err){
+                _console.log(err, 'error');
+            } 
 
             callback(result);
         });

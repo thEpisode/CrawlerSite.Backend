@@ -1,6 +1,7 @@
 function UserController(dependencies) {
 
     /// Dependencies
+    var _console;
     var _database;
     var _mongoose;
     var _app;
@@ -28,7 +29,7 @@ function UserController(dependencies) {
 
         _entity.GetModel().findOne({ "Email": data.Email }, function (err, user) {
             if (err) {
-                console.log(err);
+                _console.log(err, 'error');
                 callback({ success: false, message: 'Something was wrong while creating user' });
             }
             else {
@@ -89,8 +90,7 @@ function UserController(dependencies) {
                             }
                         });
                     }, function (err) {
-                        console.log('Error while saving: ')
-                        console.log(err);
+                        _console.log(err, 'error');
                         callback({ success: false, message: 'Something was wrong while creating user', result: null });
                     })
                 }
@@ -113,7 +113,7 @@ function UserController(dependencies) {
 
             _entity.GetModel().findOneAndRemove(data.UserId, function (err, result) {
                 if (err) {
-                    console.log(err);
+                    _console.log(err, 'error');
                     callback({ success: false, message: 'Something went wrong when updating password, try again.', result: null });
                 }
 
@@ -125,7 +125,7 @@ function UserController(dependencies) {
     var deleteUserByUserId = function (data, callback) {
         _entity.GetModel().findOneAndRemove({ "_id": data.UserId }, function (err, result) {
             if (err) {
-                console.log(err);
+                _console.log(err, 'error');
                 callback({ success: false, message: 'Something went wrong when updating password, try again.', result: null });
             }
 
@@ -136,7 +136,7 @@ function UserController(dependencies) {
     var changePasswordByUserId = function (data, callback) {
         _entity.GetModel().findOne({ "_id": data.UserId }, function (err, userResult) {
             if (err) {
-                console.log(err);
+                _console.log(err, 'error');
                 callback({ success: false, message: 'Something went wrong when updating password, try again.', result: null });
             }
             else {
@@ -144,7 +144,7 @@ function UserController(dependencies) {
                 if (userResult.Password === data.OldPassword) {
                     _entity.GetModel().findOneAndUpdate({ "_id": data.UserId }, { $set: { Password: data.NewPassword } }, { upsert: false }, function (err, result) {
                         if (err) {
-                            console.log(err);
+                            _console.log(err, 'error');
                             callback({ success: false, message: 'Something went wrong when updating password, try again.', result: null });
                         }
 
@@ -161,7 +161,7 @@ function UserController(dependencies) {
     var getUserById = function (data, callback) {
         _entity.GetModel().findOne({ "_id": data }, function (err, result) {
             if (err) {
-                console.log(err);
+                _console.log(err, 'error');
             }
             else {
                 if (result != null) {
@@ -178,7 +178,7 @@ function UserController(dependencies) {
     var getUserByEmail = function (data, callback) {
         _entity.GetModel().findOne({ "Email": data }, function (err, result) {
             if (err) {
-                console.log(err);
+                _console.log(err, 'error');
                 callback({ success: false, message: 'Something went wrong while retrieving user, try again.', result: null });
             }
             else {
@@ -190,7 +190,7 @@ function UserController(dependencies) {
     var getUserByCredentials = function (data, callback) {
 
         _entity.GetModel().findOne({ "Email": data.Email }, function (err, user) {
-            if (err) console.log(err);
+            if (err) _console.log(err, 'error');
 
             if (user == null) {
                 callback({ Success: false, Message: 'The username and password you entered did not match our records. Please double-check and try again.' });
@@ -220,7 +220,7 @@ function UserController(dependencies) {
     var getAllUser = function (data, callback) {
         _entity.GetModel().find({}, function (err, result) {
             if (err) {
-                console.log(err);
+                _console.log(err, 'error');
                 callback({ success: false, message: 'GetAllUser', result: null });
             }
 
@@ -235,7 +235,7 @@ function UserController(dependencies) {
     var editUser = function (data, callback) {
         _entity.GetModel().findOneAndUpdate({ "_id": data._id }, { $set: { Email: data.Email, FirstName: data.FirstName, LastName: data.LastName, City: data.City, Country: data.Country } }, { upsert: false }, function (err, result) {
             if (err) {
-                console.log(err);
+                _console.log(err, 'error');
                 callback(false);
             }
 
@@ -246,7 +246,7 @@ function UserController(dependencies) {
     var setHasCouponCode = function (data, callback) {
         _entity.GetModel().findOneAndUpdate({ "Email": data.Email }, { $set: { HasCouponCode: data.HasCouponCode } }, { upsert: false }, function (err, result) {
             if (err) {
-                console.log(err);
+                _console.log(err, 'error');
                 callback({ success: false, message: 'Something went wrong while updating your voucher, try again.', result: null });
             }
             else {

@@ -97,19 +97,19 @@ function Cross(dependencies) {
         return _notificationMailPassword;
     }
 
-    var setDebuggingMailUser = function(user){
+    var setDebuggingMailUser = function (user) {
         _debuggingMailUser = user;
     }
 
-    var getDebuggingMailUser = function(){
+    var getDebuggingMailUser = function () {
         return _debuggingMailUser;
     }
 
-    var setDebuggingMailPassword = function(password){
+    var setDebuggingMailPassword = function (password) {
         _debuggingMailPassword = password;
     }
 
-    var getDebuggingMailPassword = function(){
+    var getDebuggingMailPassword = function () {
         return _debuggingMailPassword;
     }
 
@@ -151,6 +151,15 @@ function Cross(dependencies) {
         return (prefix == undefined ? 'csv-' : prefix) + Math.random().toString(36).substr(2, (length == undefined ? 5 : length));
     }
 
+    function isJsonString(str) {
+        try {
+            JSON.parse(str);
+        } catch (e) {
+            return false;
+        }
+        return true;
+    }
+
     return {
         SetSettings: setSettings,
         GetMongoConnectionString: getMongoConnectionString,
@@ -167,6 +176,7 @@ function Cross(dependencies) {
         GetMailEncryption: getMailEncryption,
         GetStripePrivateKey: getStripePrivateKey,
         GetRandomString: randomStringGenerator,
+        IsJsonString: isJsonString,
     }
 }
 

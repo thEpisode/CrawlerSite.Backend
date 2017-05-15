@@ -1,6 +1,7 @@
 function IPController(dependencies) {
 
     /// Dependencies   
+    var _console;
     var _mongoose;
 
     /// Properties
@@ -32,7 +33,7 @@ function IPController(dependencies) {
     var deleteIP = function (data, callback) {
         _entity.GetModel().findOneAndRemove(data, function (err, result) {
             if (err) {
-                console.log(err);
+                _console.log(err, 'error');
                 callback(false);
             }
             
@@ -42,7 +43,9 @@ function IPController(dependencies) {
 
     var getIPById = function (data, callback) {
         _entity.GetModel().findOne({ "_id": data }, function (err, result) {
-            if (err) console.log(err);
+            if (err){
+                _console.log(err, 'error');
+            }
 
             callback(result);
         })
@@ -50,7 +53,9 @@ function IPController(dependencies) {
 
     var getIPByApiKey = function (data, callback) {
         _entity.GetModel().find({ "ApiKey": data.ApiKey }, function (err, result) {
-            if (err) console.log(err);
+            if (err){
+                _console.log(err, 'error');
+            }
 
             callback(result);
         })
@@ -58,7 +63,9 @@ function IPController(dependencies) {
 
     var getAllIP = function (data, callback) {
         _entity.GetModel().find({}, function (err, result) {
-            if (err) console.log(err);
+            if (err){
+                _console.log(err, 'error');
+            }
 
             callback(result);
         })
@@ -67,7 +74,7 @@ function IPController(dependencies) {
     var editIp = function(data, callback){
         _entity.GetModel().findOneAndUpdate({ "_id": data._id }, { $set: { IP: data.IP, Name: data.Name } }, { upsert: false }, function (err, result) {
             if (err) {
-                console.log(err);
+                _console.log(err, 'error');
                 callback(false);
             }
             

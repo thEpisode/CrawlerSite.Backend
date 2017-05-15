@@ -1,6 +1,7 @@
 function InsightController(dependencies) {
 
     /// Dependencies   
+    var _console;
     var _database;
     var _fileHandler;
     var _eventEmiter;
@@ -169,7 +170,7 @@ function InsightController(dependencies) {
                         const len = charts.length;
 
                         if (len > 0) {
-                            console.log(`start: beginning processing of ${len} charts`);
+                            //console.log(`start: beginning processing of ${len} charts`);
 
                             context.tasks = len;              // total number of tasks
                             context.active = len;             // number of active tasks
@@ -186,7 +187,7 @@ function InsightController(dependencies) {
                     // start processing of each path
                     sm.on('forEachCharts', (charts) => {
 
-                        console.log(`forEachCharts: starting ${charts.length} process chains`);
+                        //console.log(`forEachCharts: starting ${charts.length} process chains`);
 
                         charts.forEach((chart) => sm.emit('getChart', chart));
                     });
@@ -194,7 +195,7 @@ function InsightController(dependencies) {
                     // read contents from path
                     sm.on('getChart', (chart) => {
 
-                        console.log(`  getChart: ${chart}`);
+                        //console.log(`  getChart: ${chart}`);
 
                         switch (chart.toLowerCase()) {
                             case 'PageViewsPerMonth'.toLowerCase():
@@ -228,7 +229,7 @@ function InsightController(dependencies) {
                     // compute length of path contents
                     sm.on('digestContent', (content) => {
 
-                        console.log(`  digestContent`);
+                        //console.log(`  digestContent`);
 
                         next(content);
                     });
@@ -236,7 +237,7 @@ function InsightController(dependencies) {
                     // when processing is complete
                     sm.on('done', () => {
 
-                        console.log(`The total of ${context.tasks}`);
+                        ///console.log(`The total of ${context.tasks}`);
 
                         if (context.tasks > 0 && context.active === 0) {
                             callback({ success: true, message: 'GetDashboardInsightsByApiKey', result: context.results })

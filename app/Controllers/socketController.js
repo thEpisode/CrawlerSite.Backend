@@ -231,7 +231,7 @@ function Socket(dependencies) {
                             /// Search all connected sockets by ApiKey
                             var keys = Object.keys(_io.sockets.connected)
                             for (var index = 0; index < keys.length; index++) {
-                                //console.log(_io.sockets.connected[keys[index]].ApiKey)
+                                
                                 if (_io.sockets.connected[keys[index]].ApiKey !== undefined) {
                                     if (_io.sockets.connected[keys[index]].ApiKey == data.Values.ApiKey) {
                                         try{
@@ -320,7 +320,7 @@ function Socket(dependencies) {
                                 data.Values.Event.Location = geolocateResponse.result == null ? null : geolocateResponse.result;
 
                                 _database.Click().CreateClick(data.Values, function () {
-                                    //console.log('Click Saved');
+                                    
                                     _database.Site().IncreaseClickHeatmaps({ ApiKey: data.Values.ApiKey }, function (response) { })
                                     _database.Site().IncreaseHeatmapClientsBehaviorByApiKey({ ApiKey: data.Values.ApiKey }, function (response) { })
                                 });

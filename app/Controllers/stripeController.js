@@ -1,6 +1,7 @@
 function StripeController(dependencies) {
 
-    /// Dependencies   
+    /// Dependencies  
+    var _console; 
     var _stripe;
     var _cross;
     var _database;
@@ -138,7 +139,7 @@ function StripeController(dependencies) {
             { limit: 12 },
             function (err, plans) {
                 if (err) {
-                    console.log(err);
+                    _console.log(err, 'error');
                     callback({ success: false, message: 'Something went wrong when retrieving all plans, try again.', result: null });
                 }
 
@@ -152,7 +153,7 @@ function StripeController(dependencies) {
             (planId == null ? 'free' : planId),
             function (err, plan) {
                 if (err) {
-                    console.log(err);
+                    _console.log(err, 'error');
                     callback({ success: false, message: 'Something went wrong when retrieving plans, try again.', result: null });
                 }
 
@@ -166,7 +167,7 @@ function StripeController(dependencies) {
             email: customerData.Email,
         }, function (err, customer) {
             if (err) {
-                console.log(err);
+                _console.log(err, 'error');
                 callback({ success: false, message: 'Something went error occurred when creating customer', result: null });
             }
 
@@ -178,7 +179,7 @@ function StripeController(dependencies) {
                         plan: plan.id
                     }, function (err, subscription) {
                         if (err) {
-                            console.log(err);
+                            _console.log(err, 'error');
                             callback({ success: false, message: 'Something went error occurred when subscribing customer in plan', result: null });
                         }
 
@@ -228,7 +229,7 @@ function StripeController(dependencies) {
                                     source: customerData.StripeToken // obtained with Stripe.js
                                 }, function (err, customer) {
                                     if (err) {
-                                        console.log(err);
+                                        _console.log(err, 'error');
                                         callback({ success: false, message: 'Something went error occurred when creating customer', result: null });
                                     }
                                     else {
@@ -263,7 +264,7 @@ function StripeController(dependencies) {
                                     { plan: plan.id },
                                     function (err, subscription) {
                                         if (err) {
-                                            console.log(err);
+                                            _console.log(err, 'error');
                                             callback({ success: false, message: err, result: null });
                                         }
                                         else {
@@ -337,7 +338,7 @@ function StripeController(dependencies) {
                         { plan: customerData.PlanId },
                         function (err, subscription) {
                             if (err) {
-                                console.log(err);
+                                _console.log(err, 'error');
                                 callback({ success: false, message: err, result: null });
                             }
 
@@ -366,7 +367,7 @@ function StripeController(dependencies) {
                 customerData.CustomerId,
                 function (err, customer) {
                     if (err) {
-                        console.log(err);
+                        _console.log(err, 'error');
                         callback({ success: false, message: 'Something went wrong when retrieving customer, try again.', result: null });
                     }
 
@@ -389,7 +390,7 @@ function StripeController(dependencies) {
                     },
                     function (err, charges) {
                         if (err) {
-                            console.log(err);
+                            _console.log(err, 'error');
                             callback({ success: false, message: 'Something went wrong when retrieving customer, try again.', result: null });
                         }
 
@@ -505,7 +506,7 @@ function StripeController(dependencies) {
             id: _cross.GetRandomString(data.Length, data.Prefix),
         }, function (err, coupon) {
             if (err) {
-                console.log(err)
+                _console.log(err, 'error');
                 callback({ success: false, message: 'Something was wrong while creating your voucher', result: false });
             }
             else {
@@ -519,7 +520,7 @@ function StripeController(dependencies) {
             data.VoucherId,
             function (err, coupon) {
                 if (err) {
-                    console.log(err)
+                    _console.log(err, 'error');
                     // Not exist coupon
                     callback({ success: false, message: 'Voucher not exist', result: false });
                 }

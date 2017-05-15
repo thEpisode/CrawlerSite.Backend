@@ -1,6 +1,7 @@
 function FrontEndReviewController(dependencies) {
 
     /// Dependencies   
+    var _console;
     var _mongoose;
 
     /// Properties
@@ -28,16 +29,18 @@ function FrontEndReviewController(dependencies) {
             });
 
         frontendReview.save().then(function (result) {
-            console.log(result)
             // When database return a result call the return
             callback(result);
+        }, function(err){
+            _console.log(err, 'error');
+            callback(null);
         });
     }
 
     var deleteFrontEndReview = function (data, callback) {
         _entity.GetModel().findOneAndRemove(data, function (err, result) {
             if (err) {
-                console.log(err);
+                _console.log(err, 'error');
                 callback(false);
             }
 
@@ -47,7 +50,9 @@ function FrontEndReviewController(dependencies) {
 
     var getFrontEndReviewById = function (data, callback) {
         _entity.GetModel().findOne({ "_id": data }, function (err, result) {
-            if (err) console.log(err);
+            if (err){
+                _console.log(err, 'error');
+            }
 
             callback(result);
         })
@@ -55,7 +60,9 @@ function FrontEndReviewController(dependencies) {
 
     var getFrontEndReviewByUserId = function (data, callback) {
         _entity.GetModel().find({ "UserId": data }, function (err, result) {
-            if (err) console.log(err);
+            if (err){
+                _console.log(err, 'error');
+            }
 
             callback(result);
         })
@@ -63,7 +70,9 @@ function FrontEndReviewController(dependencies) {
 
     var getAllFrontEndReview = function (data, callback) {
         _entity.GetModel().find({}, function (err, result) {
-            if (err) console.log(err);
+            if (err){
+                _console.log(err, 'error');
+            }
 
             callback(result);
         })

@@ -18,6 +18,9 @@ function FlingerServer(dependencies) {
 
     var constructor = function (callback) {
         _app = dependencies.app;
+        
+        _mailController = require('./mailController')(dependencies);
+        dependencies.mailController = _mailController;
 
         /// Own Console declaration
         _console = require('./consoleController')(dependencies);
@@ -38,9 +41,6 @@ function FlingerServer(dependencies) {
         /// GeoLocate Controller
         _geolocateController = require('./geolocateController')(dependencies);
         dependencies.geolocateController = _geolocateController;
-
-        _mailController = require('./mailController')(dependencies);
-        dependencies.mailController = _mailController;
 
         _notificationHubController = require('./notificationHubController')(dependencies);
         dependencies.notificationHub = _notificationHubController;

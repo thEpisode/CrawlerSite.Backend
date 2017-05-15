@@ -1,6 +1,7 @@
 function CreditCardController(dependencies) {
 
     /// Dependencies   
+    var _console;
     var _mongoose;
 
     /// Properties
@@ -26,7 +27,7 @@ function CreditCardController(dependencies) {
         creditCard.save().then(function (result) {
             callback({ success: true, message: 'CreateCreditCard', result: result });
         }, function (err) {
-            console.log(err);
+            _console.log(err, 'error');
             callback({ success: false, message: 'Something went wrong when creating your credit card, try again.', result: null });
         })
     }
@@ -49,7 +50,7 @@ function CreditCardController(dependencies) {
             },
             function (err, result) {
                 if (err) {
-                    console.log(err);
+                    _console.log(err, 'error');
                     callback({ success: false, message: 'Something went wrong when editing your credit card, try again.', result: null });
                 }
                 else {
@@ -61,7 +62,7 @@ function CreditCardController(dependencies) {
     var deleteCreditCard = function (data, callback) {
         _entity.GetModel().findOneAndRemove(data, function (err, result) {
             if (err) {
-                console.log(err);
+                _console.log(err, 'error');
                 callback({ success: false, message: 'Something went wrong when deleting your credit card, try again.', result: null });
             }
             else {
@@ -73,7 +74,7 @@ function CreditCardController(dependencies) {
     var getCreditCardById = function (data, callback) {
         _entity.GetModel().findOne({ "_id": data }, function (err, result) {
             if (err) {
-                console.log(err);
+                _console.log(err, 'error');
                 callback({ success: false, message: 'Something went wrong when getting your credit card, try again.', result: null });
             }
             else {
@@ -85,7 +86,7 @@ function CreditCardController(dependencies) {
     var getCreditCardByFeature = function (data, callback) {
         _entity.GetModel().findOne({ "Feature": data }, function (err, result) {
             if (err) {
-                console.log(err);
+                _console.log(err, 'error');
                 callback({ success: false, message: 'Something went wrong when getting your credit card, try again.', result: null });
             }
             else {
@@ -97,7 +98,7 @@ function CreditCardController(dependencies) {
     var getAllCreditCard = function (data, callback) {
         _entity.GetModel().find({}, function (err, result) {
             if (err) {
-                console.log(err);
+                _console.log(err, 'error');
                 callback({ success: false, message: 'Something went wrong when getting your credit card, try again.', result: null });
             }
             else {

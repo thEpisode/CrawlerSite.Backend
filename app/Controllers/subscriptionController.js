@@ -1,6 +1,7 @@
 function SubscriptionController(dependencies) {
 
     /// Dependencies   
+    var _console;
     var _mongoose;
     var _creditCardController;
 
@@ -33,7 +34,7 @@ function SubscriptionController(dependencies) {
         subscription.save().then(function (result) {
             callback({ success: true, message: 'CreateSubscription', result: result });
         }, function (err) {
-            console.log(err);
+            _console.log(err, 'error');
             callback({ success: false, message: 'Something went wrong when creating your subscription, try again.', result: null });
         });
     }
@@ -57,7 +58,7 @@ function SubscriptionController(dependencies) {
             },
             function (err, result) {
                 if (err) {
-                    console.log(err);
+                    _console.log(err, 'error');
                     callback({ success: false, message: 'Something went wrong when editing your credit card, try again.', result: null });
                 }
                 else {
@@ -69,7 +70,7 @@ function SubscriptionController(dependencies) {
     var deleteSubscription = function (data, callback) {
         _entity.GetModel().findOneAndRemove(data, function (err, result) {
             if (err) {
-                console.log(err);
+                _console.log(err, 'error');
                 callback({ success: false, message: 'Something went wrong when deleting your subscription, try again.', result: null });
             }
             else {
@@ -81,7 +82,7 @@ function SubscriptionController(dependencies) {
     var getSubscriptionById = function (data, callback) {
         _entity.GetModel().findOne({ "_id": data }, function (err, result) {
             if (err) {
-                console.log(err);
+                _console.log(err, 'error');
                 callback({ success: false, message: 'Something went wrong when retrieving your subscription, try again.', result: null });
             }
             else {
@@ -93,7 +94,7 @@ function SubscriptionController(dependencies) {
     var getSubscriptionByUserId = function (data, callback) {
         _entity.GetModel().findOne({ "UsersId": { $elemMatch: { $eq: data.UserId } } }).populate("CreditCard").exec(function (err, subscriptionResult) {
             if (err) {
-                console.log(err);
+                _console.log(err, 'error');
                 callback({ success: false, message: 'Something went wrong when retrieving your subscription, try again.', result: null });
             }
             else {
@@ -105,7 +106,7 @@ function SubscriptionController(dependencies) {
     var getAllSubscription = function (data, callback) {
         _entity.GetModel().find({}, function (err, result) {
             if (err) {
-                console.log(err);
+                _console.log(err, 'error');
                 callback({ success: false, message: 'Something went wrong when retrieving your subscriptions, try again.', result: null });
             }
             else {
@@ -117,7 +118,7 @@ function SubscriptionController(dependencies) {
     var getAllSitesOfSubscriptionByUserId = function (data, callback) {
         _entity.GetModel().findOne({ "UsersId": { $elemMatch: { $eq: data.UserId } } }).populate("SitesId").exec(function (err, subscriptionResult) {
             if (err) {
-                console.log(err);
+                _console.log(err, 'error');
                 callback({ success: false, message: 'Something went wrong when getting your sites, try again.', result: null });
             }
             else {
@@ -139,7 +140,7 @@ function SubscriptionController(dependencies) {
     var addUserToSubscription = function (data, callback) {
         _entity.GetModel().findOneAndUpdate({ "_id": data.SubscriptionId }, { $push: { "UsersId": data.UserId } }, { safe: true, upsert: false }, function (err, result) {
             if (err) {
-                console.log(err);
+                _console.log(err, 'error');
                 callback({ success: false, message: 'Something went wrong when adding your new user, try again.', result: null });
             }
             else {
@@ -151,7 +152,7 @@ function SubscriptionController(dependencies) {
     var addSiteToSubscription = function (data, callback) {
         _entity.GetModel().findOneAndUpdate({ "_id": data.SubscriptionId }, { $push: { "SitesId": data.SiteId } }, { safe: true, upsert: false }, function (err, result) {
             if (err) {
-                console.log(err);
+                _console.log(err, 'error');
                 callback({ success: false, message: 'Something went wrong when adding your new site to your subscription, try again.', result: null });
             }
             else {
@@ -164,7 +165,7 @@ function SubscriptionController(dependencies) {
         if (data.UserId != undefined) {
             _entity.GetModel().findOne({ "UsersId": { $elemMatch: { $eq: data.UserId } } }).populate("CreditCard").exec(function (err, subscriptionResult) {
                 if (err) {
-                    console.log(err);
+                    _console.log(err, 'error');
 
                     callback({ success: false, message: 'Something went wrong while retrieving user', result: null });
                 }
@@ -192,7 +193,7 @@ function SubscriptionController(dependencies) {
         callback({ success: true, message: 'CheckIfCanUseHeatmaps', result: true });
         /*_entity.GetModel().findOne({ "ApiKey": data.ApiKey }, function (err, siteResult) {
             if (err) {
-                console.log(err);
+                _console.log(err, 'error');
                 callback({ success: false, message: 'Something went wrong when updating insights, try again.', result: null });
             }
             else {

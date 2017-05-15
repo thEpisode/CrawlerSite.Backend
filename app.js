@@ -1,7 +1,7 @@
 // Coplest.Flinger
 // 0.0.1
 
-console.log('\n\t\t\t== Coplest.Flinger.Backend ==\n\n');
+console.log('\n\t\t\t== CrawlerSite.Backend ==\n\n');
 
 // =======================
 // libraries =========
@@ -61,7 +61,7 @@ var dependencies = {
     root: __dirname,
 }
 
-console.log(dependencies.colors.green(' Flinger: ') + 'Libs imported');
+console.log(dependencies.colors.green(' Crawler Site: ') + 'Libs imported');
 
 // =======================
 // configuration =========
@@ -106,4 +106,4 @@ mainServer.Initialize(function () {
 // listening app =========
 // =======================
 io.listen(app.listen(cross.NormalizePort(process.env.PORT || port)), { origins: '*' });
-console.log(dependencies.colors.green(' Flinger: ') + 'Listening on port ' + port);
+console.log(dependencies.colors.green(' Crawler Site: ') + 'Listening on port ' + port);

@@ -1,6 +1,7 @@
 function NotificationController(dependencies) {
 
     /// Dependencies   
+    var _console;
     var _mongoose;
 
     /// Properties
@@ -41,7 +42,9 @@ function NotificationController(dependencies) {
 
     var getNotificationById = function (data, callback) {
         _entity.GetModel().findOneAndUpdate({ "_id": data }, { $set: { Unread: _entity.GetStates().Read } }, { upsert: false }, function (err, result) {
-            if (err) console.log(err);
+            if (err){
+                _console.log(err, 'error');
+            }
 
             callback(result);
         })
@@ -49,7 +52,9 @@ function NotificationController(dependencies) {
 
     var getNotificationByUserId = function (data, callback) {
         _entity.GetModel().find({ "UserId": data }, function (err, notificationsResult) {
-            if (err) { console.log(err) };
+            if (err) { 
+                _console.log(err, 'error');
+            };
 
             if (notificationsResult != undefined && notificationsResult != null) {
                 if (notificationsResult.length > 0) {
@@ -90,7 +95,9 @@ function NotificationController(dependencies) {
 
     var getAllNotification = function (data, callback) {
         _entity.GetModel().find({}, function (err, result) {
-            if (err) console.log(err);
+            if (err){
+                _console.log(err, 'error');
+            }
 
             callback(result);
         })

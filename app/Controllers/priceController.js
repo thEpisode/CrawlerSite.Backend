@@ -1,6 +1,7 @@
 function PriceController(dependencies) {
 
-    /// Dependencies   
+    /// Dependencies  
+    var _console; 
     var _mongoose;
 
     /// Properties
@@ -38,7 +39,9 @@ function PriceController(dependencies) {
 
     var getPriceById = function (data, callback) {
         _entity.GetModel().findOne({ "_id": data }, function (err, result) {
-            if (err) console.log(err);
+            if (err){
+                _console.log(err, 'error');
+            }
 
             callback(result);
         })
@@ -46,7 +49,9 @@ function PriceController(dependencies) {
 
     var getPriceByFeature = function (data, callback) {
         _entity.GetModel().findOne({ "Feature": data }, function (err, result) {
-            if (err) console.log(err);
+            if (err){
+                _console.log(err, 'error');
+            }
 
             callback(result);
         })
@@ -54,7 +59,9 @@ function PriceController(dependencies) {
 
     var getAllPrice = function (data, callback) {
         _entity.GetModel().find({}, function (err, result) {
-            if (err) console.log(err);
+            if (err){
+                _console.log(err, 'error');
+            }
 
             callback(result);
         })

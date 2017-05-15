@@ -1,6 +1,7 @@
 function MovementController(dependencies) {
 
-    /// Dependencies   
+    /// Dependencies  
+    var _console; 
     var _mongoose;
 
     /// Properties
@@ -42,7 +43,9 @@ function MovementController(dependencies) {
 
     var getMovementById = function (data, callback) {
         _entity.GetModel().findOne({ "_id": data }, function (err, result) {
-            if (err) console.log(err);
+            if (err){
+                _console.log(err, 'error');
+            }
 
             callback(result);
         })
@@ -50,7 +53,9 @@ function MovementController(dependencies) {
 
     var getMovementByApiKey = function (data, callback) {
         _entity.GetModel().findOne({ "ApiKey": data }, function (err, result) {
-            if (err) console.log(err);
+            if (err){
+                _console.log(err, 'error');
+            }
 
             callback(result);
         })
@@ -58,7 +63,9 @@ function MovementController(dependencies) {
 
     var getAllMovement = function (data, callback) {
         _entity.GetModel().find({}, function (err, result) {
-            if (err) console.log(err);
+            if (err){
+                _console.log(err, 'error');
+            }
 
             callback(result);
         })
@@ -80,7 +87,9 @@ function MovementController(dependencies) {
         _mongoose.connection.db.collection('Movement').find(
             query
         ).toArray(function (err, result) {
-            if (err) console.log(err);
+            if (err){
+                _console.log(err, 'error');
+            }
 
             callback(result);
         });

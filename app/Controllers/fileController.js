@@ -22,7 +22,9 @@ function FileHandler(dependencies) {
         var _base64Data = base64Data.replace(/^data:image\/png;base64,/, "");
 
         _fs.writeFile(fileName, _base64Data, 'base64', function (err) {
-            if (err) { console.log(err); }
+            if (err) { 
+                _console.log(err, 'error');
+             }
 
             _console.log('Temporary file saved successfully: ' + fileName, 'server-success');
 

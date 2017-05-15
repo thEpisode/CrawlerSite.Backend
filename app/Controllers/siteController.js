@@ -1,6 +1,7 @@
 function SiteController(dependencies) {
 
     /// Dependencies
+    var _console;
     var _database;
     var _mongoose;
     var _uuid;
@@ -195,7 +196,7 @@ function SiteController(dependencies) {
     var deleteSite = function (data, callback) {
         _entity.GetModel().findOneAndRemove(data, function (err, result) {
             if (err) {
-                console.log(err);
+                _console.log(err, 'error');
                 callback(false);
             }
 
@@ -205,7 +206,9 @@ function SiteController(dependencies) {
 
     var getSiteById = function (data, callback) {
         _entity.GetModel().findOne({ "_id": data }, function (err, result) {
-            if (err) console.log(err);
+            if (err){
+                _console.log(err, 'error');
+            }
 
             callback(result);
         })
@@ -213,7 +216,9 @@ function SiteController(dependencies) {
 
     var getSiteByName = function (data, callback) {
         _entity.GetModel().findOne({ "Name": data }, function (err, result) {
-            if (err) console.log(err);
+            if (err){
+                _console.log(err, 'error');
+            }
 
             callback(result);
         })
@@ -221,7 +226,9 @@ function SiteController(dependencies) {
 
     var getSiteByApiKey = function (data, callback) {
         _entity.GetModel().findOne({ "ApiKey": data }, function (err, result) {
-            if (err) console.log(err);
+            if (err){
+                
+            }
 
             callback(result);
         })
@@ -229,7 +236,9 @@ function SiteController(dependencies) {
 
     var getAllSite = function (data, callback) {
         _entity.GetModel().find({}, function (err, result) {
-            if (err) console.log(err);
+            if (err){
+                _console.log(err, 'error');
+            }
 
             callback(result);
         })
@@ -244,7 +253,7 @@ function SiteController(dependencies) {
     var editSite = function (data, callback) {
         _entity.GetModel().findOneAndUpdate({ "_id": data._id }, { $set: { Url: data.Url, Name: data.Name, Tags: data.Tags } }, { upsert: false }, function (err, result) {
             if (err) {
-                console.log(err);
+                _console.log(err, 'error');
                 callback(false);
             }
 
@@ -263,7 +272,9 @@ function SiteController(dependencies) {
         }
 
         _entity.GetModel().findOne({ "ApiKey": apiKey }, function (err, site) {
-            if (err) console.log(err);
+            if (err){
+                _console.log(err, 'error');
+            }
 
             // Get first branch
             var lastBranch = searchBranch(site.Track, branches[branches.length - 1]);
@@ -272,7 +283,7 @@ function SiteController(dependencies) {
 
             _entity.GetModel().findOneAndUpdate({ "ApiKey": apiKey }, { $set: { Track: site.Track } }, { upsert: false }, function (err, result) {
                 if (err) {
-                    console.log(err);
+                    _console.log(err, 'error');
                     callback(false);
                 }
 
@@ -290,7 +301,9 @@ function SiteController(dependencies) {
         if (branches.length == 1) { branches[0] = "Index" }
 
         _entity.GetModel().findOne({ "ApiKey": apiKey }, function (err, site) {
-            if (err) console.log(err);
+            if (err){
+                _console.log(err, 'error');
+            }
 
             var existBranch;
 
@@ -342,7 +355,7 @@ function SiteController(dependencies) {
                 /// If not exist branch create into entity
                 _entity.GetModel().findOneAndUpdate({ "ApiKey": apiKey }, { $set: { Track: site.Track } }, { upsert: false }, function (err, result) {
                     if (err) {
-                        console.log(err);
+                        _console.log(err, 'error');
                     }
 
                     callback(false);
@@ -382,7 +395,9 @@ function SiteController(dependencies) {
         if (endpoint == '-') { branches = []; branches[0] = "Index" }
 
         _entity.GetModel().findOne({ "ApiKey": apiKey }, function (err, site) {
-            if (err) console.log(err);
+            if (err){
+                _console.log(err, 'error');
+            }
 
             var branch = searchBranch(site.Track, branches[branches.length - 1]);
             if (branch !== null) {
@@ -397,7 +412,7 @@ function SiteController(dependencies) {
     var increasePageviewsHeatmaps = function (data, callback) {
         _entity.GetModel().findOne({ "ApiKey": data.ApiKey }, function (err, result) {
             if (err) {
-                console.log(err);
+                _console.log(err, 'error');
                 callback({ success: false, message: 'Something went wrong when updating insights, try again.', result: null });
             }
             else {
@@ -411,10 +426,10 @@ function SiteController(dependencies) {
                             }
                         }, { upsert: false }, function (err, result) {
                             if (err) {
-                                console.log(err);
+                                _console.log(err, 'error');
                                 callback({ success: false, message: 'Something went wrong when updating insights, try again.', result: null });
                             }
-                            //console.log(result.Insights.Heatmaps)
+                            
                             callback({ success: true, message: 'IncreasePageviewsHeatmapsInsights', result: result });
                         });
                 }
@@ -425,7 +440,7 @@ function SiteController(dependencies) {
     var increaseMovementHeatmaps = function (data, callback) {
         _entity.GetModel().findOne({ "ApiKey": data.ApiKey }, function (err, siteResult) {
             if (err) {
-                console.log(err);
+                _console.log(err, 'error');
                 callback({ success: false, message: 'Something went wrong when updating insights, try again.', result: null });
             }
             else {
@@ -439,10 +454,10 @@ function SiteController(dependencies) {
                             }
                         }, { upsert: false }, function (err, result) {
                             if (err) {
-                                console.log(err);
+                                _console.log(err, 'error');
                                 callback({ success: false, message: 'Something went wrong when updating insights, try again.', result: null });
                             }
-                            //console.log(result.Insights.Heatmaps)
+                            
                             callback({ success: true, message: 'IncreaseMovementHeatmaps', result: result });
                         });
                 }
@@ -456,7 +471,7 @@ function SiteController(dependencies) {
     var increaseClickHeatmaps = function (data, callback) {
         _entity.GetModel().findOne({ "ApiKey": data.ApiKey }, function (err, result) {
             if (err) {
-                console.log(err);
+                _console.log(err, 'error');
                 callback({ success: false, message: 'Something went wrong when updating insights, try again.', result: null });
             }
             else {
@@ -470,10 +485,10 @@ function SiteController(dependencies) {
                             }
                         }, { upsert: false }, function (err, result) {
                             if (err) {
-                                console.log(err);
+                                _console.log(err, 'error');
                                 callback({ success: false, message: 'Something went wrong when updating insights, try again.', result: null });
                             }
-                            //console.log(result.Insights.Heatmaps)
+                            
                             callback({ success: true, message: 'IncreaseClickHeatmaps', result: result });
                         });
                 }
@@ -484,7 +499,7 @@ function SiteController(dependencies) {
     var increaseScrollHeatmaps = function (data, callback) {
         _entity.GetModel().findOne({ "ApiKey": data.ApiKey }, function (err, result) {
             if (err) {
-                console.log(err);
+                _console.log(err, 'error');
                 callback({ success: false, message: 'Something went wrong when updating insights, try again.', result: null });
             }
             else {
@@ -498,10 +513,10 @@ function SiteController(dependencies) {
                             }
                         }, { upsert: false }, function (err, result) {
                             if (err) {
-                                console.log(err);
+                                _console.log(err, 'error');
                                 callback({ success: false, message: 'Something went wrong when updating insights, try again.', result: null });
                             }
-                            //console.log(result.Insights.Heatmaps)
+                            
                             callback({ success: true, message: 'IncreaseScrollHeatmaps', result: result });
                         });
                 }
@@ -524,7 +539,7 @@ function SiteController(dependencies) {
                 }
             }], function (err, result) {
                 if (err) {
-                    console.log(err);
+                    _console.log(err, 'error');
                     callback({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
                 }
                 else {
@@ -552,7 +567,7 @@ function SiteController(dependencies) {
                         }
                     }], function (err, result) {
                         if (err) {
-                            console.log(err);
+                            _console.log(err, 'error');
                             callback({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
                         }
                         else {
@@ -584,7 +599,7 @@ function SiteController(dependencies) {
                 }
             }], function (err, result) {
                 if (err) {
-                    console.log(err);
+                    _console.log(err, 'error');
                     callback({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
                 }
                 else {
@@ -612,7 +627,7 @@ function SiteController(dependencies) {
                         }
                     }], function (err, result) {
                         if (err) {
-                            console.log(err);
+                            _console.log(err, 'error');
                             callback({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
                         }
                         else {
@@ -644,7 +659,7 @@ function SiteController(dependencies) {
                 }
             }], function (err, result) {
                 if (err) {
-                    console.log(err);
+                    _console.log(err, 'error');
                     callback({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
                 }
                 else {
@@ -672,7 +687,7 @@ function SiteController(dependencies) {
                         }
                     }], function (err, result) {
                         if (err) {
-                            console.log(err);
+                            _console.log(err, 'error');
                             callback({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
                         }
                         else {
@@ -704,7 +719,7 @@ function SiteController(dependencies) {
                 }
             }], function (err, result) {
                 if (err) {
-                    console.log(err);
+                    _console.log(err, 'error');
                     callback({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
                 }
                 else {
@@ -732,7 +747,7 @@ function SiteController(dependencies) {
                         }
                     }], function (err, result) {
                         if (err) {
-                            console.log(err);
+                            _console.log(err, 'error');
                             callback({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
                         }
                         else {
@@ -752,7 +767,7 @@ function SiteController(dependencies) {
     var increaseUsersOnlineRATByApiKey = function (data, callback) {
         _entity.GetModel().findOne({ "ApiKey": data.ApiKey }, function (err, result) {
             if (err) {
-                console.log(err);
+                _console.log(err, 'error');
                 callback({ success: false, message: 'Something went wrong when updating insights, try again.', result: null });
             }
             else {
@@ -765,10 +780,10 @@ function SiteController(dependencies) {
                             }
                         }, { upsert: false }, function (err, result) {
                             if (err) {
-                                console.log(err);
+                                _console.log(err, 'error');
                                 callback({ success: false, message: 'Something went wrong when updating insights, try again.', result: null });
                             }
-                            //console.log(result.Insights.Heatmaps)
+                            
                             callback({ success: true, message: 'IncreaseUsersOnlineRAT', result: result });
                         });
                 }
@@ -779,7 +794,7 @@ function SiteController(dependencies) {
     var decreaseUsersOnlineRATByApiKey = function (data, callback) {
         _entity.GetModel().findOne({ "ApiKey": data.ApiKey }, function (err, result) {
             if (err) {
-                console.log(err);
+                _console.log(err, 'error');
                 callback({ success: false, message: 'Something went wrong when updating insights, try again.', result: null });
             }
             else {
@@ -792,10 +807,10 @@ function SiteController(dependencies) {
                             }
                         }, { upsert: false }, function (err, result) {
                             if (err) {
-                                console.log(err);
+                                _console.log(err, 'error');
                                 callback({ success: false, message: 'Something went wrong when updating insights, try again.', result: null });
                             }
-                            //console.log(result.Insights.Heatmaps)
+                            
                             callback({ success: true, message: 'DecreaseUsersOnlineRAT', result: result });
                         });
                 }
@@ -806,7 +821,7 @@ function SiteController(dependencies) {
     var increaseRATTimeByApiKey = function (data, callback) {
         _entity.GetModel().findOne({ "ApiKey": data.ApiKey }, function (err, result) {
             if (err) {
-                console.log(err);
+                _console.log(err, 'error');
                 callback({ success: false, message: 'Something went wrong when updating insights, try again.', result: null });
             }
             else {
@@ -820,10 +835,10 @@ function SiteController(dependencies) {
                             }
                         }, { upsert: false }, function (err, result) {
                             if (err) {
-                                console.log(err);
+                                _console.log(err, 'error');
                                 callback({ success: false, message: 'Something went wrong when updating insights, try again.', result: null });
                             }
-                            //console.log(result.Insights.Heatmaps)
+                            
                             callback({ success: true, message: 'IncreaseUsersOnlineRAT', result: result });
                         });
                 }
@@ -845,7 +860,7 @@ function SiteController(dependencies) {
                 }
             }], function (err, result) {
                 if (err) {
-                    console.log(err);
+                    _console.log(err, 'error');
                     callback({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
                 }
                 else {
@@ -869,7 +884,7 @@ function SiteController(dependencies) {
                 }
             }], function (err, result) {
                 if (err) {
-                    console.log(err);
+                    _console.log(err, 'error');
                     callback({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
                 }
                 else {
@@ -892,7 +907,7 @@ function SiteController(dependencies) {
                 }
             }], function (err, result) {
                 if (err) {
-                    console.log(err);
+                    _console.log(err, 'error');
                     callback({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
                 }
                 else {
@@ -919,7 +934,7 @@ function SiteController(dependencies) {
                         }
                     }], function (err, result) {
                         if (err) {
-                            console.log(err);
+                            _console.log(err, 'error');
                             callback({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
                         }
                         else {
@@ -955,7 +970,7 @@ function SiteController(dependencies) {
                         }
                     }], function (err, result) {
                         if (err) {
-                            console.log(err);
+                            _console.log(err, 'error');
                             callback({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
                         }
                         else {
@@ -990,7 +1005,7 @@ function SiteController(dependencies) {
                         }
                     }], function (err, result) {
                         if (err) {
-                            console.log(err);
+                            _console.log(err, 'error');
                             callback({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
                         }
                         else {
@@ -1034,7 +1049,7 @@ function SiteController(dependencies) {
                 }
             }], function (err, result) {
                 if (err) {
-                    console.log(err);
+                    _console.log(err, 'error');
                     callback({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
                 }
                 else {
@@ -1062,7 +1077,7 @@ function SiteController(dependencies) {
                         }
                     }], function (err, result) {
                         if (err) {
-                            console.log(err);
+                            _console.log(err, 'error');
                             callback({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
                         }
                         else {
@@ -1094,7 +1109,7 @@ function SiteController(dependencies) {
                 }
             }], function (err, result) {
                 if (err) {
-                    console.log(err);
+                    _console.log(err, 'error');
                     callback({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
                 }
                 else {
@@ -1122,7 +1137,7 @@ function SiteController(dependencies) {
                         }
                     }], function (err, result) {
                         if (err) {
-                            console.log(err);
+                            _console.log(err, 'error');
                             callback({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
                         }
                         else {
@@ -1153,7 +1168,7 @@ function SiteController(dependencies) {
                 }
             }], function (err, result) {
                 if (err) {
-                    console.log(err);
+                    _console.log(err, 'error');
                     callback({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
                 }
                 else {
@@ -1181,7 +1196,7 @@ function SiteController(dependencies) {
                         }
                     }], function (err, result) {
                         if (err) {
-                            console.log(err);
+                            _console.log(err, 'error');
                             callback({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
                         }
                         else {
@@ -1213,7 +1228,7 @@ function SiteController(dependencies) {
                 }
             }], function (err, result) {
                 if (err) {
-                    console.log(err);
+                    _console.log(err, 'error');
                     callback({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
                 }
                 else {
@@ -1240,7 +1255,7 @@ function SiteController(dependencies) {
                         }
                     }], function (err, result) {
                         if (err) {
-                            console.log(err);
+                            _console.log(err, 'error');
                             callback({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
                         }
                         else {
@@ -1272,7 +1287,7 @@ function SiteController(dependencies) {
                 }
             }], function (err, result) {
                 if (err) {
-                    console.log(err);
+                    _console.log(err, 'error');
                     callback({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
                 }
                 else {
@@ -1300,7 +1315,7 @@ function SiteController(dependencies) {
                         }
                     }], function (err, result) {
                         if (err) {
-                            console.log(err);
+                            _console.log(err, 'error');
                             callback({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
                         }
                         else {
@@ -1332,7 +1347,7 @@ function SiteController(dependencies) {
                 }
             }], function (err, result) {
                 if (err) {
-                    console.log(err);
+                    _console.log(err, 'error');
                     callback({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
                 }
                 else {
@@ -1361,7 +1376,7 @@ function SiteController(dependencies) {
                         }
                     }], function (err, result) {
                         if (err) {
-                            console.log(err);
+                            _console.log(err, 'error');
                             callback({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
                         }
                         else {
@@ -1381,7 +1396,7 @@ function SiteController(dependencies) {
     var getAvailableChartsByApiKey = function (apiKey, callback) {
         _entity.GetModel().findOne({ "ApiKey": apiKey }, function (err, result) {
             if (err) {
-                console.log(err);
+                _console.log(err, 'error');
                 callback({ success: false, message: 'Something went error while retreiving available Charts', result: null });
             }
 
@@ -1407,7 +1422,7 @@ function SiteController(dependencies) {
     var increaseHeatmapClientsBehaviorByApiKey = function (data, callback) {
         _entity.GetModel().findOne({ "ApiKey": data.ApiKey }, function (err, siteResult) {
             if (err) {
-                console.log(err);
+                _console.log(err, 'error');
                 callback({ success: false, message: 'Something went wrong when updating insights, try again.', result: null });
             }
             else {
@@ -1423,10 +1438,10 @@ function SiteController(dependencies) {
                             $set: insertObj
                         }, { upsert: false }, function (err, result) {
                             if (err) {
-                                console.log(err);
+                                _console.log(err, 'error');
                                 callback({ success: false, message: 'Something went wrong when updating insights, try again.', result: null });
                             }
-                            //console.log(result.Insights.Heatmaps)
+                            
                             callback({ success: true, message: 'IncreaseMovementHeatmaps', result: result });
                         });
                 }
@@ -1440,7 +1455,7 @@ function SiteController(dependencies) {
     var increaseRATClientsBehaviorByApiKey = function (data, callback) {
         _entity.GetModel().findOne({ "ApiKey": data.ApiKey }, function (err, siteResult) {
             if (err) {
-                console.log(err);
+                _console.log(err, 'error');
                 callback({ success: false, message: 'Something went wrong when updating insights, try again.', result: null });
             }
             else {
@@ -1456,10 +1471,10 @@ function SiteController(dependencies) {
                             $set: insertObj
                         }, { upsert: false }, function (err, result) {
                             if (err) {
-                                console.log(err);
+                                _console.log(err, 'error');
                                 callback({ success: false, message: 'Something went wrong when updating insights, try again.', result: null });
                             }
-                            //console.log(result.Insights.Heatmaps)
+                            
                             callback({ success: true, message: 'IncreaseMovementHeatmaps', result: result });
                         });
                 }
@@ -1473,7 +1488,7 @@ function SiteController(dependencies) {
     var increaseFormAnalysisClientsBehaviorByApiKey = function (data, callback) {
         _entity.GetModel().findOne({ "ApiKey": data.ApiKey }, function (err, siteResult) {
             if (err) {
-                console.log(err);
+                _console.log(err, 'error');
                 callback({ success: false, message: 'Something went wrong when updating insights, try again.', result: null });
             }
             else {
@@ -1489,10 +1504,10 @@ function SiteController(dependencies) {
                             $set: insertObj
                         }, { upsert: false }, function (err, result) {
                             if (err) {
-                                console.log(err);
+                                _console.log(err, 'error');
                                 callback({ success: false, message: 'Something went wrong when updating insights, try again.', result: null });
                             }
-                            //console.log(result.Insights.Heatmaps)
+                            
                             callback({ success: true, message: 'IncreaseMovementHeatmaps', result: result });
                         });
                 }
@@ -1506,7 +1521,7 @@ function SiteController(dependencies) {
     var increaseRecordsClientsBehaviorByApiKey = function (data, callback) {
         _entity.GetModel().findOne({ "ApiKey": data.ApiKey }, function (err, siteResult) {
             if (err) {
-                console.log(err);
+                _console.log(err, 'error');
                 callback({ success: false, message: 'Something went wrong when updating insights, try again.', result: null });
             }
             else {
@@ -1522,10 +1537,10 @@ function SiteController(dependencies) {
                             $set: insertObj
                         }, { upsert: false }, function (err, result) {
                             if (err) {
-                                console.log(err);
+                                _console.log(err, 'error');
                                 callback({ success: false, message: 'Something went wrong when updating insights, try again.', result: null });
                             }
-                            //console.log(result.Insights.Heatmaps)
+                            
                             callback({ success: true, message: 'IncreaseMovementHeatmaps', result: result });
                         });
                 }
@@ -1539,7 +1554,7 @@ function SiteController(dependencies) {
     var getHeatmapClientsBehaviorByApiKey = function (data, callback) {
         _entity.GetModel().findOne({ "ApiKey": data.ApiKey }, function (err, result) {
             if (err) {
-                console.log(err);
+                _console.log(err, 'error');
                 callback({ success: false, message: 'Something went error while retreiving available Charts', result: null });
             }
 
@@ -1561,7 +1576,7 @@ function SiteController(dependencies) {
     var getRATClientsBehaviorByApiKey = function (data, callback) {
         _entity.GetModel().findOne({ "ApiKey": data.ApiKey }, function (err, result) {
             if (err) {
-                console.log(err);
+                _console.log(err, 'error');
                 callback({ success: false, message: 'Something went error while retreiving available Charts', result: null });
             }
 
@@ -1583,7 +1598,7 @@ function SiteController(dependencies) {
     var getFormAnalysisClientsBehaviorByApiKey = function (data, callback) {
         _entity.GetModel().findOne({ "ApiKey": data.ApiKey }, function (err, result) {
             if (err) {
-                console.log(err);
+                _console.log(err, 'error');
                 callback({ success: false, message: 'Something went error while retreiving available Charts', result: null });
             }
 
@@ -1605,7 +1620,7 @@ function SiteController(dependencies) {
     var getRecordsClientsBehaviorByApiKey = function (data, callback) {
         _entity.GetModel().findOne({ "ApiKey": data.ApiKey }, function (err, result) {
             if (err) {
-                console.log(err);
+                _console.log(err, 'error');
                 callback({ success: false, message: 'Something went error while retreiving available Charts', result: null });
             }
 
@@ -1642,7 +1657,7 @@ function SiteController(dependencies) {
                         }
                     }], function (err, result) {
                         if (err) {
-                            console.log(err);
+                            _console.log(err, 'error');
                             callback({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
                         }
                         else {
@@ -1677,7 +1692,7 @@ function SiteController(dependencies) {
                         }
                     }], function (err, result) {
                         if (err) {
-                            console.log(err);
+                            _console.log(err, 'error');
                             callback({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
                         }
                         else {
@@ -1712,7 +1727,7 @@ function SiteController(dependencies) {
                         }
                     }], function (err, result) {
                         if (err) {
-                            console.log(err);
+                            _console.log(err, 'error');
                             callback({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
                         }
                         else {
@@ -1747,7 +1762,7 @@ function SiteController(dependencies) {
                         }
                     }], function (err, result) {
                         if (err) {
-                            console.log(err);
+                            _console.log(err, 'error');
                             callback({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
                         }
                         else {
@@ -1789,7 +1804,7 @@ function SiteController(dependencies) {
                         }
                     }], function (err, result) {
                         if (err) {
-                            console.log(err);
+                            _console.log(err, 'error');
                             callback({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
                         }
                         else {

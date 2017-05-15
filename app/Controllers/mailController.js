@@ -1,6 +1,7 @@
 function MailController(dependencies) {
 
-    /// Dependencies   
+    /// Dependencies  
+    var _console; 
     var _mail;
     var _cross;
 
@@ -48,7 +49,7 @@ function MailController(dependencies) {
 
         _server.send(message, function (err, message) {
             if (err) {
-                console.log(err);
+                _console.log(err, 'error');
                 callback({ success: false, message: 'Something went wrong when try to send email, try again.', result: err });
             }
 
@@ -72,7 +73,7 @@ function MailController(dependencies) {
 
             _server.send(message, function (err, message) {
                 if (err) {
-                    console.log(err);
+                    _console.log(err, 'error');
                     callback({ success: false, message: 'Something went wrong when try to send email, try again.', result: err });
                 }
 
@@ -85,7 +86,7 @@ function MailController(dependencies) {
         var path = _path.join(dependencies.root, "email_templates/");
         _fs.readFile(path + 'basic.html', 'utf8', function (err, data) {
             if (err) {
-                console.log(err);
+                _console.log(err, 'error');
 
                 return null;
             };
