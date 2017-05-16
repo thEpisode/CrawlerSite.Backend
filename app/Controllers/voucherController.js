@@ -208,15 +208,18 @@ function VoucherController(dependencies) {
             _database.Subscription().GetSubscriptionByUserId({ UserId: data.UserId }, function (SubscriptionResult) {
                 if (SubscriptionResult != undefined && SubscriptionResult != null) {
                     _stripeController.RedeemVoucher({ VoucherId: data.VoucherId, SubscriptionId: SubscriptionResult.SubscriptionId }, function (result) {
-                        callback(result);
+                        _database.User().SetHasCouponCode({ Email: result.StripeData.metadata.Email, HasCouponCode: false }, function (changedUserResult) {
+                            // When database return a result call the return
+                            callback({ success: true, message: 'CreateVoucher', result: result.result });
+                        })
                     })
                 }
-                else{
+                else {
                     callback({ success: false, message: 'Something was wrong while redeeming your discount voucher', result: null });
                 }
             })
         }
-        else{
+        else {
             callback({ success: false, message: 'Something was wrong while redeeming your discount voucher', result: null });
         }
     }
