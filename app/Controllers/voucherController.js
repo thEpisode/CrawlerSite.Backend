@@ -194,8 +194,26 @@ function VoucherController(dependencies) {
 
     var redeemVoucher = function (data, callback) {
         if (data.VoucherId != undefined && data.VoucherId != null) {
-            _stripeController.RedeemVoucher({ VoucherId: data.VoucherId }, function (result) {
+            _stripeController.RedeemVoucher({ VoucherId: data.VoucherId, SubscriptionId: data.SubscriptionId }, function (result) {
                 callback(result);
+            })
+        }
+        else {
+            callback({ success: false, message: 'Something was wrong while redeeming your discount voucher', result: null });
+        }
+    }
+
+    var redeemVoucherByUserId = function (data, callback) {
+        if (data.VoucherId != undefined && data.VoucherId != null) {
+            _database.Subscription().GetSubscriptionByUserId({ UserId: data.UserId }, function (SubscriptionResult) {
+                if (SubscriptionResult != undefined && SubscriptionResult != null) {
+                    _stripeController.RedeemVoucher({ VoucherId: data.VoucherId, SubscriptionId: SubscriptionResult.SubscriptionId }, function (result) {
+                        callback(result);
+                    })
+                }
+                else{
+                    callback({ success: false, message: 'Something was wrong while redeeming your discount voucher', result: null });
+                }
             })
         }
         else{
