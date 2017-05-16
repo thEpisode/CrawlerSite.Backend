@@ -9,7 +9,7 @@ function Socket(dependencies) {
     var _uuid;
     var _geolocate;
 
-    const MAX_CLIENTS = 10;
+    const MAX_CLIENTS = 10; 
 
     var _siteNamespaces = [];
     var _usersconnectedClients = [];
