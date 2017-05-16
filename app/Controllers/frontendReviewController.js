@@ -9,6 +9,7 @@ function FrontEndReviewController(dependencies) {
 
     var constructor = function () {
         _mongoose = dependencies.mongoose;
+        _console = dependencies.console;
 
         _entity = require('../Models/FrontEndReview')(dependencies);
         _entity.Initialize();

@@ -22,6 +22,7 @@ function Socket(dependencies) {
         _cross = dependencies.cross;
         _uuid = dependencies.uuid;
         _geolocate = dependencies.geolocateController;
+        _console = dependencies.console;
 
         socketImplementation();
         _console.log('Socket module initialized', 'server-success');

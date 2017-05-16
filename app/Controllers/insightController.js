@@ -13,6 +13,7 @@ function InsightController(dependencies) {
         _database = dependencies.database;
         _fileHandler = dependencies.fileHandler;
         _eventEmiter = dependencies.eventEmiter;
+        _console = dependencies.console;
     }
 
     var heatmapData = function (data, callback) {

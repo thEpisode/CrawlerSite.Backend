@@ -15,6 +15,7 @@ function StripeController(dependencies) {
     var constructor = function () {
         _cross = dependencies.cross;
         _database = dependencies.database;
+        _console = dependencies.console;
 
         _stripe_pk = _cross.GetStripePrivateKey();
 

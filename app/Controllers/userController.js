@@ -20,6 +20,7 @@ function UserController(dependencies) {
         _jwt = dependencies.jwt;
         _stripeController = dependencies.stripeController;
         _cross = dependencies.cross;
+        _console = dependencies.console;
 
         _entity = require('../Models/User')(dependencies);
         _entity.Initialize();
@@ -187,7 +188,7 @@ function UserController(dependencies) {
         })
     }
 
-    var getUserByCredentials = function (data, callback) {
+    var getUserByCredentials = function (data, callback) {_console.log(data, 'error');
 
         _entity.GetModel().findOne({ "Email": data.Email }, function (err, user) {
             if (err) _console.log(err, 'error');

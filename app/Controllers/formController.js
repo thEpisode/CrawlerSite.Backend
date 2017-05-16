@@ -9,6 +9,7 @@ function FormController(dependencies) {
 
     var constructor = function () {
         _mongoose = dependencies.mongoose;
+        _console = dependencies.console;
 
         _entity = require('../Models/Form')(dependencies);
         _entity.Initialize();

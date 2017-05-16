@@ -9,6 +9,7 @@ function MovementController(dependencies) {
 
     var constructor = function () {
         _mongoose = dependencies.mongoose;
+        _console = dependencies.console;
 
         _entity = require('../Models/Movement')(dependencies);
         _entity.Initialize();

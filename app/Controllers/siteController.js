@@ -13,6 +13,7 @@ function SiteController(dependencies) {
         _database = dependencies.database;
         _mongoose = dependencies.mongoose;
         _uuid = dependencies.uuid;
+        _console = dependencies.console;
 
         _entity = require('../Models/Site')(dependencies);
         _entity.Initialize();

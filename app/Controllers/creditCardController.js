@@ -9,6 +9,7 @@ function CreditCardController(dependencies) {
 
     var constructor = function () {
         _mongoose = dependencies.mongoose;
+        _console = dependencies.console;
 
         _entity = require('../Models/CreditCard')(dependencies);
         _entity.Initialize();

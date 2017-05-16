@@ -9,6 +9,7 @@ function IPController(dependencies) {
 
     var constructor = function () {
         _mongoose = dependencies.mongoose;
+        _console = dependencies.console;
 
         _entity = require('../Models/Ip')(dependencies); 
         _entity.Initialize();

@@ -9,6 +9,7 @@ function NotificationController(dependencies) {
 
     var constructor = function () {
         _mongoose = dependencies.mongoose;
+        _console = dependencies.console;
 
         _entity = require('../Models/Notification')(dependencies);
         _entity.Initialize();

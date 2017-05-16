@@ -17,6 +17,7 @@ function MailController(dependencies) {
 
     var constructor = function () {
         _cross = dependencies.cross;
+        _console = dependencies.console;
 
         _fs = dependencies.fs;
         _path = dependencies.path;

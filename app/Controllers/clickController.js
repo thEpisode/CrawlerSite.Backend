@@ -9,6 +9,7 @@ function ClickController(dependencies) {
 
     var constructor = function () {
         _mongoose = dependencies.mongoose;
+        _console = dependencies.console;
 
         _entity = require('../Models/Click')(dependencies);
         _entity.Initialize();

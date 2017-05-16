@@ -15,6 +15,7 @@ function VoucherController(dependencies) {
         _stripeController = dependencies.stripeController;
         _notificationHubController = dependencies.notificationHub;
         _database = dependencies.database;
+        _console = dependencies.console;
 
         _entity = require('../Models/Voucher')(dependencies);
         _entity.Initialize();

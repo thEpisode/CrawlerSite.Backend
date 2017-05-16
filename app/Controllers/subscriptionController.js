@@ -11,6 +11,7 @@ function SubscriptionController(dependencies) {
     var constructor = function () {
         _mongoose = dependencies.mongoose;
         _creditCardController = dependencies.CreditCardController;
+        _console = dependencies.console;
 
         _entity = require('../Models/Subscription')(dependencies);
         _entity.Initialize();

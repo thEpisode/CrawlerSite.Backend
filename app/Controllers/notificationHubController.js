@@ -4,6 +4,7 @@ function NotificationHubController(dependencies) {
     var _mail;
     var _cross;
     var _database;
+    var _console;
 
     var _server;
 
@@ -11,6 +12,7 @@ function NotificationHubController(dependencies) {
         _cross = dependencies.cross;
         _mail = dependencies.mailController;
         _database = dependencies.database;
+        _console = dependencies.console;
     }
 
     var sendNotification = function (notificationData, callback) {

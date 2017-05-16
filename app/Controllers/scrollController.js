@@ -9,6 +9,7 @@ function ScrollController(dependencies) {
 
     var constructor = function () {
         _mongoose = dependencies.mongoose;
+        _console = dependencies.console;
 
         _entity = require('../Models/Scroll')(dependencies);
         _entity.Initialize();

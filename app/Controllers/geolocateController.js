@@ -5,6 +5,7 @@ function GeolocateController(dependencies) {
     var _geoip;
     var _eventEmiter;
     var _geolocator;
+    var _console;
 
     /// Properties
 
@@ -13,6 +14,7 @@ function GeolocateController(dependencies) {
         _database = dependencies.database;
         _geoip = dependencies.geoip;
         _eventEmiter = dependencies.eventEmiter;
+        _console = dependencies.console;
 
         databaseConnect(function (result) {
             callback(result);
