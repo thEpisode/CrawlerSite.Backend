@@ -235,6 +235,7 @@ function VoucherController(dependencies) {
         GetAllVoucher: getAllVoucher,
         VerifyByStripeId: verifyByStripeId,
         RedeemVoucher: redeemVoucher,
+        RedeemVoucherByUserId: redeemVoucherByUserId,
         Entity: getEntity
     }
 }
