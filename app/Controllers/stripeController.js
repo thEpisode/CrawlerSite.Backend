@@ -553,6 +553,7 @@ function StripeController(dependencies) {
             { coupon: data.VoucherId },
             function(err, subscription){
                 if (err) {
+                    _console.log(err, 'error');
                     callback({ success: false, message: 'Something was wrong while redeeming your discount voucher', result: null });
                 }
                 else {

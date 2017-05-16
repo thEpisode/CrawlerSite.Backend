@@ -176,16 +176,27 @@ function VoucherController(dependencies) {
             }
             else {
                 if (voucherResult !== undefined && voucherResult !== null) {
-                    if (voucherResult.StripeData.id !== undefined && voucherResult.StripeData.id !== null) {
-                        _stripeController.VerifyDiscountVoucher({ VoucherId: voucherResult.StripeData.id }, function (result) {
-                            callback(result);
-                        });
+                    //Validate state
+                    if (voucherResult.State == _entity.GetStates().Unremeeded) {
+                        if (voucherResult.StripeData.id !== undefined && voucherResult.StripeData.id !== null) {
+                            _stripeController.VerifyDiscountVoucher({ VoucherId: voucherResult.StripeData.id }, function (result) {
+                                callback(result);
+                            });
+                        }
+                        else {
+                            _console.log('verifyByStripeId: voucherResult.StripeData.id undefined or null', 'error');
+                            callback({ success: false, message: 'Your voucher not exist, just copy and paste from our email.', result: null });
+                        }
                     }
-                    else {
-                        callback({ success: false, message: 'Your voucher not exist, just copy and paste from our email.', result: null });
+                    else if(voucherResult.State == _entity.GetStates().Redeemed){
+                        callback({ success: false, message: 'Your voucher was redeemed.', result: null });
+                    }
+                    else{
+                        callback({ success: false, message: 'Your voucher was expired.', result: null });
                     }
                 }
                 else {
+                    _console.log('verifyByStripeId: voucherResult undefined or null', 'error');
                     callback({ success: false, message: 'Your voucher not exist, just copy and paste from our email.', result: null });
                 }
             }
@@ -207,19 +218,39 @@ function VoucherController(dependencies) {
         if (data.VoucherId != undefined && data.VoucherId != null) {
             _database.Subscription().GetSubscriptionByUserId({ UserId: data.UserId }, function (SubscriptionResult) {
                 if (SubscriptionResult != undefined && SubscriptionResult != null) {
-                    _stripeController.RedeemVoucher({ VoucherId: data.VoucherId, SubscriptionId: SubscriptionResult.SubscriptionId }, function (result) {
-                        _database.User().SetHasCouponCode({ Email: result.StripeData.metadata.Email, HasCouponCode: false }, function (changedUserResult) {
-                            // When database return a result call the return
-                            callback({ success: true, message: 'CreateVoucher', result: result.result });
-                        })
-                    })
+                    if (SubscriptionResult.success === true) {
+                        _stripeController.RedeemVoucher({ VoucherId: data.VoucherId, SubscriptionId: SubscriptionResult.result.SubscriptionId }, function (redeemVoucherResult) {
+                            if (redeemVoucherResult != undefined && redeemVoucherResult != null) {
+                                if (redeemVoucherResult.success == true) {
+                                    _entity.GetModel().findOneAndUpdate({ "StripeData.id": data.VoucherId }, { $set: { State: _entity.GetStates().Redeemed } }, { upsert: false }, function (err, result) {
+                                        // Change status of voucher
+                                    });
+                                    _database.User().SetHasCouponCode({ Email: redeemVoucherResult.result.metadata.Email, HasCouponCode: false }, function (changedUserResult) {
+                                        // When database return a result call the return
+                                        callback({ success: true, message: 'CreateVoucher', result: redeemVoucherResult.result });
+                                    })
+                                }
+                                else {
+                                    callback({ success: false, message: 'Something was wrong while redeeming your discount voucher', result: null });
+                                }
+                            }
+                            else {
+                                callback({ success: false, message: 'Something was wrong while redeeming your discount voucher', result: null });
+                            }
+                        });
+                    }
+                    else {
+                        callback({ success: false, message: 'Something was wrong while redeeming your discount voucher', result: null });
+                    }
                 }
                 else {
+                    _console.log('redeemVoucherByUserId: SubscriptionResult undefined or null', 'error');
                     callback({ success: false, message: 'Something was wrong while redeeming your discount voucher', result: null });
                 }
             })
         }
         else {
+            _console.log('redeemVoucherByUserId: VoucherId undefined or null', 'error');
             callback({ success: false, message: 'Something was wrong while redeeming your discount voucher', result: null });
         }
     }
