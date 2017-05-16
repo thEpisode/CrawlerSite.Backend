@@ -188,7 +188,7 @@ function UserController(dependencies) {
         })
     }
 
-    var getUserByCredentials = function (data, callback) {_console.log(data, 'error');
+    var getUserByCredentials = function (data, callback) {
 
         _entity.GetModel().findOne({ "Email": data.Email }, function (err, user) {
             if (err) _console.log(err, 'error');
