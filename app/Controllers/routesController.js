@@ -145,6 +145,13 @@ function Routes(dependencies) {
             })
         });
 
+        /// Welcome
+        /// -------------------------
+        // route to show message (GET http://localhost:3000/api/Welcome)
+        _apiRoutes.get('/Welcome', function (req, res) {
+            res.json({ success: true, message: 'Welcome to the coolest API on earth!' });
+        });
+        
         /// Middleware
         /// -------------------------
         //  To verify a token
@@ -178,15 +185,7 @@ function Routes(dependencies) {
 
             }
         });
-
-        
-        /// Welcome
-        /// -------------------------
-        // route to show message (GET http://localhost:3000/api/Welcome)
-        _apiRoutes.get('/Welcome', function (req, res) {
-            res.json({ success: true, message: 'Welcome to the coolest API on earth!' });
-        });
-
+                
         /// Click api routes
         /// -------------------------
         //  (POST http://localhost:3000/api/Click/Create)

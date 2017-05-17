@@ -28,11 +28,12 @@ var app       = express();
 // use body parser so we can get info from POST and/or URL parameters
 app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
 app.use(bodyParser.json()); // support json encoded bodies
+app.use(cors({origin: '*'}));
 // Settings for CORS
 app.use(function (req, res, next) {
 
     // Website you wish to allow to connect
-    res.setHeader('Access-Control-Allow-Origin', 'https://testcrawlersite.000webhostapp.com');
+    res.setHeader('Access-Control-Allow-Origin', '*');
 
     // Request methods you wish to allow
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
@@ -49,7 +50,7 @@ app.use(function (req, res, next) {
 });
 
 var server    = app.listen(cross.NormalizePort(process.env.PORT || 3500));
-var io        = require('socket.io').listen(server, { origins: 'https://testcrawlersite.000webhostapp.com' });
+var io        = require('socket.io').listen(server, { origins: '*' });
 
 
 
