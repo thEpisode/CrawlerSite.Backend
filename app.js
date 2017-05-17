@@ -53,8 +53,8 @@ var server = app.listen(cross.NormalizePort(process.env.PORT || 3500));
 var io = require('socket.io').listen(server, {
     log: false,
     agent: false,
-    origins: '*:*'
-    // 'transports': ['websocket', 'htmlfile', 'xhr-polling', 'jsonp-polling']
+    origins: '*:*',
+    transports: ['websocket', 'htmlfile', 'xhr-polling', 'jsonp-polling']
 });
 
 
