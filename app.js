@@ -24,7 +24,6 @@ var bodyParser = require('body-parser');
 var cors = require('cors');
 var express = require('express');
 var app = express();
-var http = require("http")
 
 // use body parser so we can get info from POST and/or URL parameters
 app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
@@ -50,19 +49,9 @@ app.use(function (req, res, next) {
     next();
 });
 
-app.server = http.createServer(onRequest);
-app.server.listen = app.listen(cross.NormalizePort(process.env.PORT || 3500));
-//var server = app.listen(cross.NormalizePort(process.env.PORT || 3500));
+var server = app.listen(cross.NormalizePort(process.env.PORT || 3500));
 
-//var httpServer = require("http").createServer(onRequest);
-
-function onRequest(req, res) {
-    res.writeHead(200, {
-        'Access-Control-Allow-Origin': '*'
-    });
-};
-
-var io = require('socket.io').listen(http, {
+var io = require('socket.io').listen(server, {
     log: false,
     agent: false,
     origins: '*:*',
