@@ -54,7 +54,7 @@ var io = require('socket.io').listen(server, {
     log: false,
     agent: false,
     origins: '*:*',
-    transports: ['websocket', 'htmlfile', 'xhr-polling', 'jsonp-polling']
+    transports: ['websocket', 'htmlfile', 'xhr-polling', 'jsonp-polling', 'polling']
 });
 
 
