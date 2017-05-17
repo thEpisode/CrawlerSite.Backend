@@ -22,25 +22,21 @@ var cors = require('cors');*/
 var path = require('path');
 var bodyParser = require('body-parser');
 var cors = require('cors');
-var express   = require('express');
-var app       = express();
+var express = require('express');
+var app = express();
 
 // use body parser so we can get info from POST and/or URL parameters
 app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
 app.use(bodyParser.json()); // support json encoded bodies
 // Settings for CORS
 app.use(cors({
-    'allowedHeaders': ['x-access-token', 'Content-Type'],
-    'exposedHeaders': ['x-access-token'],
-    'origin': '*',
-    'methods': 'GET,HEAD,PUT,PATCH,POST,DELETE',
-    'preflightContinue': false,
-    'credentials': true
+    origin: function (origin, callback) {
+        callback(null, true);
+    }
 }));
-app.options('*', cors())
 
-var server    = app.listen(cross.NormalizePort(process.env.PORT || 3500));
-var io        = require('socket.io').listen(server, { origins: '*' });
+var server = app.listen(cross.NormalizePort(process.env.PORT || 3500));
+var io = require('socket.io').listen(server, { origins: '*' });
 
 
 
