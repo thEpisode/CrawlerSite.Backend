@@ -22,13 +22,13 @@ var cors = require('cors');*/
 var path = require('path');
 var bodyParser = require('body-parser');
 var cors = require('cors');
-var express   = require('express');
-var app       = express();
+var express = require('express');
+var app = express();
 
 // use body parser so we can get info from POST and/or URL parameters
 app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
 app.use(bodyParser.json()); // support json encoded bodies
-app.use(cors({origin: '*'}));
+app.use(cors({ origin: '*' }));
 // Settings for CORS
 app.use(function (req, res, next) {
 
@@ -49,8 +49,13 @@ app.use(function (req, res, next) {
     next();
 });
 
-var server    = app.listen(cross.NormalizePort(process.env.PORT || 3500));
-var io        = require('socket.io').listen(server, { origins: '*:*' });
+var server = app.listen(cross.NormalizePort(process.env.PORT || 3500));
+var io = require('socket.io').listen(server, {
+    log: false,
+    agent: false,
+    origins: '*:*'
+    // 'transports': ['websocket', 'htmlfile', 'xhr-polling', 'jsonp-polling']
+});
 
 
 
