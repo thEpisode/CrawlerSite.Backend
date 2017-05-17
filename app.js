@@ -50,7 +50,7 @@ app.use(function (req, res, next) {
 });
 
 var server    = app.listen(cross.NormalizePort(process.env.PORT || 3500));
-var io        = require('socket.io').listen(server, { origins: '*' });
+var io        = require('socket.io').listen(server, { origins: '*:*' });
 
 
 
