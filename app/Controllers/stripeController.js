@@ -1,7 +1,7 @@
 function StripeController(dependencies) {
 
     /// Dependencies  
-    var _console; 
+    var _console;
     var _stripe;
     var _cross;
     var _database;
@@ -171,8 +171,13 @@ function StripeController(dependencies) {
                 _console.log(err, 'error');
                 callback({ success: false, message: 'Something went error occurred when creating customer', result: null });
             }
-
-            getPlan('free', function (plan) {
+            var initialPlan = 'free';
+            if (customerData.VoucherId != undefined && customerData.VoucherId != null) {
+                if (customerData.VoucherId.length > 0) {
+                    initialPlan = customerData.VoucherId;
+                }
+            }
+            getPlan(initialPlan, function (plan) {
                 if (plan != undefined && plan != null) {
                     //// Create a new subscription for this customer
                     _stripe.subscriptions.create({
@@ -551,7 +556,7 @@ function StripeController(dependencies) {
         _stripe.subscriptions.update(
             data.SubscriptionId,
             { coupon: data.VoucherId },
-            function(err, subscription){
+            function (err, subscription) {
                 if (err) {
                     _console.log(err, 'error');
                     callback({ success: false, message: 'Something was wrong while redeeming your discount voucher', result: null });
