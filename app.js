@@ -24,7 +24,11 @@ var bodyParser = require('body-parser');
 var cors = require('cors');
 var express = require('express');
 var app = express();
-var http = require("http");
+
+var express = require("express")
+var app = require('express')();
+
+var server = require('http').createServer(app);
 
 // use body parser so we can get info from POST and/or URL parameters
 app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
@@ -50,17 +54,7 @@ app.use(function (req, res, next) {
     next();
 });
 
-app.server = http.createServer(onRequest);
-app.server.listen = app.listen(cross.NormalizePort(process.env.PORT || 3500));
-
-function onRequest(req, res) {
-    res.writeHead(200, {
-        'Access-Control-Allow-Origin': '*'
-    });
-};
-
-var io = require('socket.io').listen(app.server);
-io.origins('*:*');
+var io = require('socket.io')(server);
 
 
 
@@ -112,7 +106,7 @@ console.log(dependencies.colors.green(' Crawler Site: ') + 'Libs imported');
 // =======================
 // configuration =========
 // =======================
-var port = 3500;
+var port = cross.NormalizePort(process.env.PORT || 3500);
 
 var isOnline = true;
 
@@ -121,21 +115,6 @@ String.prototype.replaceAll = function (search, replacement) {
     return target.replace(new RegExp(search, 'g'), replacement);
 };
 
-/*// use body parser so we can get info from POST and/or URL parameters
-app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
-app.use(bodyParser.json()); // support json encoded bodies
-// Settings for CORS
-app.use(cors({
-    'allowedHeaders': ['x-access-token', 'Content-Type'],
-    'exposedHeaders': ['x-access-token'],
-    'origin': '*',
-    'methods': 'GET,HEAD,PUT,PATCH,POST,DELETE',
-    'preflightContinue': false,
-    'credentials': true
-}));
-app.options('*', cors())
-io.origins('*:*');
-io.set('origins', '*:*');*/
 // =======================
 // initialize modules =========
 // =======================
@@ -151,5 +130,5 @@ mainServer.Initialize(function () {
 // =======================
 // listening app =========
 // =======================
-//io.listen(app.listen(cross.NormalizePort(process.env.PORT || port)), { origins: '*' });
+server.listen(port);
 console.log(dependencies.colors.green(' Crawler Site: ') + 'Listening on port ' + port); 
