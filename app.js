@@ -55,7 +55,9 @@ app.use(function (req, res, next) {
 });
 
 // CORS is enabled by default in Socket.io 2.0
-var io = require('socket.io')(server);
+var io = require('socket.io')(server,{
+    transports: ['websocket','xhr-polling','jsonp-polling']
+});
 var morgan = require('morgan');
 var mongoose = require('mongoose');
 var jwt = require('jsonwebtoken'); // used to create, sign, and verify tokens
