@@ -1,4 +1,4 @@
-// Coplest.Flinger
+// CrawlerSite.Backend
 // 0.0.1
 
 console.log('\n\t\t\t== CrawlerSite.Backend ==\n\n');
@@ -12,12 +12,60 @@ var config = require('config');
 var cross = require('./app/Controllers/crossController')({ config: config });
 cross.SetSettings();
 
-var express = require("express");
+/*var express = require("express");
 var app = express();
 var path = require('path');
 var http = require('http').Server(app);
 var io = require("socket.io")(http);
 var bodyParser = require('body-parser');
+var cors = require('cors');*/
+var path = require('path');
+var bodyParser = require('body-parser');
+var cors = require('cors');
+var express = require('express');
+var app = express();
+var http = require("http");
+
+// use body parser so we can get info from POST and/or URL parameters
+app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
+app.use(bodyParser.json()); // support json encoded bodies
+app.use(cors({ origin: '*' }));
+// Settings for CORS
+app.use(function (req, res, next) {
+
+    // Website you wish to allow to connect
+    res.header('Access-Control-Allow-Origin', '*');
+
+    // Request methods you wish to allow
+    res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+
+    // Request headers you wish to allow
+    res.header('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
+
+    // Set to true if you need the website to include cookies in the requests sent
+    // to the API (e.g. in case you use sessions)
+    res.header('Access-Control-Allow-Credentials', false);
+
+    // Pass to next layer of middleware
+    next();
+});
+
+app.server = http.createServer(onRequest);
+app.server.listen = app.listen(cross.NormalizePort(process.env.PORT || 3500));
+
+function onRequest(req, res) {
+    res.writeHead(200, {
+        'Access-Control-Allow-Origin': '*'
+    });
+};
+
+var io = require('socket.io').listen(app.server);
+io.origins('*:*');
+
+
+
+
+
 var morgan = require('morgan');
 var mongoose = require('mongoose');
 var jwt = require('jsonwebtoken'); // used to create, sign, and verify tokens
@@ -26,7 +74,6 @@ var assert = require('assert');
 var mpromise = require('mpromise');
 var open = require('open');
 var colors = require('colors/safe');
-var cors = require('cors');
 var uuid = require('uuid');
 var fs = require('fs');
 var grid = require('gridfs-stream');
@@ -39,7 +86,6 @@ var dependencies = {
     express: express,
     app: app,
     path: path,
-    http: http,
     io: io,
     bodyParser: bodyParser,
     morgan: morgan,
@@ -75,7 +121,7 @@ String.prototype.replaceAll = function (search, replacement) {
     return target.replace(new RegExp(search, 'g'), replacement);
 };
 
-// use body parser so we can get info from POST and/or URL parameters
+/*// use body parser so we can get info from POST and/or URL parameters
 app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
 app.use(bodyParser.json()); // support json encoded bodies
 // Settings for CORS
@@ -89,7 +135,7 @@ app.use(cors({
 }));
 app.options('*', cors())
 io.origins('*:*');
-io.set('origins', '*:*');
+io.set('origins', '*:*');*/
 // =======================
 // initialize modules =========
 // =======================
@@ -105,5 +151,5 @@ mainServer.Initialize(function () {
 // =======================
 // listening app =========
 // =======================
-io.listen(app.listen(cross.NormalizePort(process.env.PORT || port)), { origins: '*' });
-console.log(dependencies.colors.green(' Crawler Site: ') + 'Listening on port ' + port);
+//io.listen(app.listen(cross.NormalizePort(process.env.PORT || port)), { origins: '*' });
+console.log(dependencies.colors.green(' Crawler Site: ') + 'Listening on port ' + port); 
