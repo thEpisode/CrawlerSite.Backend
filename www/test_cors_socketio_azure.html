@@ -1,0 +1,10 @@
+<script src="//crawlerbackend.azurewebsites.net/socket.io.js"></script>
+
+<script>
+    var socket = io('//crawlerbackend.azurewebsites.net/', {
+        reconnectionAttempts : 1
+    });
+    socket.on('connect', function(){
+        console.log('hola')
+    });
+</script>
