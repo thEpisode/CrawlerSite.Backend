@@ -1,0 +1,10 @@
+<script src="http://localhost:3500/socket.io.js"></script>
+
+<script>
+    var socket = io('http://localhost:3500/', {
+        reconnectionAttempts : 1
+    });
+    socket.on('connect', function(){
+        console.log('hola')
+    });
+</script>
