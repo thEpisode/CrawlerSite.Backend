@@ -56,7 +56,7 @@ app.use(function (req, res, next) {
 
 // CORS is enabled by default in Socket.io 2.0
 var io = require('socket.io')(server,{
-    transports: ['websocket']
+    
 });
 var morgan = require('morgan');
 var mongoose = require('mongoose');
