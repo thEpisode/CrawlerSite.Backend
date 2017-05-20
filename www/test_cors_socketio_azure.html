@@ -1,10 +1,12 @@
-<script src="//test-crawlerapi.azurewebsites.net/socket.io.js"></script>
+<script src="//crawlerbackend.azurewebsites.net/socket.io.js"></script>
 
 <script>
-    var socket = io('//test-crawlerapi.azurewebsites.net/', { 
+    var socket = io('//crawlerbackend.azurewebsites.net/', { 
         reconnectionAttempts : 1
     });
     socket.on('connect', function(){
-        console.log('hola')
+        document.querySelector('#result').innerHTML = 'Your now connected to WebSocket server';
     });
 </script>
+
+<div id="result"></div>

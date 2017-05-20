@@ -12,13 +12,6 @@ var config = require('config');
 var cross = require('./app/Controllers/crossController')({ config: config });
 cross.SetSettings();
 
-/*var express = require("express");
-var app = express();
-var path = require('path');
-var http = require('http').Server(app);
-var io = require("socket.io")(http);
-var bodyParser = require('body-parser');
-var cors = require('cors');*/
 var path = require('path');
 var bodyParser = require('body-parser');
 var cors = require('cors');
