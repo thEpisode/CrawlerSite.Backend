@@ -1,0 +1,10 @@
+{
+    "uid": "CrawlerSite.Backend",
+    // Append logs
+    "append": true,
+    //Logs the forever output to LOGFILE
+    "logfile": true,
+    "watch": true,
+    "script": "app.js",
+    "sourceDir": "/home/api_admin/CrawlerSite.Backend"
+}
