@@ -15,13 +15,35 @@ cross.SetSettings();
 var path = require('path');
 var bodyParser = require('body-parser');
 var cors = require('cors');
+var fs = require('fs');
 var express = require('express');
 var app = express();
+var morgan = require('morgan');
+var mongoose = require('mongoose');
+var jwt = require('jsonwebtoken'); // used to create, sign, and verify tokens
+var checkInternet = require('is-online');
+var assert = require('assert');
+var mpromise = require('mpromise');
+var open = require('open');
+var colors = require('colors/safe');
+var uuid = require('uuid');
+var grid = require('gridfs-stream');
+var emailjs = require('emailjs');
+var stripe = require('stripe')(cross.GetStripePrivateKey());
+var eventEmiter = require('events').EventEmitter;
+var geoip = require('maxmind');
 
 var express = require("express")
 var app = require('express')();
 
-var server = require('http').createServer(app);
+var https = require('https');
+
+const options = {
+    pfx: fs.readFileSync(path.join(__dirname, 'certificate/appservicecertificate.pfx')),
+    passphrase: 'kVi3emAjxJnZd5pG9sbvlR7OKf8LPCHzhIFcyq2tQrBUu4XTgW'
+};
+
+var server = https.createServer(options, app);
 
 // use body parser so we can get info from POST and/or URL parameters
 app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
@@ -48,24 +70,8 @@ app.use(function (req, res, next) {
 });
 
 // CORS is enabled by default in Socket.io 2.0
-var io = require('socket.io')(server,{
-    
-});
-var morgan = require('morgan');
-var mongoose = require('mongoose');
-var jwt = require('jsonwebtoken'); // used to create, sign, and verify tokens
-var checkInternet = require('is-online');
-var assert = require('assert');
-var mpromise = require('mpromise');
-var open = require('open');
-var colors = require('colors/safe');
-var uuid = require('uuid');
-var fs = require('fs');
-var grid = require('gridfs-stream');
-var emailjs = require('emailjs');
-var stripe = require('stripe')(cross.GetStripePrivateKey());
-var eventEmiter = require('events').EventEmitter;
-var geoip = require('maxmind');
+var io = require('socket.io')(server, {});
+
 
 var dependencies = {
     express: express,
