@@ -40,3 +40,19 @@ Create a file named "default.json" on /config/ folder
 After install MongoDB and packages you can run this local server with:
 
 > npm run start
+
+## Production
+
+If you trying to run on Virtual Machine install forever package:
+
+> npm install -g forever
+
+### Start server to listen
+We decide to use 3500 internal port to redirect to 443 (SSL), run:
+
+> cd CrawlerSite.Backend
+> sudo forever start forever/production.json
+
+### Stop apps
+
+> sudo forever stopall
