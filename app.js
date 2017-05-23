@@ -36,23 +36,26 @@ const geoip = require('maxmind');
 const express = require("express")
 const app = require('express')();
 
+var isInDebug = process.env.NODE_ENV === 'development' ? true : false;
+
 var webProtocol = {};
 var isHTTPS = false;
 
 const https = require('https');
 const http = require('http');
 
-try {
+
+if (isInDebug === true) {
+    webProtocol = http.createServer(app);
+    isHTTPS = false;
+}
+else {
     const options = {
         pfx: fs.readFileSync(path.join(__dirname, 'certificate/appservicecertificate.pfx')),
         passphrase: 'kVi3emAjxJnZd5pG9sbvlR7OKf8LPCHzhIFcyq2tQrBUu4XTgW'
     };
     webProtocol = https.createServer(options, app);
     isHTTPS = true;
-}
-catch (ex) {
-    webProtocol = https.createServer(app);
-    isHTTPS = false;
 }
 
 /**
