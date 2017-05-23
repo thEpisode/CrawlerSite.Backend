@@ -396,7 +396,7 @@ function InsightController(dependencies) {
     var dashboardInsightsByUserId = function (data, callback) {
         if (data.UserId != undefined && data.UserId != null) {
             if (data.UserId.length > 0) {
-                _database.Site().GetAllSitesByUserId(data.UserId, function (sitesResult) {
+                _database.Site().GetAllSitesByUserId(data, function (sitesResult) {
                     if (sitesResult != undefined && sitesResult != null) {
                         if (sitesResult.success === true) {
                             if (sitesResult.result.length > 0) {
