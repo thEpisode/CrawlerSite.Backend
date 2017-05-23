@@ -1,20 +1,22 @@
 {
-  "name": "coplest.flinger.core",
-  "title": "Flinger",
-  "description": "Web server to get and analyze all insight from Flinger",
+  "name": "crawlersite.backend",
+  "title": "Crawler Site",
+  "description": "Web server to get and analyze all insight from Crawler Site",
   "version": "0.0.1",
-  "homepage": "http://coplest.com",
+  "homepage": "https://crawlersite.com",
   "author": {
-    "name": "Coplest S.A.S. and other contributors",
-    "url": "https://github.com/Coplest/Coplest.Flinger/blob/master/AUTHORS"
+    "name": "Crawler Site Inc. and other contributors",
+    "url": "https://github.com/CrawlerSite/CrawlerSite.Backend/blob/master/AUTHORS"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/Coplest/Coplest.Flinger.git"
+    "url": "https://github.com/CrawlerSite/CrawlerSite.Backend.git"
   },
   "keywords": [
-    "flinger",
-    "coplest",
+    "crawler",
+    "site",
+    "camilo",
+    "rodriguez",
     "heatmaps",
     "remote",
     "administration",
@@ -29,7 +31,7 @@
     "experience"
   ],
   "bugs": {
-    "url": "https://github.com/Coplest/Coplest.Flinger/issues"
+    "url": "https://github.com/CrawlerSite/CrawlerSite.Backend/issues"
   },
   "license": "MIT",
   "dependencies": {
@@ -54,9 +56,10 @@
     "stripe": "^4.15.0",
     "uuid": "^3.0.1"
   },
-  "engine": "node 4.4.7",
+  "engine": "node 7.10.0",
   "scripts": {
     "start": "node app.js",
-    "start-prod": "PORT=80 node app.js"
+    "start-prod": "PORT=80 node app.js",
+    "debug": "node --nolazy --debug-brk=5858 app.js"
   }
 }

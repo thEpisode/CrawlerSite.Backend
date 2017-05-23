@@ -72,9 +72,9 @@ function FlingerServer(dependencies) {
                         /// Socket declaration
                         _socketController = require('./socketController')(dependencies);
 
-                        initializeControllers(callback);
+                        _console.log('Configured Controllers', 'server-success');
 
-                        _console.log('Server initialized', 'server-success');
+                        initializeControllers(callback);
                     }
                     else {
                         _console.log('Exiting from server app', 'error');
@@ -99,7 +99,7 @@ function FlingerServer(dependencies) {
         _mailController.Initialize();
         _notificationHubController.Initialize();
 
-        _console.log('Modules initialized', 'server-success');
+        _console.log('Controllers initialized', 'server-success');
         callback();
     }
 

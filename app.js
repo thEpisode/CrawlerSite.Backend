@@ -1,78 +1,101 @@
-// CrawlerSite.Backend
-// 0.0.1
+/**
+ * CrawlerSite.Backend
+ * Tag: 0.0.1
+ */
 
 console.log('\n\t\t\t== CrawlerSite.Backend ==\n\n');
 
-// =======================
-// libraries =========
-// =======================
+/**
+ * Dependencies
+ */
 
-var config = require('config');
+const config = require('config');
 
-var cross = require('./app/Controllers/crossController')({ config: config });
+const cross = require('./app/Controllers/crossController')({ config: config });
 cross.SetSettings();
 
-var path = require('path');
-var bodyParser = require('body-parser');
-var cors = require('cors');
-var fs = require('fs');
-var express = require('express');
-var app = express();
-var morgan = require('morgan');
-var mongoose = require('mongoose');
-var jwt = require('jsonwebtoken'); // used to create, sign, and verify tokens
-var checkInternet = require('is-online');
-var assert = require('assert');
-var mpromise = require('mpromise');
-var open = require('open');
-var colors = require('colors/safe');
-var uuid = require('uuid');
-var grid = require('gridfs-stream');
-var emailjs = require('emailjs');
-var stripe = require('stripe')(cross.GetStripePrivateKey());
-var eventEmiter = require('events').EventEmitter;
-var geoip = require('maxmind');
+const path = require('path');
+const bodyParser = require('body-parser');
+const cors = require('cors');
+const fs = require('fs');
+const morgan = require('morgan');
+const mongoose = require('mongoose');
+const jwt = require('jsonwebtoken'); // used to create, sign, and verify tokens
+const checkInternet = require('is-online');
+const assert = require('assert');
+const mpromise = require('mpromise');
+const open = require('open');
+const colors = require('colors/safe');
+const uuid = require('uuid');
+const grid = require('gridfs-stream');
+const emailjs = require('emailjs');
+const stripe = require('stripe')(cross.GetStripePrivateKey());
+const eventEmiter = require('events').EventEmitter;
+const geoip = require('maxmind');
 
-var express = require("express")
-var app = require('express')();
+const express = require("express")
+const app = require('express')();
 
-var https = require('https');
+var webProtocol = {};
+var isHTTPS = false;
 
-const options = {
-    pfx: fs.readFileSync(path.join(__dirname, 'certificate/appservicecertificate.pfx')),
-    passphrase: 'kVi3emAjxJnZd5pG9sbvlR7OKf8LPCHzhIFcyq2tQrBUu4XTgW'
-};
+const https = require('https');
+const http = require('http');
 
-var server = https.createServer(options, app);
+try {
+    const options = {
+        pfx: fs.readFileSync(path.join(__dirname, 'certificate/appservicecertificate.pfx')),
+        passphrase: 'kVi3emAjxJnZd5pG9sbvlR7OKf8LPCHzhIFcyq2tQrBUu4XTgW'
+    };
+    webProtocol = https.createServer(options, app);
+    isHTTPS = true;
+}
+catch (ex) {
+    webProtocol = https.createServer(app);
+    isHTTPS = false;
+}
 
-// use body parser so we can get info from POST and/or URL parameters
-app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
-app.use(bodyParser.json()); // support json encoded bodies
+/**
+ * Server configurations and Server Socket configurations
+ * 
+ * Using body parser we can get info from POST and/or URL parameters so easy,
+ * check routesController.js
+ */
+
+/// Support encoded bodies
+app.use(bodyParser.urlencoded({ extended: true }));
+
+/// Support JSON encoded bodies
+app.use(bodyParser.json());
+
+/// Accept all origins
 app.use(cors({ origin: '*' }));
-// Settings for CORS
+
+// Settings for CORS, deep and manual configuration
 app.use(function (req, res, next) {
 
-    // Website you wish to allow to connect
+    // App accept all origins
     res.header('Access-Control-Allow-Origin', '*');
 
-    // Request methods you wish to allow
+    // Request methods accepted
     res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
 
-    // Request headers you wish to allow
-    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept-Type');
+    // Request headers accepted
+    res.header('Access-Control-Allow-Headers', 'Origin, x-access-token, X-Requested-With, Content-Type, Accept-Type');
 
-    // Set to true if you need the website to include cookies in the requests sent
-    // to the API (e.g. in case you use sessions)
+    // Accept cookies in requests
     res.header('Access-Control-Allow-Credentials', true);
 
     // Pass to next layer of middleware
     next();
 });
 
-// CORS is enabled by default in Socket.io 2.0
-var io = require('socket.io')(server, {});
+// Setting Socket.io  and CORS is enabled by default in Socket.io 2.0
+var io = require('socket.io')(webProtocol, {});
 
-
+/**
+ * Dependencies Object to inject
+ */
 var dependencies = {
     express: express,
     app: app,
@@ -100,32 +123,33 @@ var dependencies = {
 
 console.log(dependencies.colors.green(' Crawler Site: ') + 'Libs imported');
 
-// =======================
-// configuration =========
-// =======================
-var port = cross.NormalizePort(process.env.PORT || 3500);
-
-var isOnline = true;
+/**
+ * Global settings
+ */
+const port = cross.NormalizePort(process.env.PORT || 3500);
 
 String.prototype.replaceAll = function (search, replacement) {
     var target = this;
     return target.replace(new RegExp(search, 'g'), replacement);
 };
 
-// =======================
-// initialize modules =========
-// =======================
+/**
+ * App initialization
+ */
+console.log(dependencies.colors.green(' Crawler Site: ') + 'Initializing controllers');
 var mainServer = require('./app/Controllers/mainController')(dependencies);
 
 mainServer.Initialize(function () {
-    // =======================
-    // launching app =========
-    // =======================
-    open('http://localhost:' + port);
+    /**
+     * When all controllers are initialized succesfuly
+     */
+    console.log(dependencies.colors.green(' Crawler Site: ') + 'Controllers initialized succesfuly');
+    console.log(dependencies.colors.green(' Crawler Site: ') + 'Waiting for events...');
+    open(isHTTPS === true ? 'https://localhost:' + port : 'http://localhost:' + port);
 });
 
-// =======================
-// listening app =========
-// =======================
-server.listen(port);
-console.log(dependencies.colors.green(' Crawler Site: ') + 'Listening on port ' + port); 
+/**
+ * Listening app
+ */
+webProtocol.listen(port);
+console.log(dependencies.colors.green(' Crawler Site: ') + 'Server URI: ' + (isHTTPS === true ? 'https://localhost:' + port : 'http://localhost:' + port)); 

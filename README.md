@@ -1,6 +1,11 @@
 # Crawler Site [ ![Codeship Status for CrawlerSite/CrawlerSite.Backend](https://app.codeship.com/projects/7bcc6350-1248-0135-9dbc-4a1a20133278/status?branch=master)](https://app.codeship.com/projects/217002)
 easy way to truly understand your web and mobile site visitors. 
 
+## Pre-requisites
+
+    - Node.js 7.10.0
+    - NPM 4.2.0
+
 ## Developing Mode
 You need execute some steps to develop in this project. Remember if you want to develop on Crawler Site (Fron and back) you need run first this project
 
@@ -41,7 +46,7 @@ After install MongoDB and packages you can run this local server with:
 
 > npm run start
 
-## Production
+## Production stage
 
 If you trying to run on Virtual Machine install forever package:
 
@@ -53,6 +58,12 @@ We decide to use 3500 internal port to redirect to 443 (SSL), run:
 > cd CrawlerSite.Backend
 > sudo forever start forever/production.json
 
+### Checking all apps
+A common task is check if this app is running, to see all apps use:
+
+> sudo forever list
+
 ### Stop apps
+If you want to stop this project on production stage use following code:
 
 > sudo forever stopall
