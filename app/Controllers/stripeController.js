@@ -174,7 +174,51 @@ function StripeController(dependencies) {
             var initialPlan = 'free';
             if (customerData.VoucherId != undefined && customerData.VoucherId != null) {
                 if (customerData.VoucherId.length > 0) {
-                    initialPlan = customerData.VoucherId;
+                    getDiscountVoucher(customerData.VoucherId, function (voucherResult) {
+                        if (voucherResult.success === true) {
+                            initialPlan = customerData.voucherResult.result.metadata.PlanId;
+                            getPlan(initialPlan, function (plan) {
+                                if (plan != undefined && plan != null) {
+                                    //// Create a new subscription for this customer
+                                    _stripe.subscriptions.create({
+                                        customer: customer.id,
+                                        plan: plan.id
+                                    }, function (err, subscription) {
+                                        if (err) {
+                                            _console.log(err, 'error');
+                                            callback({ success: false, message: 'Something went error occurred when subscribing customer in plan', result: null });
+                                        }
+
+                                        //// Save credit card data
+                                        _database.CreditCard().CreateCreditCard({ CreditCardToken: null, FirstNameCard: null, LastNameCard: null }, function (creditCardResult) {
+                                            if (creditCardResult !== undefined && creditCardResult.result !== null) {
+                                                //// Save subscription
+                                                _database.Subscription().CreateSubscription({ CustomerId: customer.id, PlanId: plan.id, CurrentPlan: plan, SubscriptionId: subscription.id, CreditCard: creditCardResult.result, Email: customerData.Email }, function (subscriptionResult) {
+                                                    if (subscriptionResult !== undefined && subscriptionResult.result !== null) {
+                                                        _database.Subscription().AddUserToSubscription({ SubscriptionId: subscriptionResult.result._id, UserId: customerData._id }, function (addUserToSubscriptionResult) {
+                                                            if (addUserToSubscriptionResult !== undefined && addUserToSubscriptionResult.result !== null) {
+                                                                callback({ success: true, message: 'User saved succesfuly', result: subscriptionResult.result });
+                                                            }
+                                                            else {
+                                                                callback({ success: false, message: 'Something went occurred wrong while creating user, try again.', result: null });
+                                                            }
+                                                        })
+                                                    }
+                                                    else {
+                                                        callback({ success: false, message: 'Something went occurred wrong while creating user, try again.', result: null });
+                                                    }
+                                                })
+                                            }
+                                            else {
+                                                callback({ success: false, message: 'Something went occurred wrong while creating user, try again.', result: null });
+                                            }
+                                        });
+                                    });
+                                }
+                            });
+                        }
+
+                    })
                 }
             }
             getPlan(initialPlan, function (plan) {
@@ -507,7 +551,8 @@ function StripeController(dependencies) {
             amount_off: data.Amount,
             currency: data.Currency,
             metadata: {
-                Email: data.Email
+                Email: data.Email,
+                PlanId: data.PlanId
             },
             id: _cross.GetRandomString(data.Length, data.Prefix),
         }, function (err, coupon) {
