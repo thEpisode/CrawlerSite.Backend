@@ -7,6 +7,7 @@ function UserController(dependencies) {
     var _app;
     var _jwt;
     var _stripeController;
+    var _subscriptionController;
 
     /// Properties
     var _entity;
@@ -27,7 +28,7 @@ function UserController(dependencies) {
     }
 
     var createUser = function (data, callback) {
-        _entity.GetModel().findOne({ "Email": new RegExp('^' + data.Email, 'i')  }, function (err, user) {
+        _entity.GetModel().findOne({ "Email": new RegExp('^' + data.Email, 'i') }, function (err, user) {
             if (err) {
                 _console.log(err, 'error');
                 callback({ success: false, message: 'Something was wrong while creating user' });
@@ -67,7 +68,7 @@ function UserController(dependencies) {
                                         _stripeController.RedeemVoucher({ SubscriptionId: stripeResult.result.SubscriptionId, VoucherId: data.VoucherId }, function (redeemResult) {
                                             if (redeemResult != undefined && redeemResult != null) {
                                                 if (redeemResult.success == true) {
-                                                    callback({ success: true, message: 'RedeemVoucher', result: stripeResult });
+                                                    callback({ success: true, message: 'CreateUser', result: stripeResult });
                                                 }
                                                 else {
                                                     callback({ success: false, message: 'Something was wrong while creating user', result: null });
@@ -79,14 +80,14 @@ function UserController(dependencies) {
                                         })
                                     }
                                     else {
-                                        callback({ success: true, message: 'RedeemVoucher', result: stripeResult });
+                                        callback({ success: false, message: 'Something was wrong while creating user', result: null });
                                     }
                                 }
                                 else {
                                     callback({ success: false, message: 'Something was wrong while creating user', result: null });
                                 }
                             }
-                            else{
+                            else {
                                 callback({ success: false, message: 'Something was wrong while creating user', result: null });
                             }
                         });
@@ -97,6 +98,70 @@ function UserController(dependencies) {
                 }
             }
         });
+    }
+
+    var createUserToSubscription = function (data, callback) {
+        _database.Subscription().GetSubscriptionByUserId({ UserId: data.UserId }, function (subscriptionResult) {
+            if (subscriptionResult !== undefined) {
+                if (subscriptionResult.success === true) {
+                    _entity.GetModel().findOne({ "Email": new RegExp('^' + data.Email, 'i') }, function (err, user) {
+                        if (err) {
+                            _console.log(err, 'error');
+                            callback({ success: false, message: 'Something was wrong while creating user' });
+                        }
+                        else {
+                            if (user != null) {
+                                callback({ success: false, message: 'This email is already registered' });
+                            }
+                            else {
+                                var user = new _entity.GetModel()(
+                                    {
+                                        _id: _mongoose.Types.ObjectId(),
+                                        FirstName: data.FirstName,
+                                        LastName: data.LastName,
+                                        Email: data.Email,
+                                        Password: (data.Password !== undefined && data.Password !== null ? data.Password : _cross.GetRandomString(10, '')),
+                                        Work: data.Work,
+                                        City: data.City,
+                                        Country: data.Country,
+                                        AcceptTerms: data.AcceptTerms,
+                                        State: data.State,
+                                        Settings: [],
+                                        ChangePasswordNextLogin: data.ChangePasswordNextLogin != undefined ? data.ChangePasswordNextLogin : false,
+                                        ReferCode: _cross.GetRandomString(5, 'ref-'),
+                                    });
+
+                                user.save().then(function (userResult) {
+                                    _database.Subscription().AddUserToSubscription({ SubscriptionId: subscriptionResult.result._id, UserId: userResult._id }, function (addSubscriptionResult) {
+                                        if (addSubscriptionResult !== undefined && addSubscriptionResult !== null) {
+                                            if (addSubscriptionResult.success === true) {
+                                                callback({ success: true, message: 'CreateUser', result: userResult });
+                                            }
+                                            else {
+                                                callback({ success: false, message: 'Something was wrong while creating user', result: null });
+                                            }
+                                        }
+                                        else {
+                                            callback({ success: false, message: 'Something was wrong while creating user', result: null });
+                                        }
+                                    })
+                                },
+                                    function (err) {
+                                        _console.log(err, 'error');
+                                        callback({ success: false, message: 'Something was wrong while creating user', result: null });
+                                    });
+                            }
+                        }
+                    });
+                }
+                else {
+                    callback({ success: false, message: 'Something was wrong while creating user', result: null });
+                }
+            }
+            else {
+                callback({ success: false, message: 'Something was wrong while creating user', result: null });
+            }
+        })
     }
 
     var deleteAccountByUserId = function (data, callback) {
@@ -259,6 +324,7 @@ function UserController(dependencies) {
     return {
         Initialize: constructor,
         CreateUser: createUser,
+        CreateUserToSubscription: createUserToSubscription,
         DeleteAccountByUserId: deleteAccountByUserId,
         DeleteByUserId: deleteUserByUserId,
         ChangePasswordByUserId: changePasswordByUserId,

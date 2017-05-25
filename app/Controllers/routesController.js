@@ -59,6 +59,7 @@ function Routes(dependencies) {
                 res.json(result);
             })
         });
+        
 
         //
         _apiRoutes.post('/Payment/Voucher/VerifyVoucher', function(req, res){
@@ -470,6 +471,13 @@ function Routes(dependencies) {
 
         /// User api routes
         /// -------------------------
+        // (POST http://localhost:3000/api/User/createUserToSubscription)
+        _apiRoutes.post('/User/createUserToSubscription', function (req, res) {
+            _database.User().CreateUserToSubscription(req.body, function (result) {
+                res.json(result);
+            })
+        });
+
         //  (GET http://localhost:3000/api/User/Email/username@domain.com)
         _apiRoutes.get('/User/Email/:Email', function (req, res) {
             _database.User().GetUserByEmail(req.params.Email, function (result) {
