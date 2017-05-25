@@ -27,8 +27,7 @@ function UserController(dependencies) {
     }
 
     var createUser = function (data, callback) {
-
-        _entity.GetModel().findOne({ "Email": data.Email }, function (err, user) {
+        _entity.GetModel().findOne({ "Email": new RegExp('^' + data.Email, 'i')  }, function (err, user) {
             if (err) {
                 _console.log(err, 'error');
                 callback({ success: false, message: 'Something was wrong while creating user' });
