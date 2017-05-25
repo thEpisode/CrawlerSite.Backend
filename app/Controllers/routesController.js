@@ -439,7 +439,7 @@ function Routes(dependencies) {
                 res.json({ success: true, message: 'GetAllSite', result: result });
             })
         });
-
+        
         //  (GET http://localhost:3000/api/Site/UserId)
         _apiRoutes.get('/Site/AddUserToSite/Site/:SiteId/User/:UserId', function (req, res) {
             _database.Subscription().AddUserToSubscription({ SubscriptionId: req.params.SubscriptionId, UserId: req.params.UserId }, function (result) {
@@ -449,7 +449,7 @@ function Routes(dependencies) {
 
         //  (GET http://localhost:3000/api/Site/UserId)
         _apiRoutes.get('/Site/UserId/:UserId', function (req, res) {
-            _database.Site().GetAllSitesByUserId(req.params, function (result) {
+            _database.Subscription().GetAllSitesOfSubscriptionByUserId(req.params, function (result) {
                 res.json(result);
             })
         });
@@ -487,6 +487,13 @@ function Routes(dependencies) {
         //  (GET http://localhost:3000/api/User)
         _apiRoutes.get('/User/All', function (req, res) {
             _database.User().GetAllUser(null, function (result) {
+                res.json(result);
+            })
+        });
+
+        //  (GET http://localhost:3000/api/User)
+        _apiRoutes.get('/User/GetAllUsersOfSubscriptionByUserId/:UserId', function (req, res) {
+            _database.Subscription().GetAllUsersOfSubscriptionByUserId(req.params, function (result) {
                 res.json(result);
             })
         });
