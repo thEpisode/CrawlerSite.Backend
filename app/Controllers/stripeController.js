@@ -174,9 +174,9 @@ function StripeController(dependencies) {
             var initialPlan = 'free';
             if (customerData.VoucherId != undefined && customerData.VoucherId != null) {
                 if (customerData.VoucherId.length > 0) {
-                    getDiscountVoucher(customerData.VoucherId, function (voucherResult) {
+                    getDiscountVoucher(customerData, function (voucherResult) {
                         if (voucherResult.success === true) {
-                            initialPlan = customerData.voucherResult.result.metadata.PlanId;
+                            initialPlan = voucherResult.result.metadata.PlanId;
                             getPlan(initialPlan, function (plan) {
                                 if (plan != undefined && plan != null) {
                                     //// Create a new subscription for this customer

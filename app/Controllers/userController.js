@@ -58,6 +58,7 @@ function UserController(dependencies) {
 
                     user.save().then(function (userResult) {
                         // When database return any result call the "return" named callback
+                        userResult.VoucherId = data.VoucherId;
                         _stripeController.CreateInitialCustomer(userResult, function (stripeResult) {
                             if (stripeResult != undefined && stripeResult != null) {
                                 if (stripeResult.success == true) {
