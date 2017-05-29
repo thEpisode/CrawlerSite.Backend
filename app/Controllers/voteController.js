@@ -21,12 +21,15 @@ function VoteController(dependencies) {
             {
                 _id: _mongoose.Types.ObjectId(),
                 Feature: data.Feature,
+                UserId: data.UserId,
                 State: _entity.GetStates().Valid
             });
 
         vote.save().then(function (result) {
-            // When database return a result call the return
-            callback();
+            callback({ success: true, message: 'CreateVote', result: result });
+        }, function (err) {
+            _console.log(err, 'error');
+            callback({ success: false, message: 'Something went wrong when creating your vote, try again.', result: null });
         })
     }
 

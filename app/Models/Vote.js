@@ -23,6 +23,7 @@ function Vote(dependencies) {
             {
                 _id: _schema.Types.ObjectId,
                 Feature: String,
+                UserId: String,
                 State: Number,
             },
             { timestamps: { createdAt: 'created_at' }, minimize: false, collection: 'Vote' }
