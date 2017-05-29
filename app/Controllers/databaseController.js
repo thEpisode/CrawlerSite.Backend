@@ -24,6 +24,7 @@ function Database(dependencies) {
     var _creditCard;
     var _subscription;
     var _voucher;
+    var _vote;
 
     var constructor = function (callback) {
         _mongoose = dependencies.mongoose;
@@ -126,6 +127,9 @@ function Database(dependencies) {
         _voucher = require('./voucherController.js')(dependencies);
         _voucher.Initialize();
 
+        _vote = require('./voteController.js')(dependencies);
+        _vote.Initialize();
+
         _frontendReview = require('./frontendReviewController')(dependencies);
         _frontendReview.Initialize();
 
@@ -184,6 +188,10 @@ function Database(dependencies) {
         return _voucher;
     }
 
+    var getVoteController = function(){
+        return _vote;
+    }
+
     var getSubscriptionController = function(){
         return _subscription;
     }
@@ -204,6 +212,7 @@ function Database(dependencies) {
         CreditCard: getCreditCardController,
         Subscription: getSubscriptionController,
         Voucher: getVoucherController,
+        Vote: getVoteController,
         GetGridFS: getGridFS
     }
 }
