@@ -79,8 +79,9 @@ function UserController(dependencies) {
                                             }
                                         })
                                     }
+                                    /// User has not voucher to redeem
                                     else {
-                                        callback({ success: false, message: 'Something was wrong while creating user', result: null });
+                                        callback({ success: true, message: 'CreateUser', result: stripeResult });
                                     }
                                 }
                                 else {

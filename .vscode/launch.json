@@ -6,7 +6,7 @@
             "type": "node",
             "request": "launch",
             "program": "${workspaceRoot}/app.js",
-            "stopOnEntry": false,
+            "stopOnEntry": true,
             "args": [],
             "cwd": "${workspaceRoot}",
             "preLaunchTask": null,
@@ -17,9 +17,7 @@
             "env": {
                 "NODE_ENV": "development"
             },
-            "console": "internalConsole",
-            "sourceMaps": false,
-            "outFiles": []
+            "sourceMaps": false
         },
         {
             "name": "Attach",

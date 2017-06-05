@@ -287,9 +287,9 @@ function StripeController(dependencies) {
                                         _database.CreditCard().EditCreditCard({ _id: subscriptionResult.result.CreditCard, CreditCardToken: customerData.StripeToken, FirstNameCard: customerData.Firstname, LastNameCard: customerData.Lastname }, function (creditCardResult) {
                                             if (creditCardResult !== undefined && creditCardResult.result !== null) {
                                                 //// Save subscription
-                                                _database.Subscription().EditSubscription({ CustomerId: customer.id, PlanId: plan.id, CurrentPlan: plan, SubscriptionId: subscriptionResult.SubscriptionId }, function (subscriptionResult) {
-                                                    if (subscriptionResult !== undefined && subscriptionResult.result !== null) {
-                                                        callback({ success: true, message: 'User saved succesfuly', result: subscriptionResult })
+                                                _database.Subscription().EditSubscription({ _id: subscriptionResult.result._id, CustomerId: customer.id, PlanId: plan.id, CurrentPlan: plan, SubscriptionId: subscriptionResult.result.SubscriptionId }, function (editSubscriptionResult) {
+                                                    if (editSubscriptionResult !== undefined && editSubscriptionResult.result !== null) {
+                                                        callback({ success: true, message: 'User saved succesfuly', result: editSubscriptionResult })
                                                     }
                                                     else {
                                                         callback({ success: false, message: 'Something went occurred wrong when update payment method, try again.', result: null });
@@ -322,9 +322,9 @@ function StripeController(dependencies) {
                                             _database.CreditCard().EditCreditCard({ _id: subscriptionResult.result.CreditCard, CreditCardToken: customerData.StripeToken, FirstNameCard: customerData.Firstname, LastNameCard: customerData.Lastname }, function (creditCardResult) {
                                                 if (creditCardResult !== undefined && creditCardResult.result !== null) {
                                                     //// Save subscription
-                                                    _database.Subscription().EditSubscription({ CustomerId: subscriptionResult.CustomerId, PlanId: plan.id, CurrentPlan: plan, SubscriptionId: subscriptionResult.SubscriptionId }, function (subscriptionResult) {
-                                                        if (subscriptionResult !== undefined && subscriptionResult.result !== null) {
-                                                            callback({ success: true, message: 'User saved succesfuly', result: subscriptionResult })
+                                                    _database.Subscription().EditSubscription({ _id: subscriptionResult.result.id, CustomerId: subscriptionResult.result.CustomerId, PlanId: plan.id, CurrentPlan: plan, SubscriptionId: subscriptionResult.result.SubscriptionId }, function (editSubscriptionResult) {
+                                                        if (editSubscriptionResult !== undefined && editSubscriptionResult.result !== null) {
+                                                            callback({ success: true, message: 'User saved succesfuly', result: editSubscriptionResult })
                                                         }
                                                         else {
                                                             callback({ success: false, message: 'Something went occurred wrong when update payment method, try again.', result: null });

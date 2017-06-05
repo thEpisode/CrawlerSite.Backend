@@ -691,7 +691,7 @@ function Routes(dependencies) {
 
         /// Stripe api routes
         /// -------------------------
-        //  (POST http://localhost:3000/api/Payment/Subscription/UpdatePaymentMethod)
+        //  (POST http://localhost:3000/api/Stripe/Webhooks/)
         _apiRoutes.post('/Stripe/Webhooks/', function (req, res) {
             _stripe.ProcessWebhook(JSON.parse(req.body), function (result) {
                 if (result == true) {
