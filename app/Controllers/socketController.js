@@ -9,7 +9,7 @@ function Socket(dependencies) {
     var _uuid;
     var _geolocate;
 
-    const MAX_CLIENTS = 10; 
+    const MAX_CLIENTS = 10;
 
     var _siteNamespaces = [];
     var _usersconnectedClients = [];
@@ -71,7 +71,7 @@ function Socket(dependencies) {
 
                     socket.emit('Coplest.Flinger.RAT', { Command: 'ConnectedToRSN#Response', Values: { SocketId: socket.id } });
 
-                    socket.on('Coplest.Flinger.RAT', function (data) {
+                    socket.on('Coplest.Flinger.RAT', function (data, callback) {
                         if (data.Command != null) {
                             switch (data.Command) {
                                 case 'UserJoinToPrivateRoom#Request':
@@ -125,7 +125,11 @@ function Socket(dependencies) {
                                     ratServiceNamespace.to(data.Values.RoomId).emit('Coplest.Flinger.RAT', { Command: 'RefreshScreenshot#Request', Values: data.Values })
                                     break;
                                 case 'SendReverseShellCommand#Request':
+                                    data.Values.csrf = _cross.GenerateAntiForgeryToken();
                                     ratServiceNamespace.to(data.Values.RoomId).emit('Coplest.Flinger.RAT', { Command: 'ReverseShellCommand#Request', Values: data.Values })
+                                    break;
+                                case 'ValidateReverseShellCommandCSRF#Request':
+                                    callback({ IsValid: _cross.ValidateAntiForgeryToken(data.Values.csrf) });
                                     break;
                                 default:
                                     break;
@@ -235,17 +239,17 @@ function Socket(dependencies) {
                             /// Search all connected sockets by ApiKey
                             var keys = Object.keys(_io.sockets.connected)
                             for (var index = 0; index < keys.length; index++) {
-                                
+
                                 if (_io.sockets.connected[keys[index]].ApiKey !== undefined) {
                                     if (_io.sockets.connected[keys[index]].ApiKey == data.Values.ApiKey) {
-                                        try{
+                                        try {
                                             var socketClientInformation = _io.sockets.connected[keys[index]].ClientInformation;
                                             connectedSockets.push({ SocketId: _io.sockets.connected[keys[index]].id, ApiKey: data.Values.ApiKey, ClientInformation: socketClientInformation })
                                         }
-                                        catch(e){
+                                        catch (e) {
                                             _console.log('Socket hasnt client information: ' + _io.sockets.connected[keys[index]].id, 'error');
                                         }
-                                        
+
                                     }
                                 }
 
@@ -324,7 +328,7 @@ function Socket(dependencies) {
                                 data.Values.Event.Location = geolocateResponse.result == null ? null : geolocateResponse.result;
 
                                 _database.Click().CreateClick(data.Values, function () {
-                                    
+
                                     _database.Site().IncreaseClickHeatmaps({ ApiKey: data.Values.ApiKey }, function (response) { })
                                     _database.Site().IncreaseHeatmapClientsBehaviorByApiKey({ ApiKey: data.Values.ApiKey }, function (response) { })
                                 });

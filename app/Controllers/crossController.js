@@ -33,11 +33,11 @@ function Cross(dependencies) {
     }
 
     var generateAntiForgeryToken = function(){
-        return tokens.create(getSecretAntiForgeryToken());
+        return dependencies.tokens.create(getSecretAntiForgeryToken());
     }
 
     var validateAntiForgeryToken = function(token){
-        return tokens.verify(getSecretAntiForgeryToken(), token);
+        return dependencies.tokens.verify(getSecretAntiForgeryToken(), token);
     }
 
     var getMongoConnectionString = function () {
