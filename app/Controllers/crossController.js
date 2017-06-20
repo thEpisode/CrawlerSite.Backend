@@ -8,6 +8,7 @@ function Cross(dependencies) {
     var _notificationMailPassword = '';
     var _debuggingMailUser = '';
     var _debuggingMailPassword = '';
+    var _ratSecretAntiForgeryToken = '';
 
     var setSettings = function () {
         setFlingerSecretJWT(dependencies.config.FlingerSecretJWT);
@@ -20,6 +21,23 @@ function Cross(dependencies) {
         setMailPort(dependencies.config.MailPort);
         setMailEncryption(dependencies.config.MailEncryption);
         setStripePrivateKey(dependencies.config.StripePrivateKey);
+        setSecretAntiForgeryToken();
+    }
+
+    var setSecretAntiForgeryToken = function(){
+        _ratSecretAntiForgeryToken = dependencies.tokens.secretSync();
+    }
+
+    var getSecretAntiForgeryToken = function(){
+        return _ratSecretAntiForgeryToken;
+    }
+
+    var generateAntiForgeryToken = function(){
+        return tokens.create(getSecretAntiForgeryToken());
+    }
+
+    var validateAntiForgeryToken = function(token){
+        return tokens.verify(getSecretAntiForgeryToken(), token);
     }
 
     var getMongoConnectionString = function () {
@@ -175,6 +193,8 @@ function Cross(dependencies) {
         GetMailPort: getMailPort,
         GetMailEncryption: getMailEncryption,
         GetStripePrivateKey: getStripePrivateKey,
+        GenerateAntiForgeryToken: generateAntiForgeryToken,
+        ValidateAntiForgeryToken: validateAntiForgeryToken,
         GetRandomString: randomStringGenerator,
         IsJsonString: isJsonString,
     }

@@ -1,6 +1,6 @@
 /**
  * CrawlerSite.Backend
- * Tag: 0.0.1
+ * Tag: 1.0.0
  */
 
 console.log('\n\t\t\t== CrawlerSite.Backend ==\n\n');
@@ -10,8 +10,9 @@ console.log('\n\t\t\t== CrawlerSite.Backend ==\n\n');
  */
 
 const config = require('config');
+const tokens = require('csrf'); // Used to prevent Cross Site Request Forgery attaks
 
-const cross = require('./app/Controllers/crossController')({ config: config });
+const cross = require('./app/Controllers/crossController')({ config: config, tokens: new tokens(), });
 cross.SetSettings();
 
 const path = require('path');
@@ -122,6 +123,7 @@ var dependencies = {
     geoip: geoip,
     eventEmiter: eventEmiter,
     root: __dirname,
+    tokens: tokens,
 }
 
 console.log(dependencies.colors.green(' Crawler Site: ') + 'Libs imported');

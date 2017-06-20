@@ -54,7 +54,8 @@
     "socket.io": "^2.0.1",
     "socket.io-client": "latest",
     "stripe": "^4.15.0",
-    "uuid": "^3.0.1"
+    "uuid": "^3.0.1",
+    "csrf": "^3.0.6"
   },
   "engine": "node 7.10.0",
   "scripts": {
