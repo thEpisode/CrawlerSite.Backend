@@ -12,6 +12,8 @@ console.log('\n\t\t\t== CrawlerSite.Backend ==\n\n');
 const config = require('config');
 const tokens = require('csrf'); // Used to prevent Cross Site Request Forgery attaks
 const hpp = require('hpp'); // Used to preventing HTTP Parameter Pollution (HPP)
+const helmet = require('helmet'); // Used to enforce security
+const contentLength = require('express-content-length-validator');
 
 const cross = require('./app/Controllers/crossController')({ config: config, tokens: new tokens(), });
 cross.SetSettings();
@@ -69,9 +71,23 @@ else {
 
 /// Support encoded bodies
 app.use(bodyParser.urlencoded());
+
+/// Preventing HTTP Parameter Pollution
 app.use(hpp());
 
+/// Preventing some many security risks
+app.use(helmet())
+app.use(helmet.hidePoweredBy({setTo: 'FakeServer 1.0'})); //change value of X-Powered-By header to given value
+app.use(helmet.noCache({noEtag: true})); //set Cache-Control header
+app.use(helmet.noSniff());    // set X-Content-Type-Options header
+app.use(helmet.frameguard()); // set X-Frame-Options header
+app.use(helmet.xssFilter());  // set X-XSS-Protection header
+
+/// Disable X-Powered-By Header to preventing Clickjacking
 app.disable('x-powered-by');
+
+// max size accepted for the content-length 
+app.use(contentLength.validateMax({max: 9999, status: 400, message: "max size accepted for the content-length"}));
 
 /// Support JSON encoded bodies
 app.use(bodyParser.json());
@@ -79,8 +95,17 @@ app.use(bodyParser.json());
 /// Accept all origins
 app.use(cors({ origin: '*' }));
 
-// Settings for CORS, deep and manual configuration
+/// Settings for CORS (deep and manual configuration) and security settings
 app.use(function (req, res, next) {
+
+    // Invokes browser XSS protection mechanisms
+    res.header('X-XSS-Protection', '1; mode=block');
+
+    // Prevents application being displayed in iframes
+    res.header('X-Frame-Options', 'deny');
+
+    // Prevents mime sniffing
+    res.header('X-Content-Type-Options', 'nosniff');
 
     // App accept all origins
     res.header('Access-Control-Allow-Origin', '*');
