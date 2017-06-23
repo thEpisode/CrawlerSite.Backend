@@ -39,10 +39,12 @@
     "colors": "latest",
     "config": "^1.20.4",
     "cors": "^2.8.3",
+    "csrf": "^3.0.6",
     "ejs": "latest",
     "emailjs": "latest",
     "express": "latest",
     "gridfs-stream": "^1.1.1",
+    "hpp": "^0.2.2",
     "is-online": "latest",
     "jsonwebtoken": "latest",
     "maxmind": "^2.2.0",
@@ -54,8 +56,7 @@
     "socket.io": "^2.0.1",
     "socket.io-client": "latest",
     "stripe": "^4.15.0",
-    "uuid": "^3.0.1",
-    "csrf": "^3.0.6"
+    "uuid": "^3.0.1"
   },
   "engine": "node 7.10.0",
   "scripts": {

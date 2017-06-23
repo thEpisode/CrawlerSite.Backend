@@ -11,6 +11,7 @@ console.log('\n\t\t\t== CrawlerSite.Backend ==\n\n');
 
 const config = require('config');
 const tokens = require('csrf'); // Used to prevent Cross Site Request Forgery attaks
+const hpp = require('hpp'); // Used to preventing HTTP Parameter Pollution (HPP)
 
 const cross = require('./app/Controllers/crossController')({ config: config, tokens: new tokens(), });
 cross.SetSettings();
@@ -67,7 +68,10 @@ else {
  */
 
 /// Support encoded bodies
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.urlencoded());
+app.use(hpp());
+
+app.disable('x-powered-by');
 
 /// Support JSON encoded bodies
 app.use(bodyParser.json());
