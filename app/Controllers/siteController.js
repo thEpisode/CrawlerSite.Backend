@@ -226,12 +226,12 @@ function SiteController(dependencies) {
     }
 
     var getSiteByApiKey = function (data, callback) {
-        _entity.GetModel().findOne({ "ApiKey": data }, function (err, result) {
+        _entity.GetModel().findOne({ "ApiKey": data.ApiKey }, function (err, result) {
             if (err){
-                
+                _console.log(err, 'error');
             }
 
-            callback(result);
+            callback({ success: true, message: 'GetSiteByApiKey', result: result });
         })
     }
 

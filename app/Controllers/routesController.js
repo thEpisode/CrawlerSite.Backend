@@ -70,8 +70,8 @@ function Routes(dependencies) {
 
         //  (GET http://localhost:3000/api/Site/DiscoveryMode/[KEY])
         _apiRoutes.get('/Site/DiscoveryMode/:ApiKey', function (req, res) {
-            _database.Site().GetSiteByApiKey(req.params.ApiKey, function (result) {
-                res.json({ success: true, message: 'GetSiteByApiKey', result: result.DiscoveryMode });
+            _database.Site().GetSiteByApiKey(req.params, function (result) {
+                res.json(result);
             })
         });
 
@@ -454,6 +454,13 @@ function Routes(dependencies) {
                 res.json(result);
             })
         });
+
+        // (GET http://localhost:3000/api/ApiKey/)
+        _apiRoutes.get('/Site/ApiKey/:ApiKey', function(req, res){
+            _database.Site().GetSiteByApiKey(req.params, function(result){
+                res.json(result);
+            })
+        })
 
         // (POST http://localhost:3000/api/Site/Edit)
         _apiRoutes.post('/Site/Edit', function (req, res) {
