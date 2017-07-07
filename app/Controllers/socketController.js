@@ -360,22 +360,26 @@ function Socket(dependencies) {
                 }
             })
 
-            socket.on('Coplest.Flinger.PushScreenshot', function (data) {
+            socket.on('Coplest.Flinger.Screenshot', function (data) {
                 if (data.Command != undefined) {
-                    _database.Site().WebCrawling(data.Values.ApiKey, data.Values.Endpoint, function (result) {
-                        // if hasn't a screenshot
-                        if (result == false) {
-                            _fileHandler.CreateScreenshotFile(data.Values.Base64Data, data.Values.Endpoint, function (result) {
-                                // Add new image to entity
-                                _database.Site().AddScreenshotToChild(data.Values.ApiKey, result._id + '', data.Values.Endpoint, function () {
-                                    //res.json({ message: 'CreateScreenshotFile', result: true });
-                                })
+                    switch (data.Command) {
+                        case 'PushScreenshot#Request':
+                            _database.Site().WebCrawling(data.Values.ApiKey, data.Values.Endpoint, function (result) {
+                                // if hasn't a screenshot
+                                if (result == false) {
+                                    _database.Screenshot().CreateScreenshot(data.Values, function (createScreenshotResult) {/*Screenshot saved*/});
+                                }
+                            });
+                            break;
+                        case 'GetIfLastScreenshotIsObsoleteByApiKey#Request':
+                            _database.Screenshot().GetIfLastScreenshotIsObsoleteByApiKey(data.Values, function(result){
+                                socket.emit('Coplest.Flinger.ServerEvent', { Command: 'GetIfLastScreenshotIsObsoleteByApiKey#Response', Values: result });
                             })
-                        }
-                        else {
-                            //res.json({ message: 'CreateScreenshotFile', result: true });
-                        }
-                    })
+                            break;
+                        default:
+                            break;
+                    }
+
                 }
             })
         });

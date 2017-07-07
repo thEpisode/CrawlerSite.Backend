@@ -25,6 +25,7 @@ function Database(dependencies) {
     var _subscription;
     var _voucher;
     var _vote;
+    var _screenshot;
 
     var constructor = function (callback) {
         _mongoose = dependencies.mongoose;
@@ -74,15 +75,15 @@ function Database(dependencies) {
     }
 
     /// To improve performance
-    var createIndexes = function(){
-        _mongoose.connection.db.collection('Movement').createIndex({"ApiKey": 1});
-        _mongoose.connection.db.collection('Movement').createIndex({"Pathname": 1});
-        
-        _mongoose.connection.db.collection('Click').createIndex({"ApiKey": 1});
-        _mongoose.connection.db.collection('Click').createIndex({"Pathname": 1});
+    var createIndexes = function () {
+        _mongoose.connection.db.collection('Movement').createIndex({ "ApiKey": 1 });
+        _mongoose.connection.db.collection('Movement').createIndex({ "Pathname": 1 });
 
-        _mongoose.connection.db.collection('Scroll').createIndex({"ApiKey": 1});
-        _mongoose.connection.db.collection('Scroll').createIndex({"Pathname": 1});
+        _mongoose.connection.db.collection('Click').createIndex({ "ApiKey": 1 });
+        _mongoose.connection.db.collection('Click').createIndex({ "Pathname": 1 });
+
+        _mongoose.connection.db.collection('Scroll').createIndex({ "ApiKey": 1 });
+        _mongoose.connection.db.collection('Scroll').createIndex({ "Pathname": 1 });
     }
 
     var getGridFS = function () {
@@ -117,18 +118,21 @@ function Database(dependencies) {
         _user = require('./userController')(dependencies);
         _user.Initialize();
 
-        _creditCard = require('./creditCardController.js')(dependencies);
+        _creditCard = require('./creditCardController')(dependencies);
         _creditCard.Initialize();
         dependencies.CreditCardController = _creditCard;
 
-        _subscription = require('./subscriptionController.js')(dependencies);
+        _subscription = require('./subscriptionController')(dependencies);
         _subscription.Initialize();
 
-        _voucher = require('./voucherController.js')(dependencies);
+        _voucher = require('./voucherController')(dependencies);
         _voucher.Initialize();
 
-        _vote = require('./voteController.js')(dependencies);
+        _vote = require('./voteController')(dependencies);
         _vote.Initialize();
+
+        _screenshot = require('./screenshotController')(dependencies);
+        _screenshot.Initialize();
 
         _frontendReview = require('./frontendReviewController')(dependencies);
         _frontendReview.Initialize();
@@ -180,19 +184,23 @@ function Database(dependencies) {
         return _frontendReview;
     }
 
-    var getCreditCardController = function(){
+    var getCreditCardController = function () {
         return _creditCard;
     }
 
-    var getVoucherController = function(){
+    var getVoucherController = function () {
         return _voucher;
     }
 
-    var getVoteController = function(){
+    var getVoteController = function () {
         return _vote;
     }
 
-    var getSubscriptionController = function(){
+    var getScreenshotController = function () {
+        return _screenshot;
+    }
+
+    var getSubscriptionController = function () {
         return _subscription;
     }
 
@@ -213,6 +221,7 @@ function Database(dependencies) {
         Subscription: getSubscriptionController,
         Voucher: getVoucherController,
         Vote: getVoteController,
+        Screenshot: getScreenshotController,
         GetGridFS: getGridFS
     }
 }

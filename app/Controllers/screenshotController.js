@@ -85,14 +85,25 @@ function ScreenshotController(dependencies) {
         })
     }
 
-    var getIfLastScreenshotIsObsoleteByApiKey = function () {
+    var getIfLastScreenshotIsObsoleteByApiKey = function (data, callback) {
         _entity.GetModel().findOne({ "ApiKey": data.ApiKey }, {}, { sort: { 'created_at': -1 } }, function (err, result) {
             if (err) {
                 _console.log(err, 'error');
                 callback({ success: false, message: 'Something was wrong while getting screenshot', result: null });
             }
             else {
-                callback({ success: true, message: 'getScreenshotByApiKey', result: result });
+                if (result != null) {
+                    var timestamp = new Date(result.Timestamp);
+                    if (Math.round((timestamp - (new Date()).toUTCString()) / (1000 * 60 * 60 * 24)) >= 30) {
+                        callback({ success: true, message: 'getIfLastScreenshotIsObsoleteByApiKey', result: true });
+                    }
+                    else {
+                        callback({ success: true, message: 'getIfLastScreenshotIsObsoleteByApiKey', result: false });
+                    }
+                }
+                else {
+                    callback({ success: true, message: 'getIfLastScreenshotIsObsoleteByApiKey', result: true });
+                }
             }
         })
     }

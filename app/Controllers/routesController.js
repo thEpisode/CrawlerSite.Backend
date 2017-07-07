@@ -69,26 +69,28 @@ function Routes(dependencies) {
         });
 
         //  (GET http://localhost:3000/api/Site/DiscoveryMode/[KEY])
-        _apiRoutes.get('/Site/DiscoveryMode/:ApiKey', function (req, res) {
+        /*_apiRoutes.get('/Site/DiscoveryMode/:ApiKey', function (req, res) {
             _database.Site().GetSiteByApiKey(req.params, function (result) {
                 res.json(result);
             })
-        });
+        });*/
 
-        //  (GET http://localhost:3000/api/Site/AddImage/
-        _apiRoutes.post('/Site/AddImage', function (req, res) {
+        //  (GET http://localhost:3000/api/Site/AddScreenshot/
+        _apiRoutes.post('/Site/AddScreenshot', function (req, res) {
             _database.Site().WebCrawling(req.body.ApiKey, req.body.Endpoint, function (result) {
                 // if hasn't a screenshot
                 if (result == false) {
-                    _fileHandler.CreateScreenshotFile(req.body.Base64Data, req.body.Endpoint, function (result) {
-                        // Add new image to entity
-                        _database.Site().AddScreenshotToChild(req.body.ApiKey, result._id + '', req.body.Endpoint, function () {
-                            res.json({ success: true, message: 'CreateScreenshotFile', result: true });
-                        })
-                    })
+                    _database.Screenshot().CreateScreenshot(req.body, function(createScreenshotResult){
+                        if(createScreenshotResult.result === true){
+                            res.json({ success: true, message: 'AddScreenshot', result: true });
+                        }
+                        else{
+                            res.json(createScreenshotResult);
+                        }
+                    });
                 }
                 else {
-                    res.json({ success: true, message: 'CreateScreenshotFile', result: true });
+                    res.json({ success: true, message: 'AddScreenshot', result: true });
                 }
             })
 
