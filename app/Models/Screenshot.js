@@ -20,8 +20,12 @@ function Screenshot(dependencies) {
 
         _model = _mongoose.model('Screenshot', new _schema(
             {
+                DocumentSize: {
+                    height: Number,
+                    width: Number
+                },
                 Timestamp: String,
-                Screenshot: Buffer,
+                Screenshot: String,
                 Endpoint: String,
                 Type: Number,
                 ApiKey: String,

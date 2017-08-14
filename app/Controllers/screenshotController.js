@@ -1,6 +1,7 @@
 function ScreenshotController(dependencies) {
 
-    /// Dependencies  
+    /// Dependencies
+    var _database;
     var _console;
     var _mongoose;
 
@@ -8,6 +9,7 @@ function ScreenshotController(dependencies) {
     var _entity;
 
     var constructor = function () {
+        _database = dependencies.database;
         _mongoose = dependencies.mongoose;
         _console = dependencies.console;
 
@@ -19,6 +21,7 @@ function ScreenshotController(dependencies) {
 
         var screenshot = new _entity.GetModel()(
             {
+                DocumentSize: data.DocumentSize,
                 Timestamp: data.Timestamp,
                 Screenshot: data.Screenshot,
                 Endpoint: data.Endpoint,
@@ -27,9 +30,12 @@ function ScreenshotController(dependencies) {
                 IsObsolete: false,
             });
 
-        screenshot.save().then(function (result) {
-            // When database return a result call the return
-            callback({ success: true, message: 'CreateScreenshot', result: result });
+        screenshot.save().then(function (screenshotResult) {
+            // Save this new Screenshot Id into Site.Track
+            _database.Site().AddScreenshotToChild(data.ApiKey, screenshotResult._id, data.Endpoint, function (savedScreenshot) {
+                // When database return a result call the return
+                callback({ success: true, message: 'CreateScreenshot', result: screenshotResult });
+            });
         }, function (err) {
             _console.log(err, 'error');
             callback({ success: false, message: 'Something was wrong while creating screenshot', result: null });
@@ -49,13 +55,13 @@ function ScreenshotController(dependencies) {
     }
 
     var getScreenshotById = function (data, callback) {
-        _entity.GetModel().findOne({ "_id": data.Id }, function (err, result) {
+        _entity.GetModel().findOne({ "_id": data.Id }, function (err, screenshotResult) {
             if (err) {
                 _console.log(err, 'error');
                 callback({ success: false, message: 'Something was wrong while getting screenshot', result: null });
             }
             else {
-                callback({ success: true, message: 'getScreenshotById', result: result });
+                callback({ success: true, message: 'getScreenshotById', result: screenshotResult });
             }
 
         })

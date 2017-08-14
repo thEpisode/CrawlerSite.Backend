@@ -136,8 +136,8 @@ function Routes(dependencies) {
         /// Heatmap insights api routes
         /// -------------------------
         _apiRoutes.get('/Insights/HeatmapScreenshotById/:Id', function (req, res) {
-            _insights.HeatmapScreenshotById(req.params.Id, function (file) {
-                file.pipe(res);
+            _insights.HeatmapScreenshotById(req.params, function (result) {
+                res.json(result);
             })
         })
 

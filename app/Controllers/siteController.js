@@ -262,7 +262,7 @@ function SiteController(dependencies) {
         })
     }
 
-    var addScreenshotToChild = function (apiKey, fileId, endpoint, callback) {
+    var addScreenshotToChild = function (apiKey, screenshotId, endpoint, callback) {
         var branches = [];
 
         if (endpoint == '/') { branches[0] = "Index" }
@@ -279,7 +279,7 @@ function SiteController(dependencies) {
 
             // Get first branch
             var lastBranch = searchBranch(site.Track, branches[branches.length - 1]);
-            lastBranch.Screenshot = fileId;
+            lastBranch.Screenshot = screenshotId;
 
 
             _entity.GetModel().findOneAndUpdate({ "ApiKey": apiKey }, { $set: { Track: site.Track } }, { upsert: false }, function (err, result) {

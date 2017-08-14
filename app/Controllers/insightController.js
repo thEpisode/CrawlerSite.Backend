@@ -124,10 +124,10 @@ function InsightController(dependencies) {
         })
     }
 
-    var heatmapScreenshotById = function (Id, callback) {
-        _fileHandler.ReadFileById(Id, function (stream) {
-            callback(stream);
-        })
+    var heatmapScreenshotById = function (data, callback) {
+        _database.Screenshot().GetScreenshotById(data, function (heatmapResult) {
+            callback(heatmapResult);
+        });
     }
 
     var dashboardInsightsByApiKey = function (data, callback) {
