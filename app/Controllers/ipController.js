@@ -109,14 +109,18 @@ function IPController(dependencies) {
                     for (var i = 0; i < IPRresult.length; i++) {
                         var ip = IPRresult[i];
                         if (ip.PrivateIPs.length == 1) {
-                            next(searchIp(ip.PrivateIPs[0], data))
+                            if (data.PublicIP === ip.PrivateIPs[0]) {
+                                next(searchIp(ip.PrivateIPs[0], data))
+                            }
                         }
                         else {
                             var searchIpResult = {};
                             for (var i = 0; i < ip.PrivateIPs.length; i++) {
-                                searchIpResult = searchIp(ip.PrivateIPs[i], data);
-                                if (searchIpResult.result.isBlocked === true) {
-                                    break;
+                                if (data.PublicIP === ip.PrivateIPs[i]) {
+                                    searchIpResult = searchIp(ip.PrivateIPs[i], data);
+                                    if (searchIpResult.result.isBlocked === true) {
+                                        break;
+                                    }
                                 }
                             }
                             next(searchIpResult);
