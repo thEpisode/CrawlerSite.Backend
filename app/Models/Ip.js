@@ -21,7 +21,7 @@ function Ip(dependencies) {
         _model = _mongoose.model('Ip', new _schema(
             {
                 ApiKey: String,
-                IP: String,
+                PublicIP: String,
                 PrivateIPs:[String],
                 Name: String,
                 State: Number

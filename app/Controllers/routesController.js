@@ -254,7 +254,7 @@ function Routes(dependencies) {
         //  (POST http://localhost:3000/api/Ip/Create)
         _apiRoutes.post('/Ip/Create', function (req, res) {
             _database.Ip().CreateIP(req.body, function (result) {
-                res.json({ success: true, message: 'CreateIP', result: result });
+                res.json(result);
             })
         });
 

@@ -11,7 +11,7 @@ function IPController(dependencies) {
         _mongoose = dependencies.mongoose;
         _console = dependencies.console;
 
-        _entity = require('../Models/Ip')(dependencies); 
+        _entity = require('../Models/Ip')(dependencies);
         _entity.Initialize();
     }
 
@@ -28,7 +28,15 @@ function IPController(dependencies) {
 
         ip.save().then(function (result) {
             // When database return a result call the return
-            next(result);
+            if (result !== undefined && result !== null) {
+                next({ success: true, message: 'CreateIP', result: result });
+            }
+            else {
+                next({ success: false, message: 'Something went wrong while creating new IP', result: null });
+            }
+        }, function (err) {
+            _console.log(err, 'error');
+            next({ success: false, message: 'Something was wrong while creating new IP', result: null });
         })
     }
 
@@ -38,14 +46,14 @@ function IPController(dependencies) {
                 _console.log(err, 'error');
                 next(false);
             }
-            
+
             next(true);
         })
     }
 
     var getIPById = function (data, next) {
         _entity.GetModel().findOne({ "_id": data }, function (err, result) {
-            if (err){
+            if (err) {
                 _console.log(err, 'error');
             }
 
@@ -55,7 +63,7 @@ function IPController(dependencies) {
 
     var getAllIPByApiKey = function (data, next) {
         _entity.GetModel().find({ "ApiKey": data.ApiKey }, function (err, result) {
-            if (err){
+            if (err) {
                 _console.log(err, 'error');
             }
 
@@ -65,7 +73,7 @@ function IPController(dependencies) {
 
     var getAllIP = function (data, next) {
         _entity.GetModel().find({}, function (err, result) {
-            if (err){
+            if (err) {
                 _console.log(err, 'error');
             }
 
@@ -73,15 +81,91 @@ function IPController(dependencies) {
         })
     }
 
-    var editIp = function(data, next){
+    var editIp = function (data, next) {
         _entity.GetModel().findOneAndUpdate({ "_id": data._id }, { $set: { IP: data.IP, Name: data.Name } }, { upsert: false }, function (err, result) {
             if (err) {
                 _console.log(err, 'error');
                 next(false);
             }
-            
+
             next(true);
         })
+    }
+
+    var checkIfIPIsBlockedByApiKey = function (data, next) {
+        _entity.GetModel().find({ "ApiKey": data.ApiKey, }, function (err, IPRresult) {
+            if (err) {
+                _console.log(err, 'error');
+                next({
+                    success: false,
+                    message: `Something went wrong while retrieving IPs by Api Key`,
+                    result: {
+                        isBlocked: false
+                    }
+                })
+            }
+            else {
+                if (IPRresult !== undefined && IPRresult !== null) {
+                    for (var i = 0; i < IPRresult.length; i++) {
+                        var ip = IPRresult[i];
+                        if (ip.PrivateIPs.length == 1) {
+                            next(searchIp(ip.PrivateIPs[0], data))
+                        }
+                        else {
+                            var searchIpResult = {};
+                            for (var i = 0; i < ip.PrivateIPs.length; i++) {
+                                searchIpResult = searchIp(ip.PrivateIPs[i], data);
+                                if (searchIpResult.result.isBlocked === true) {
+                                    break;
+                                }
+                            }
+                            next(searchIpResult);
+                        }
+                    }
+                }
+                else {
+                    next({
+                        success: true,
+                        message: `Not matching`,
+                        result: {
+                            isBlocked: false
+                        }
+                    })
+                }
+            }
+        })
+    }
+
+    var searchIp = function (ip, data) {
+        if (ip.indexOf('*') >= 0) {
+            return {
+                success: true,
+                message: `Ip blocked`,
+                result: {
+                    isBlocked: true
+                }
+            };
+        }
+        else {
+            if (ip === data.QueryIP) {
+                return {
+                    success: true,
+                    message: `Ip blocked`,
+                    result: {
+                        isBlocked: true
+                    }
+                };
+            }
+            else {
+                return {
+                    success: true,
+                    message: `Not matching`,
+                    result: {
+                        isBlocked: false
+                    }
+                };
+            }
+        }
     }
 
     var getEntity = function () {
@@ -96,6 +180,7 @@ function IPController(dependencies) {
         GetAllIPByApiKey: getAllIPByApiKey,
         GetAllIP: getAllIP,
         EditIp: editIp,
+        CheckIfIPIsBlockedByApiKey: checkIfIPIsBlockedByApiKey,
         Entity: getEntity
     }
 }

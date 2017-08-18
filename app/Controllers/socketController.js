@@ -303,24 +303,43 @@ function Socket(dependencies) {
             }) */
 
             //Set Api Key and geolocation to connected socket
-            socket.on('Coplest.Flinger.AddApiKeyToSocket', function (data) {
+            socket.on('Coplest.Flinger.SubscribeSocketToApiKey', function (data) {
                 if (data.ApiKey != undefined) {
-                    
-                    _geolocate.Locate({ IP: socket.handshake.address }, function (geolocateResponse) {
-                        if(geolocateResponse !== undefined && geolocateResponse!== null){
-                            if(geolocateResponse.success === true){
-                                data.ClientInformation.Geolocation = geolocateResponse
+                    _database.Ip().CheckIfIPIsBlockedByApiKey({ ApiKey: data.ApiKey, QueryIP: data.ClientInformation.privateIP.IPv4 }, function (checkResult) {
+                        _geolocate.Locate({ IP: socket.handshake.address }, function (geolocateResponse) {
+                            if (geolocateResponse !== undefined && geolocateResponse !== null) {
+                                if (geolocateResponse.success === true) {
+                                    data.ClientInformation.Geolocation = geolocateResponse
+                                }
                             }
-                        }
-                        data.ClientInformation.PublicIP = socket.handshake.address;
+                            data.ClientInformation.PublicIP = socket.handshake.address;
 
-                        var connectedSocket = _io.sockets.connected[socket.id.split('#')[1]];
-                        connectedSocket.ApiKey = data.ApiKey;
-                        connectedSocket.ClientInformation = data.ClientInformation;
-                        
+                            /// Set data to socket
+                            var connectedSocket = _io.sockets.connected[socket.id.split('#')[1]];
+                            connectedSocket.ApiKey = data.ApiKey;
+                            connectedSocket.ClientInformation = data.ClientInformation;
 
-                        adminPoolNamespace.emit('Coplest.Flinger.RAT', { Command: 'SubscribeSocketToApiKey#Request', Values: { SocketId: socket.id.split('#')[1], ApiKey: data.ApiKey, ClientInformation: data.ClientInformation } });
-                    });
+                            if (checkResult !== undefined && checkResult !== null) {
+                                if (checkResult.success === true) {
+                                    /// Check if IP is blocked
+                                    if (checkResult.result.isBlocked === true) {
+                                        _database.Site().GetSiteByApiKey({ApiKey: data.ApiKey}, function(siteResult){
+                                            socket.emit('Coplest.Flinger.ServerEvent', { Command: 'BlockedUser', Values: { 
+                                                Message: siteResult.result.BlockUserText, 
+                                                Location:data.ClientInformation.Geolocation,  
+                                                PrivateIP: data.ClientInformation.privateIP.IPv4,
+                                                PublicIP: data.ClientInformation.PublicIP } });
+                                        });
+                                    }
+                                    else {
+                                        adminPoolNamespace.emit('Coplest.Flinger.RAT', { Command: 'SubscribeSocketToApiKey#Request', Values: { SocketId: socket.id.split('#')[1], ApiKey: data.ApiKey, ClientInformation: data.ClientInformation } });
+                                    }
+                                }
+                            }
+
+                        });
+
+                    })
                 }
             })
 
