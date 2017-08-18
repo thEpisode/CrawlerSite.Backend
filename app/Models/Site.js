@@ -163,7 +163,8 @@ function Site(dependencies) {
                             H23: Number
                         },
                     }
-                }
+                },
+                BlockUserText: String
             },
             { timestamps: { createdAt: 'created_at' }, minimize: false, collection: 'Site' }
         ));

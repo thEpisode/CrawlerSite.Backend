@@ -15,7 +15,7 @@ function NotificationController(dependencies) {
         _entity.Initialize();
     }
 
-    var createNotification = function (data, callback) {
+    var createNotification = function (data, next) {
 
         var notification = new _entity.GetModel()(
             {
@@ -31,27 +31,27 @@ function NotificationController(dependencies) {
 
         notification.save().then(function (result) {
             // When database return a result call the return
-            callback();
+            next();
         })
     }
 
-    var deleteNotification = function (data, callback) {
+    var deleteNotification = function (data, next) {
         _entity.GetModel().findOneAndRemove(data, function (err, result) {
-            callback(result);
+            next(result);
         })
     }
 
-    var getNotificationById = function (data, callback) {
+    var getNotificationById = function (data, next) {
         _entity.GetModel().findOneAndUpdate({ "_id": data }, { $set: { Unread: _entity.GetStates().Read } }, { upsert: false }, function (err, result) {
             if (err){
                 _console.log(err, 'error');
             }
 
-            callback(result);
+            next(result);
         })
     }
 
-    var getNotificationByUserId = function (data, callback) {
+    var getNotificationByUserId = function (data, next) {
         _entity.GetModel().find({ "UserId": data }, function (err, notificationsResult) {
             if (err) { 
                 _console.log(err, 'error');
@@ -71,7 +71,7 @@ function NotificationController(dependencies) {
                                 notificationResult.ItWasRead = _entity.GetStates().Seen;
                                 result.push(notificationResult);
                                 if (notificationsRemaining <= 0) {
-                                    callback({ success: true, message: 'GetNotificationByUserId', result: result });
+                                    next({ success: true, message: 'GetNotificationByUserId', result: result });
                                 }
                             })
                         }
@@ -79,28 +79,28 @@ function NotificationController(dependencies) {
                             --notificationsRemaining;
                             result.push(item);
                             if (notificationsRemaining <= 0) {
-                                callback({ success: true, message: 'GetNotificationByUserId', result: result });
+                                next({ success: true, message: 'GetNotificationByUserId', result: result });
                             }
                         }
                     })
                 }
                 else {
-                    callback({ success: false, message: 'User has no notifications', result: null });
+                    next({ success: false, message: 'User has no notifications', result: null });
                 }
             }
             else {
-                callback({ success: false, message: 'User has no notifications', result: null });
+                next({ success: false, message: 'User has no notifications', result: null });
             }
         })
     }
 
-    var getAllNotification = function (data, callback) {
+    var getAllNotification = function (data, next) {
         _entity.GetModel().find({}, function (err, result) {
             if (err){
                 _console.log(err, 'error');
             }
 
-            callback(result);
+            next(result);
         })
     }
 

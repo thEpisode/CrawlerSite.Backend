@@ -15,7 +15,7 @@ function FrontEndReviewController(dependencies) {
         _entity.Initialize();
     }
 
-    var createFrontEndReview = function (data, callback) {
+    var createFrontEndReview = function (data, next) {
 
         var frontendReview = new _entity.GetModel()(
             {
@@ -31,51 +31,51 @@ function FrontEndReviewController(dependencies) {
 
         frontendReview.save().then(function (result) {
             // When database return a result call the return
-            callback(result);
+            next(result);
         }, function(err){
             _console.log(err, 'error');
-            callback(null);
+            next(null);
         });
     }
 
-    var deleteFrontEndReview = function (data, callback) {
+    var deleteFrontEndReview = function (data, next) {
         _entity.GetModel().findOneAndRemove(data, function (err, result) {
             if (err) {
                 _console.log(err, 'error');
-                callback(false);
+                next(false);
             }
 
-            callback(true);
+            next(true);
         })
     }
 
-    var getFrontEndReviewById = function (data, callback) {
+    var getFrontEndReviewById = function (data, next) {
         _entity.GetModel().findOne({ "_id": data }, function (err, result) {
             if (err){
                 _console.log(err, 'error');
             }
 
-            callback(result);
+            next(result);
         })
     }
 
-    var getFrontEndReviewByUserId = function (data, callback) {
+    var getFrontEndReviewByUserId = function (data, next) {
         _entity.GetModel().find({ "UserId": data }, function (err, result) {
             if (err){
                 _console.log(err, 'error');
             }
 
-            callback(result);
+            next(result);
         })
     }
 
-    var getAllFrontEndReview = function (data, callback) {
+    var getAllFrontEndReview = function (data, next) {
         _entity.GetModel().find({}, function (err, result) {
             if (err){
                 _console.log(err, 'error');
             }
 
-            callback(result);
+            next(result);
         })
     }
 

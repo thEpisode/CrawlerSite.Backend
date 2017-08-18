@@ -27,15 +27,15 @@ function UserController(dependencies) {
         _entity.Initialize();
     }
 
-    var createUser = function (data, callback) {
+    var createUser = function (data, next) {
         _entity.GetModel().findOne({ "Email": new RegExp('^' + data.Email, 'i') }, function (err, user) {
             if (err) {
                 _console.log(err, 'error');
-                callback({ success: false, message: 'Something was wrong while creating user' });
+                next({ success: false, message: 'Something was wrong while creating user' });
             }
             else {
                 if (user != null) {
-                    callback({ success: false, message: 'This email is already registered' });
+                    next({ success: false, message: 'This email is already registered' });
                 }
                 else {
                     var user = new _entity.GetModel()(
@@ -57,7 +57,7 @@ function UserController(dependencies) {
                         });
 
                     user.save().then(function (userResult) {
-                        // When database return any result call the "return" named callback
+                        // When database return any result call the "return" named next
                         userResult.VoucherId = data.VoucherId;
                         _stripeController.CreateInitialCustomer(userResult, function (stripeResult) {
                             if (stripeResult != undefined && stripeResult != null) {
@@ -68,51 +68,51 @@ function UserController(dependencies) {
                                         _stripeController.RedeemVoucher({ SubscriptionId: stripeResult.result.SubscriptionId, VoucherId: data.VoucherId }, function (redeemResult) {
                                             if (redeemResult != undefined && redeemResult != null) {
                                                 if (redeemResult.success == true) {
-                                                    callback({ success: true, message: 'CreateUser', result: stripeResult });
+                                                    next({ success: true, message: 'CreateUser', result: stripeResult });
                                                 }
                                                 else {
-                                                    callback({ success: false, message: 'Something was wrong while creating user', result: null });
+                                                    next({ success: false, message: 'Something was wrong while creating user', result: null });
                                                 }
                                             }
                                             else {
-                                                callback({ success: false, message: 'Something was wrong while creating user', result: null });
+                                                next({ success: false, message: 'Something was wrong while creating user', result: null });
                                             }
                                         })
                                     }
                                     /// User has not voucher to redeem
                                     else {
-                                        callback({ success: true, message: 'CreateUser', result: stripeResult });
+                                        next({ success: true, message: 'CreateUser', result: stripeResult });
                                     }
                                 }
                                 else {
-                                    callback({ success: false, message: 'Something was wrong while creating user', result: null });
+                                    next({ success: false, message: 'Something was wrong while creating user', result: null });
                                 }
                             }
                             else {
-                                callback({ success: false, message: 'Something was wrong while creating user', result: null });
+                                next({ success: false, message: 'Something was wrong while creating user', result: null });
                             }
                         });
                     }, function (err) {
                         _console.log(err, 'error');
-                        callback({ success: false, message: 'Something was wrong while creating user', result: null });
+                        next({ success: false, message: 'Something was wrong while creating user', result: null });
                     })
                 }
             }
         });
     }
 
-    var createUserToSubscription = function (data, callback) {
+    var createUserToSubscription = function (data, next) {
         _database.Subscription().GetSubscriptionByUserId({ UserId: data.UserId }, function (subscriptionResult) {
             if (subscriptionResult !== undefined) {
                 if (subscriptionResult.success === true) {
                     _entity.GetModel().findOne({ "Email": new RegExp('^' + data.Email, 'i') }, function (err, user) {
                         if (err) {
                             _console.log(err, 'error');
-                            callback({ success: false, message: 'Something was wrong while creating user' });
+                            next({ success: false, message: 'Something was wrong while creating user' });
                         }
                         else {
                             if (user != null) {
-                                callback({ success: false, message: 'This email is already registered' });
+                                next({ success: false, message: 'This email is already registered' });
                             }
                             else {
                                 var user = new _entity.GetModel()(
@@ -136,36 +136,36 @@ function UserController(dependencies) {
                                     _database.Subscription().AddUserToSubscription({ SubscriptionId: subscriptionResult.result._id, UserId: userResult._id }, function (addSubscriptionResult) {
                                         if (addSubscriptionResult !== undefined && addSubscriptionResult !== null) {
                                             if (addSubscriptionResult.success === true) {
-                                                callback({ success: true, message: 'CreateUser', result: userResult });
+                                                next({ success: true, message: 'CreateUser', result: userResult });
                                             }
                                             else {
-                                                callback({ success: false, message: 'Something was wrong while creating user', result: null });
+                                                next({ success: false, message: 'Something was wrong while creating user', result: null });
                                             }
                                         }
                                         else {
-                                            callback({ success: false, message: 'Something was wrong while creating user', result: null });
+                                            next({ success: false, message: 'Something was wrong while creating user', result: null });
                                         }
                                     })
                                 },
                                     function (err) {
                                         _console.log(err, 'error');
-                                        callback({ success: false, message: 'Something was wrong while creating user', result: null });
+                                        next({ success: false, message: 'Something was wrong while creating user', result: null });
                                     });
                             }
                         }
                     });
                 }
                 else {
-                    callback({ success: false, message: 'Something was wrong while creating user', result: null });
+                    next({ success: false, message: 'Something was wrong while creating user', result: null });
                 }
             }
             else {
-                callback({ success: false, message: 'Something was wrong while creating user', result: null });
+                next({ success: false, message: 'Something was wrong while creating user', result: null });
             }
         })
     }
 
-    var deleteAccountByUserId = function (data, callback) {
+    var deleteAccountByUserId = function (data, next) {
         _database.Site().GetAllSitesByUserId({ "_id": data.UserId }, function (sitesResult) {
 
             if (sitesResult.result.length > 0) {
@@ -181,30 +181,30 @@ function UserController(dependencies) {
             _entity.GetModel().findOneAndRemove(data.UserId, function (err, result) {
                 if (err) {
                     _console.log(err, 'error');
-                    callback({ success: false, message: 'Something went wrong when updating password, try again.', result: null });
+                    next({ success: false, message: 'Something went wrong when updating password, try again.', result: null });
                 }
 
-                callback({ success: true, message: 'ChangePasswordByUserId', result: result });
+                next({ success: true, message: 'ChangePasswordByUserId', result: result });
             })
         });
     }
 
-    var deleteUserByUserId = function (data, callback) {
+    var deleteUserByUserId = function (data, next) {
         _entity.GetModel().findOneAndRemove({ "_id": data.UserId }, function (err, result) {
             if (err) {
                 _console.log(err, 'error');
-                callback({ success: false, message: 'Something went wrong when updating password, try again.', result: null });
+                next({ success: false, message: 'Something went wrong when updating password, try again.', result: null });
             }
 
-            callback({ success: true, message: 'ChangePasswordByUserId', result: result });
+            next({ success: true, message: 'ChangePasswordByUserId', result: result });
         })
     }
 
-    var changePasswordByUserId = function (data, callback) {
+    var changePasswordByUserId = function (data, next) {
         _entity.GetModel().findOne({ "_id": data.UserId }, function (err, userResult) {
             if (err) {
                 _console.log(err, 'error');
-                callback({ success: false, message: 'Something went wrong when updating password, try again.', result: null });
+                next({ success: false, message: 'Something went wrong when updating password, try again.', result: null });
             }
             else {
                 // Decrypt password and compare
@@ -212,20 +212,20 @@ function UserController(dependencies) {
                     _entity.GetModel().findOneAndUpdate({ "_id": data.UserId }, { $set: { Password: data.NewPassword } }, { upsert: false }, function (err, result) {
                         if (err) {
                             _console.log(err, 'error');
-                            callback({ success: false, message: 'Something went wrong when updating password, try again.', result: null });
+                            next({ success: false, message: 'Something went wrong when updating password, try again.', result: null });
                         }
 
-                        callback({ success: true, message: 'ChangePasswordByUserId', result: result });
+                        next({ success: true, message: 'ChangePasswordByUserId', result: result });
                     })
                 }
                 else {
-                    callback({ success: false, message: 'Old password isn\'t valid, try again.', result: null });
+                    next({ success: false, message: 'Old password isn\'t valid, try again.', result: null });
                 }
             }
         })
     }
 
-    var getUserById = function (data, callback) {
+    var getUserById = function (data, next) {
         _entity.GetModel().findOne({ "_id": data }, function (err, result) {
             if (err) {
                 _console.log(err, 'error');
@@ -234,7 +234,7 @@ function UserController(dependencies) {
                 if (result != null) {
                     result.StripeToken = '';
 
-                    callback(result);
+                    next(result);
                 }
 
             }
@@ -242,29 +242,29 @@ function UserController(dependencies) {
         })
     }
 
-    var getUserByEmail = function (data, callback) {
+    var getUserByEmail = function (data, next) {
         _entity.GetModel().findOne({ "Email": data }, function (err, result) {
             if (err) {
                 _console.log(err, 'error');
-                callback({ success: false, message: 'Something went wrong while retrieving user, try again.', result: null });
+                next({ success: false, message: 'Something went wrong while retrieving user, try again.', result: null });
             }
             else {
-                callback({ success: true, message: 'GetUserByEmail', result: result });
+                next({ success: true, message: 'GetUserByEmail', result: result });
             }
         })
     }
 
-    var getUserByCredentials = function (data, callback) {
+    var getUserByCredentials = function (data, next) {
 
         _entity.GetModel().findOne({ "Email": data.Email }, function (err, user) {
             if (err) _console.log(err, 'error');
 
             if (user == null) {
-                callback({ Success: false, Message: 'The username and password you entered did not match our records. Please double-check and try again.' });
+                next({ Success: false, Message: 'The username and password you entered did not match our records. Please double-check and try again.' });
             }
             else if (user != null) {
                 if (user.Password != data.Password) {
-                    callback({ Success: false, Message: 'The username and password you entered did not match our records. Please double-check and try again.' });
+                    next({ Success: false, Message: 'The username and password you entered did not match our records. Please double-check and try again.' });
                 }
                 else {
                     var secret = _app.get('FlingerSecretJWT');
@@ -273,7 +273,7 @@ function UserController(dependencies) {
                         expiresIn: '24h' // expires in 24 hours
                     });
 
-                    callback({
+                    next({
                         UserId: user._id,
                         Success: true,
                         Message: 'Authentication succesfuly',
@@ -284,14 +284,14 @@ function UserController(dependencies) {
         })
     }
 
-    var getAllUser = function (data, callback) {
+    var getAllUser = function (data, next) {
         _entity.GetModel().find({}, function (err, result) {
             if (err) {
                 _console.log(err, 'error');
-                callback({ success: false, message: 'GetAllUser', result: null });
+                next({ success: false, message: 'GetAllUser', result: null });
             }
 
-            callback({ success: true, message: 'GetAllUser', result: result });
+            next({ success: true, message: 'GetAllUser', result: result });
         })
     }
 
@@ -299,25 +299,25 @@ function UserController(dependencies) {
         return _entity;
     }
 
-    var editUser = function (data, callback) {
+    var editUser = function (data, next) {
         _entity.GetModel().findOneAndUpdate({ "_id": data._id }, { $set: { Email: data.Email, FirstName: data.FirstName, LastName: data.LastName, City: data.City, Country: data.Country } }, { upsert: false }, function (err, result) {
             if (err) {
                 _console.log(err, 'error');
-                callback(false);
+                next(false);
             }
 
-            callback(result);
+            next(result);
         });
     }
 
-    var setHasCouponCode = function (data, callback) {
+    var setHasCouponCode = function (data, next) {
         _entity.GetModel().findOneAndUpdate({ "Email": data.Email }, { $set: { HasCouponCode: data.HasCouponCode } }, { upsert: false }, function (err, result) {
             if (err) {
                 _console.log(err, 'error');
-                callback({ success: false, message: 'Something went wrong while updating your voucher, try again.', result: null });
+                next({ success: false, message: 'Something went wrong while updating your voucher, try again.', result: null });
             }
             else {
-                callback({ success: true, message: 'SetHasCouponCode', result: result });
+                next({ success: true, message: 'SetHasCouponCode', result: result });
             }
         });
     }

@@ -15,7 +15,7 @@ function ScrollController(dependencies) {
         _entity.Initialize();
     }
 
-    var createScroll = function (data, callback) {
+    var createScroll = function (data, next) {
 
         var scroll = new _entity.GetModel()(
             {
@@ -31,47 +31,47 @@ function ScrollController(dependencies) {
 
         scroll.save().then(function (result) {
             // When database return a result call the return
-            callback();
+            next();
         })
     }
 
-    var deleteScroll = function (data, callback) {
+    var deleteScroll = function (data, next) {
         _entity.GetModel().findOneAndRemove(data, function (err, result) {
-            callback(result);
+            next(result);
         })
     }
 
-    var getScrollById = function (data, callback) {
+    var getScrollById = function (data, next) {
         _entity.GetModel().findOne({ "_id": data }, function (err, result) {
             if (err) {
                 _console.log(err, 'error');
             }
 
-            callback(result);
+            next(result);
         })
     }
 
-    var getScrollByApiKey = function (data, callback) {
+    var getScrollByApiKey = function (data, next) {
         _entity.GetModel().findOne({ "ApiKey": data }, function (err, result) {
             if (err) {
                 _console.log(err, 'error');
             }
 
-            callback(result);
+            next(result);
         })
     }
 
-    var getAllScroll = function (data, callback) {
+    var getAllScroll = function (data, next) {
         _entity.GetModel().find({}, function (err, result) {
             if (err) {
                 _console.log(err, 'error');
             }
 
-            callback(result);
+            next(result);
         })
     }
 
-    var getInsight = function (ApiKey, MinWidth, MaxWidth, MaxTime, Flash, Browser, OperatingSystem, Cookies, Location, Endpoint, callback) {
+    var getInsight = function (ApiKey, MinWidth, MaxWidth, MaxTime, Flash, Browser, OperatingSystem, Cookies, Location, Endpoint, next) {
         var query = {};
 
         if (ApiKey != 'null') { query['ApiKey'] = ApiKey; }
@@ -91,7 +91,7 @@ function ScrollController(dependencies) {
                 _console.log(err, 'error');
             }
 
-            callback(result);
+            next(result);
         });
     }
 

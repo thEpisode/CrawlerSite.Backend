@@ -22,6 +22,7 @@ function Ip(dependencies) {
             {
                 ApiKey: String,
                 IP: String,
+                PrivateIPs:[String],
                 Name: String,
                 State: Number
             },

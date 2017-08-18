@@ -15,7 +15,7 @@ function CreditCardController(dependencies) {
         _entity.Initialize();
     }
 
-    var createCreditCard = function (data, callback) {
+    var createCreditCard = function (data, next) {
         var creditCard = new _entity.GetModel()(
             {
                 _id: _mongoose.Types.ObjectId(),
@@ -26,14 +26,14 @@ function CreditCardController(dependencies) {
             });
 
         creditCard.save().then(function (result) {
-            callback({ success: true, message: 'CreateCreditCard', result: result });
+            next({ success: true, message: 'CreateCreditCard', result: result });
         }, function (err) {
             _console.log(err, 'error');
-            callback({ success: false, message: 'Something went wrong when creating your credit card, try again.', result: null });
+            next({ success: false, message: 'Something went wrong when creating your credit card, try again.', result: null });
         })
     }
 
-    var editCreditCard = function (data, callback) {
+    var editCreditCard = function (data, next) {
         var creditCardState = data.State == undefined ? _entity.GetStates().Active : data.State;
         _entity.GetModel().findOneAndUpdate(
             { "_id": data._id },
@@ -52,58 +52,58 @@ function CreditCardController(dependencies) {
             function (err, result) {
                 if (err) {
                     _console.log(err, 'error');
-                    callback({ success: false, message: 'Something went wrong when editing your credit card, try again.', result: null });
+                    next({ success: false, message: 'Something went wrong when editing your credit card, try again.', result: null });
                 }
                 else {
-                    callback({ success: true, message: 'EditCreditCard', result: result });
+                    next({ success: true, message: 'EditCreditCard', result: result });
                 }
             });
     }
 
-    var deleteCreditCard = function (data, callback) {
+    var deleteCreditCard = function (data, next) {
         _entity.GetModel().findOneAndRemove(data, function (err, result) {
             if (err) {
                 _console.log(err, 'error');
-                callback({ success: false, message: 'Something went wrong when deleting your credit card, try again.', result: null });
+                next({ success: false, message: 'Something went wrong when deleting your credit card, try again.', result: null });
             }
             else {
-                callback({ success: true, message: 'DeleteCreditCard', result: result });
+                next({ success: true, message: 'DeleteCreditCard', result: result });
             }
         })
     }
 
-    var getCreditCardById = function (data, callback) {
+    var getCreditCardById = function (data, next) {
         _entity.GetModel().findOne({ "_id": data }, function (err, result) {
             if (err) {
                 _console.log(err, 'error');
-                callback({ success: false, message: 'Something went wrong when getting your credit card, try again.', result: null });
+                next({ success: false, message: 'Something went wrong when getting your credit card, try again.', result: null });
             }
             else {
-                callback({ success: true, message: 'GetCreditCardById', result: result });
+                next({ success: true, message: 'GetCreditCardById', result: result });
             }
         })
     }
 
-    var getCreditCardByFeature = function (data, callback) {
+    var getCreditCardByFeature = function (data, next) {
         _entity.GetModel().findOne({ "Feature": data }, function (err, result) {
             if (err) {
                 _console.log(err, 'error');
-                callback({ success: false, message: 'Something went wrong when getting your credit card, try again.', result: null });
+                next({ success: false, message: 'Something went wrong when getting your credit card, try again.', result: null });
             }
             else {
-                callback({ success: true, message: 'GetCreditCardByFeature', result: result });
+                next({ success: true, message: 'GetCreditCardByFeature', result: result });
             }
         })
     }
 
-    var getAllCreditCard = function (data, callback) {
+    var getAllCreditCard = function (data, next) {
         _entity.GetModel().find({}, function (err, result) {
             if (err) {
                 _console.log(err, 'error');
-                callback({ success: false, message: 'Something went wrong when getting your credit card, try again.', result: null });
+                next({ success: false, message: 'Something went wrong when getting your credit card, try again.', result: null });
             }
             else {
-                callback({ success: true, message: 'GetAllCreditCard', result: result });
+                next({ success: true, message: 'GetAllCreditCard', result: result });
             }
         })
     }

@@ -39,7 +39,7 @@ function MailController(dependencies) {
         });
     }
 
-    var sendBasic = function (emailData, callback) {
+    var sendBasic = function (emailData, next) {
         var message = {
             text: emailData.Text,
             from: (!!emailData.From) ? emailData.From : "Crawler Site Team <" + _mailUser + ">",
@@ -51,14 +51,14 @@ function MailController(dependencies) {
         _server.send(message, function (err, message) {
             if (err) {
                 _console.log(err, 'error');
-                callback({ success: false, message: 'Something went wrong when try to send email, try again.', result: err });
+                next({ success: false, message: 'Something went wrong when try to send email, try again.', result: err });
             }
 
-            callback({ success: true, message: 'SendBasic', result: message });
+            next({ success: true, message: 'SendBasic', result: message });
         });
     }
 
-    var sendComposed = function (emailData, callback) {
+    var sendComposed = function (emailData, next) {
         composeWithBasicTemplate(emailData, function (emailDataTemplate) {
             var message = {
                 text: emailData.Text,
@@ -75,15 +75,15 @@ function MailController(dependencies) {
             _server.send(message, function (err, message) {
                 if (err) {
                     _console.log(err, 'error');
-                    callback({ success: false, message: 'Something went wrong when try to send email, try again.', result: err });
+                    next({ success: false, message: 'Something went wrong when try to send email, try again.', result: err });
                 }
 
-                callback({ success: true, message: 'SendComposed', result: message });
+                next({ success: true, message: 'SendComposed', result: message });
             });
         })
     }
 
-    var composeWithBasicTemplate = function (emailData, callback) {
+    var composeWithBasicTemplate = function (emailData, next) {
         var path = _path.join(dependencies.root, "email_templates/");
         _fs.readFile(path + 'basic.html', 'utf8', function (err, data) {
             if (err) {
@@ -99,7 +99,7 @@ function MailController(dependencies) {
             data = data.replace('{TEXTACTION}', emailData.ComposedTextAction);
             data = data.replace('{COPYRIGHTDATE}', (new Date()).getFullYear());
 
-            callback(data);
+            next(data);
         });
     }
 

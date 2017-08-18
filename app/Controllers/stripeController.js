@@ -24,7 +24,7 @@ function StripeController(dependencies) {
         createInitialPlans()
     }
 
-    var createInitialPlans = function (callback) {
+    var createInitialPlans = function (next) {
         createPlan({
             Id: 'free',
             Amount: 0,
@@ -108,7 +108,7 @@ function StripeController(dependencies) {
         });
     }
 
-    var createPlan = function (data, callback) {
+    var createPlan = function (data, next) {
         _stripe.plans.retrieve(data.Id, function (err, plan) {
             if (err) {
                 if (err.statusCode == 404) {
@@ -121,55 +121,55 @@ function StripeController(dependencies) {
                         metadata: data.Metadata,
                     }, function (err, plan) {
                         if (err) {
-                            callback({ success: false, message: 'Something went wrong when retrieving all plans, try again.', result: null });
+                            next({ success: false, message: 'Something went wrong when retrieving all plans, try again.', result: null });
                         }
                         else {
-                            callback({ success: true, message: 'CreatePlan', result: plan })
+                            next({ success: true, message: 'CreatePlan', result: plan })
                         }
                     })
                 }
             }
             else {
-                callback({ success: false, message: 'Plan already exists, try with another plan.', result: null });
+                next({ success: false, message: 'Plan already exists, try with another plan.', result: null });
             }
         });
     }
 
-    var getAllPlans = function (callback) {
+    var getAllPlans = function (next) {
         _stripe.plans.list(
             { limit: 12 },
             function (err, plans) {
                 if (err) {
                     _console.log(err, 'error');
-                    callback({ success: false, message: 'Something went wrong when retrieving all plans, try again.', result: null });
+                    next({ success: false, message: 'Something went wrong when retrieving all plans, try again.', result: null });
                 }
 
-                callback(plans);
+                next(plans);
             }
         );
     }
 
-    var getPlan = function (planId, callback) {
+    var getPlan = function (planId, next) {
         _stripe.plans.retrieve(
             (planId == null ? 'free' : planId),
             function (err, plan) {
                 if (err) {
                     _console.log(err, 'error');
-                    callback({ success: false, message: 'Something went wrong when retrieving plans, try again.', result: null });
+                    next({ success: false, message: 'Something went wrong when retrieving plans, try again.', result: null });
                 }
 
-                callback(plan);
+                next(plan);
             })
     }
 
-    var createInitialCustomer = function (customerData, callback) {
+    var createInitialCustomer = function (customerData, next) {
         //// Create a new customer with email
         _stripe.customers.create({
             email: customerData.Email,
         }, function (err, customer) {
             if (err) {
                 _console.log(err, 'error');
-                callback({ success: false, message: 'Something went error occurred when creating customer', result: null });
+                next({ success: false, message: 'Something went error occurred when creating customer', result: null });
             }
             var initialPlan = 'free';
             if (customerData.VoucherId != undefined && customerData.VoucherId != null) {
@@ -186,7 +186,7 @@ function StripeController(dependencies) {
                                     }, function (err, subscription) {
                                         if (err) {
                                             _console.log(err, 'error');
-                                            callback({ success: false, message: 'Something went error occurred when subscribing customer in plan', result: null });
+                                            next({ success: false, message: 'Something went error occurred when subscribing customer in plan', result: null });
                                         }
 
                                         //// Save credit card data
@@ -197,20 +197,20 @@ function StripeController(dependencies) {
                                                     if (subscriptionResult !== undefined && subscriptionResult.result !== null) {
                                                         _database.Subscription().AddUserToSubscription({ SubscriptionId: subscriptionResult.result._id, UserId: customerData._id }, function (addUserToSubscriptionResult) {
                                                             if (addUserToSubscriptionResult !== undefined && addUserToSubscriptionResult.result !== null) {
-                                                                callback({ success: true, message: 'User saved succesfuly', result: subscriptionResult.result });
+                                                                next({ success: true, message: 'User saved succesfuly', result: subscriptionResult.result });
                                                             }
                                                             else {
-                                                                callback({ success: false, message: 'Something went occurred wrong while creating user, try again.', result: null });
+                                                                next({ success: false, message: 'Something went occurred wrong while creating user, try again.', result: null });
                                                             }
                                                         })
                                                     }
                                                     else {
-                                                        callback({ success: false, message: 'Something went occurred wrong while creating user, try again.', result: null });
+                                                        next({ success: false, message: 'Something went occurred wrong while creating user, try again.', result: null });
                                                     }
                                                 })
                                             }
                                             else {
-                                                callback({ success: false, message: 'Something went occurred wrong while creating user, try again.', result: null });
+                                                next({ success: false, message: 'Something went occurred wrong while creating user, try again.', result: null });
                                             }
                                         });
                                     });
@@ -230,7 +230,7 @@ function StripeController(dependencies) {
                     }, function (err, subscription) {
                         if (err) {
                             _console.log(err, 'error');
-                            callback({ success: false, message: 'Something went error occurred when subscribing customer in plan', result: null });
+                            next({ success: false, message: 'Something went error occurred when subscribing customer in plan', result: null });
                         }
 
                         //// Save credit card data
@@ -241,20 +241,20 @@ function StripeController(dependencies) {
                                     if (subscriptionResult !== undefined && subscriptionResult.result !== null) {
                                         _database.Subscription().AddUserToSubscription({ SubscriptionId: subscriptionResult.result._id, UserId: customerData._id }, function (addUserToSubscriptionResult) {
                                             if (addUserToSubscriptionResult !== undefined && addUserToSubscriptionResult.result !== null) {
-                                                callback({ success: true, message: 'User saved succesfuly', result: subscriptionResult.result });
+                                                next({ success: true, message: 'User saved succesfuly', result: subscriptionResult.result });
                                             }
                                             else {
-                                                callback({ success: false, message: 'Something went occurred wrong while creating user, try again.', result: null });
+                                                next({ success: false, message: 'Something went occurred wrong while creating user, try again.', result: null });
                                             }
                                         })
                                     }
                                     else {
-                                        callback({ success: false, message: 'Something went occurred wrong while creating user, try again.', result: null });
+                                        next({ success: false, message: 'Something went occurred wrong while creating user, try again.', result: null });
                                     }
                                 })
                             }
                             else {
-                                callback({ success: false, message: 'Something went occurred wrong while creating user, try again.', result: null });
+                                next({ success: false, message: 'Something went occurred wrong while creating user, try again.', result: null });
                             }
                         });
                     });
@@ -263,7 +263,7 @@ function StripeController(dependencies) {
         });
     }
 
-    var updateSubscription = function (customerData, callback) {
+    var updateSubscription = function (customerData, next) {
 
         // Find in mongo user by email
         _database.User().GetUserByEmail(customerData.Email, function (userResult) {
@@ -280,7 +280,7 @@ function StripeController(dependencies) {
                                 }, function (err, customer) {
                                     if (err) {
                                         _console.log(err, 'error');
-                                        callback({ success: false, message: 'Something went error occurred when creating customer', result: null });
+                                        next({ success: false, message: 'Something went error occurred when creating customer', result: null });
                                     }
                                     else {
                                         //// Save credit card data
@@ -289,15 +289,15 @@ function StripeController(dependencies) {
                                                 //// Save subscription
                                                 _database.Subscription().EditSubscription({ _id: subscriptionResult.result._id, CustomerId: customer.id, PlanId: plan.id, CurrentPlan: plan, SubscriptionId: subscriptionResult.result.SubscriptionId }, function (editSubscriptionResult) {
                                                     if (editSubscriptionResult !== undefined && editSubscriptionResult.result !== null) {
-                                                        callback({ success: true, message: 'User saved succesfuly', result: editSubscriptionResult })
+                                                        next({ success: true, message: 'User saved succesfuly', result: editSubscriptionResult })
                                                     }
                                                     else {
-                                                        callback({ success: false, message: 'Something went occurred wrong when update payment method, try again.', result: null });
+                                                        next({ success: false, message: 'Something went occurred wrong when update payment method, try again.', result: null });
                                                     }
                                                 })
                                             }
                                             else {
-                                                callback({ success: false, message: 'Something went occurred wrong when update payment method, try again.', result: null });
+                                                next({ success: false, message: 'Something went occurred wrong when update payment method, try again.', result: null });
                                             }
                                         });
                                     }
@@ -315,7 +315,7 @@ function StripeController(dependencies) {
                                     function (err, subscription) {
                                         if (err) {
                                             _console.log(err, 'error');
-                                            callback({ success: false, message: err, result: null });
+                                            next({ success: false, message: err, result: null });
                                         }
                                         else {
                                             //// Save credit card data
@@ -324,15 +324,15 @@ function StripeController(dependencies) {
                                                     //// Save subscription
                                                     _database.Subscription().EditSubscription({ _id: subscriptionResult.result.id, CustomerId: subscriptionResult.result.CustomerId, PlanId: plan.id, CurrentPlan: plan, SubscriptionId: subscriptionResult.result.SubscriptionId }, function (editSubscriptionResult) {
                                                         if (editSubscriptionResult !== undefined && editSubscriptionResult.result !== null) {
-                                                            callback({ success: true, message: 'User saved succesfuly', result: editSubscriptionResult })
+                                                            next({ success: true, message: 'User saved succesfuly', result: editSubscriptionResult })
                                                         }
                                                         else {
-                                                            callback({ success: false, message: 'Something went occurred wrong when update payment method, try again.', result: null });
+                                                            next({ success: false, message: 'Something went occurred wrong when update payment method, try again.', result: null });
                                                         }
                                                     })
                                                 }
                                                 else {
-                                                    callback({ success: false, message: 'Something went occurred wrong when update payment method, try again.', result: null });
+                                                    next({ success: false, message: 'Something went occurred wrong when update payment method, try again.', result: null });
                                                 }
                                             });
                                         }
@@ -344,12 +344,12 @@ function StripeController(dependencies) {
                 })
             }
             else {
-                callback({ success: false, message: 'User not found, try again.', result: null });
+                next({ success: false, message: 'User not found, try again.', result: null });
             }
         });
     }
 
-    var cancelSubscription = function (customerData, callback) {
+    var cancelSubscription = function (customerData, next) {
         _database.User().GetUserByEmail(customerData.Email, function (userResult) {
             if (userResult.result !== undefined && userResult.result != null) {
                 if (userResult.result.CustomerId != undefined && userResult.result.CustomerId.length > 0) {
@@ -366,10 +366,10 @@ function StripeController(dependencies) {
 
                             _database.User().UpdatePaymentData(userResult.result, function (result) {
                                 if (result == null) {
-                                    callback({ success: false, message: 'Something went occurred wrong when update payment data, try again.', result: result });
+                                    next({ success: false, message: 'Something went occurred wrong when update payment data, try again.', result: result });
                                 }
                                 else {
-                                    callback({ success: true, message: 'Payment saved succesfuly', result: result })
+                                    next({ success: true, message: 'Payment saved succesfuly', result: result })
                                 }
                             })
                         }
@@ -379,7 +379,7 @@ function StripeController(dependencies) {
         })
     }
 
-    var changePlan = function (customerData, callback) {
+    var changePlan = function (customerData, next) {
         _database.User().GetUserById(customerData.UserId, function (userResult) {
             if (userResult.result != undefined && userResult.result != null) {
                 if (userResult.result.CustomerId.length != 0) {
@@ -389,48 +389,48 @@ function StripeController(dependencies) {
                         function (err, subscription) {
                             if (err) {
                                 _console.log(err, 'error');
-                                callback({ success: false, message: err, result: null });
+                                next({ success: false, message: err, result: null });
                             }
 
                             userResult.result.PlanId = customerData.PlanId;
                             _database.User().UpdatePaymentData(userResult.result, function (result) {
                                 if (result == null) {
-                                    callback({ success: false, message: 'Something went occurred wrong when updating data, try again.', result: result });
+                                    next({ success: false, message: 'Something went occurred wrong when updating data, try again.', result: result });
                                 }
                                 else {
-                                    callback({ success: true, message: 'Plan changed succesfuly', result: result })
+                                    next({ success: true, message: 'Plan changed succesfuly', result: result })
                                 }
                             });
                         }
                     );
                 }
                 else {
-                    callback({ success: false, message: 'User has not any plan active, please first update payment method to change plan.', result: null });
+                    next({ success: false, message: 'User has not any plan active, please first update payment method to change plan.', result: null });
                 }
             }
         });
     }
 
-    var getCustomerByUserId = function (customerData, callback) {
+    var getCustomerByUserId = function (customerData, next) {
         if (customerData.CustomerId !== undefined) {
             _stripe.customers.retrieve(
                 customerData.CustomerId,
                 function (err, customer) {
                     if (err) {
                         _console.log(err, 'error');
-                        callback({ success: false, message: 'Something went wrong when retrieving customer, try again.', result: null });
+                        next({ success: false, message: 'Something went wrong when retrieving customer, try again.', result: null });
                     }
 
-                    callback({ success: true, message: 'GetCustomerByUserId', result: customer });
+                    next({ success: true, message: 'GetCustomerByUserId', result: customer });
                 }
             );
         }
         else {
-            callback({ success: false, message: 'Please provide a customer id, try again.', result: null });
+            next({ success: false, message: 'Please provide a customer id, try again.', result: null });
         }
     }
 
-    var getChargesByUserId = function (customerData, callback) {
+    var getChargesByUserId = function (customerData, next) {
         _database.User().GetUserById(customerData.UserId, function (userResult) {
             if (userResult != null) {
                 _stripe.charges.list(
@@ -441,20 +441,20 @@ function StripeController(dependencies) {
                     function (err, charges) {
                         if (err) {
                             _console.log(err, 'error');
-                            callback({ success: false, message: 'Something went wrong when retrieving customer, try again.', result: null });
+                            next({ success: false, message: 'Something went wrong when retrieving customer, try again.', result: null });
                         }
 
-                        callback({ success: true, message: 'GetChargesByUserId', result: charges });
+                        next({ success: true, message: 'GetChargesByUserId', result: charges });
                     }
                 );
             }
             else {
-                callback({ success: false, message: 'User not found, try again.', result: null });
+                next({ success: false, message: 'User not found, try again.', result: null });
             }
         });
     }
 
-    var processWebhook = function (webHookData, callback) {
+    var processWebhook = function (webHookData, next) {
         _stripe.events.retrieve(webHookData.id, function (err, event) {
             switch (webHookData.type) {
                 case 'account.updated':
@@ -541,11 +541,11 @@ function StripeController(dependencies) {
                     break;
             }
 
-            callback(true);
+            next(true);
         });
     }
 
-    var generateDiscountVoucher = function (data, callback) {
+    var generateDiscountVoucher = function (data, next) {
         _stripe.coupons.create({
             duration: 'once',
             amount_off: data.Amount,
@@ -558,56 +558,56 @@ function StripeController(dependencies) {
         }, function (err, coupon) {
             if (err) {
                 _console.log(err, 'error');
-                callback({ success: false, message: 'Something was wrong while creating your voucher', result: false });
+                next({ success: false, message: 'Something was wrong while creating your voucher', result: false });
             }
             else {
-                callback({ success: true, message: 'GenerateDiscountVoucher', result: coupon });
+                next({ success: true, message: 'GenerateDiscountVoucher', result: coupon });
             }
         });
     }
 
-    var verifyDiscountVoucher = function (data, callback) {
+    var verifyDiscountVoucher = function (data, next) {
         _stripe.coupons.retrieve(
             data.VoucherId,
             function (err, coupon) {
                 if (err) {
                     _console.log(err, 'error');
                     // Not exist coupon
-                    callback({ success: false, message: 'Voucher not exist', result: false });
+                    next({ success: false, message: 'Voucher not exist', result: false });
                 }
                 else {
-                    callback({ success: true, message: 'VerifyDiscountVoucher', result: true });
+                    next({ success: true, message: 'VerifyDiscountVoucher', result: true });
                 }
             }
         );
     }
 
-    var getDiscountVoucher = function (data, callback) {
+    var getDiscountVoucher = function (data, next) {
         _stripe.coupons.retrieve(
             data.VoucherId,
             function (err, coupon) {
                 if (err) {
                     // Not exist coupon
-                    callback({ success: false, message: 'Voucher not exist', result: null });
+                    next({ success: false, message: 'Voucher not exist', result: null });
                 }
                 else {
-                    callback({ success: true, message: 'GetDiscountVoucher', result: coupon });
+                    next({ success: true, message: 'GetDiscountVoucher', result: coupon });
                 }
             }
         );
     }
 
-    var redeemVoucher = function (data, callback) {
+    var redeemVoucher = function (data, next) {
         _stripe.subscriptions.update(
             data.SubscriptionId,
             { coupon: data.VoucherId },
             function (err, subscription) {
                 if (err) {
                     _console.log(err, 'error');
-                    callback({ success: false, message: 'Something was wrong while redeeming your discount voucher', result: null });
+                    next({ success: false, message: 'Something was wrong while redeeming your discount voucher', result: null });
                 }
                 else {
-                    callback({ success: true, message: 'RedeemVoucher', result: subscription });
+                    next({ success: true, message: 'RedeemVoucher', result: subscription });
                 }
             }
         )

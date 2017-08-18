@@ -15,7 +15,7 @@ function ClickController(dependencies) {
         _entity.Initialize();
     }
 
-    var createClick = function (data, callback) {
+    var createClick = function (data, next) {
 
         var click = new _entity.GetModel()(
             {
@@ -32,47 +32,47 @@ function ClickController(dependencies) {
 
         click.save().then(function (result) {
             // When database return a result call the return
-            callback();
+            next();
         })
     }
 
-    var deleteClick = function (data, callback) {
+    var deleteClick = function (data, next) {
         _entity.GetModel().findOneAndRemove(data, function (err, result) {
-            callback(result);
+            next(result);
         })
     }
 
-    var getClickById = function (data, callback) {
+    var getClickById = function (data, next) {
         _entity.GetModel().findOne({ "_id": data }, function (err, result) {
             if (err){
                 _console.log(err, 'error');
             } 
 
-            callback(result);
+            next(result);
         })
     }
 
-    var getClickByApiKey = function (data, callback) {
+    var getClickByApiKey = function (data, next) {
         _entity.GetModel().findOne({ "ApiKey": data }, function (err, result) {
             if (err){
                 _console.log(err, 'error');
             } 
 
-            callback(result);
+            next(result);
         })
     }
 
-    var getAllClick = function (data, callback) {
+    var getAllClick = function (data, next) {
         _entity.GetModel().find({}, function (err, result) {
             if (err){
                 _console.log(err, 'error');
             } 
 
-            callback(result);
+            next(result);
         })
     }
 
-    var getInsight = function (ApiKey, MinWidth, MaxWidth, MaxTime,Flash, Browser, OperatingSystem, Cookies, Location, Endpoint, callback) {
+    var getInsight = function (ApiKey, MinWidth, MaxWidth, MaxTime,Flash, Browser, OperatingSystem, Cookies, Location, Endpoint, next) {
         var query = {};
 
         if (ApiKey != 'null') { query['ApiKey'] = ApiKey; }
@@ -92,7 +92,7 @@ function ClickController(dependencies) {
                 _console.log(err, 'error');
             } 
 
-            callback(result);
+            next(result);
         });
     }
 

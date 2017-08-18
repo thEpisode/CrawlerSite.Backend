@@ -17,7 +17,7 @@ function SubscriptionController(dependencies) {
         _entity.Initialize();
     }
 
-    var createSubscription = function (data, callback) {
+    var createSubscription = function (data, next) {
         var subscription = new _entity.GetModel()(
             {
                 _id: _mongoose.Types.ObjectId(),
@@ -33,14 +33,14 @@ function SubscriptionController(dependencies) {
             });
 
         subscription.save().then(function (result) {
-            callback({ success: true, message: 'CreateSubscription', result: result });
+            next({ success: true, message: 'CreateSubscription', result: result });
         }, function (err) {
             _console.log(err, 'error');
-            callback({ success: false, message: 'Something went wrong when creating your subscription, try again.', result: null });
+            next({ success: false, message: 'Something went wrong when creating your subscription, try again.', result: null });
         });
     }
 
-    var editSubscription = function (data, callback) {
+    var editSubscription = function (data, next) {
         var state = data.State == undefined ? _entity.GetStates().Active : data.state;
         _entity.GetModel().findOneAndUpdate(
             { "_id": data._id },
@@ -60,164 +60,164 @@ function SubscriptionController(dependencies) {
             function (err, result) {
                 if (err) {
                     _console.log(err, 'error');
-                    callback({ success: false, message: 'Something went wrong when editing your credit card, try again.', result: null });
+                    next({ success: false, message: 'Something went wrong when editing your credit card, try again.', result: null });
                 }
                 else {
-                    callback({ success: true, message: 'EditSubscription', result: result });
+                    next({ success: true, message: 'EditSubscription', result: result });
                 }
             });
     }
 
-    var deleteSubscription = function (data, callback) {
+    var deleteSubscription = function (data, next) {
         _entity.GetModel().findOneAndRemove(data, function (err, result) {
             if (err) {
                 _console.log(err, 'error');
-                callback({ success: false, message: 'Something went wrong when deleting your subscription, try again.', result: null });
+                next({ success: false, message: 'Something went wrong when deleting your subscription, try again.', result: null });
             }
             else {
-                callback({ success: true, message: 'DeleteSubscription', result: result });
+                next({ success: true, message: 'DeleteSubscription', result: result });
             }
         });
     }
 
-    var getSubscriptionById = function (data, callback) {
+    var getSubscriptionById = function (data, next) {
         _entity.GetModel().findOne({ "_id": data }, function (err, result) {
             if (err) {
                 _console.log(err, 'error');
-                callback({ success: false, message: 'Something went wrong when retrieving your subscription, try again.', result: null });
+                next({ success: false, message: 'Something went wrong when retrieving your subscription, try again.', result: null });
             }
             else {
-                callback({ success: true, message: 'GetSubscriptionById', result: result });
+                next({ success: true, message: 'GetSubscriptionById', result: result });
             }
         });
     }
 
-    var getSubscriptionByUserId = function (data, callback) {
+    var getSubscriptionByUserId = function (data, next) {
         _entity.GetModel().findOne({ "UsersId": { $elemMatch: { $eq: data.UserId } } }).populate("CreditCard").exec(function (err, subscriptionResult) {
             if (err) {
                 _console.log(err, 'error');
-                callback({ success: false, message: 'Something went wrong when retrieving your subscription, try again.', result: null });
+                next({ success: false, message: 'Something went wrong when retrieving your subscription, try again.', result: null });
             }
             else {
-                callback({ success: true, message: 'GetSubscriptionById', result: subscriptionResult });
+                next({ success: true, message: 'GetSubscriptionById', result: subscriptionResult });
             }
         });
     }
 
-    var getAllSubscription = function (data, callback) {
+    var getAllSubscription = function (data, next) {
         _entity.GetModel().find({}, function (err, result) {
             if (err) {
                 _console.log(err, 'error');
-                callback({ success: false, message: 'Something went wrong when retrieving your subscriptions, try again.', result: null });
+                next({ success: false, message: 'Something went wrong when retrieving your subscriptions, try again.', result: null });
             }
             else {
-                callback({ success: true, message: 'GetAllSubscription', result: result });
+                next({ success: true, message: 'GetAllSubscription', result: result });
             }
         });
     }
 
-    var getAllSitesOfSubscriptionByUserId = function (data, callback) {
+    var getAllSitesOfSubscriptionByUserId = function (data, next) {
         _entity.GetModel().findOne({ "UsersId": { $elemMatch: { $eq: data.UserId } } }).populate("SitesId").exec(function (err, subscriptionResult) {
             if (err) {
                 _console.log(err, 'error');
-                callback({ success: false, message: 'Something went wrong when getting your sites, try again.', result: null });
+                next({ success: false, message: 'Something went wrong when getting your sites, try again.', result: null });
             }
             else {
                 if (subscriptionResult !== undefined && subscriptionResult !== null) {
                     if (subscriptionResult.SitesId != undefined && subscriptionResult.SitesId !== null) {
-                        callback({ success: true, message: 'GetAllSitesOfSubscriptionByUserId', result: subscriptionResult.SitesId });
+                        next({ success: true, message: 'GetAllSitesOfSubscriptionByUserId', result: subscriptionResult.SitesId });
                     }
                     else {
-                        callback({ success: false, message: 'You haven\'t sites, create one first', result: null });
+                        next({ success: false, message: 'You haven\'t sites, create one first', result: null });
                     }
                 }
                 else {
-                    callback({ success: false, message: 'You haven\'t sites, create one first', result: null });
+                    next({ success: false, message: 'You haven\'t sites, create one first', result: null });
                 }
             }
         });
     }
 
-    var getAllUsersOfSubscriptionByUserId = function (data, callback) {
+    var getAllUsersOfSubscriptionByUserId = function (data, next) {
         _entity.GetModel().findOne({ "UsersId": { $elemMatch: { $eq: data.UserId } } }).populate("UsersId").exec(function (err, subscriptionResult) {
             if (err) {
                 _console.log(err, 'error');
-                callback({ success: false, message: 'Something went wrong when getting your sites, try again.', result: null });
+                next({ success: false, message: 'Something went wrong when getting your sites, try again.', result: null });
             }
             else {
                 if (subscriptionResult !== undefined && subscriptionResult !== null) {
                     if (subscriptionResult.SitesId != undefined && subscriptionResult.SitesId !== null) {
-                        callback({ success: true, message: 'GetAllUsersOfSubscriptionByUserId', result: subscriptionResult.UsersId });
+                        next({ success: true, message: 'GetAllUsersOfSubscriptionByUserId', result: subscriptionResult.UsersId });
                     }
                     else {
-                        callback({ success: false, message: 'You haven\'t sites, create one first', result: null });
+                        next({ success: false, message: 'You haven\'t sites, create one first', result: null });
                     }
                 }
                 else {
-                    callback({ success: false, message: 'You haven\'t sites, create one first', result: null });
+                    next({ success: false, message: 'You haven\'t sites, create one first', result: null });
                 }
             }
         });
     }
 
-    var addUserToSubscription = function (data, callback) {
+    var addUserToSubscription = function (data, next) {
         _entity.GetModel().findOneAndUpdate({ "_id": data.SubscriptionId }, { $push: { "UsersId": data.UserId } }, { safe: true, upsert: false }, function (err, result) {
             if (err) {
                 _console.log(err, 'error');
-                callback({ success: false, message: 'Something went wrong when adding your new user, try again.', result: null });
+                next({ success: false, message: 'Something went wrong when adding your new user, try again.', result: null });
             }
             else {
-                callback({ success: true, message: 'AddUserToSubscription', result: result });
+                next({ success: true, message: 'AddUserToSubscription', result: result });
             }
         });
     }
 
-    var addSiteToSubscription = function (data, callback) {
+    var addSiteToSubscription = function (data, next) {
         _entity.GetModel().findOneAndUpdate({ "_id": data.SubscriptionId }, { $push: { "SitesId": data.SiteId } }, { safe: true, upsert: false }, function (err, result) {
             if (err) {
                 _console.log(err, 'error');
-                callback({ success: false, message: 'Something went wrong when adding your new site to your subscription, try again.', result: null });
+                next({ success: false, message: 'Something went wrong when adding your new site to your subscription, try again.', result: null });
             }
             else {
-                callback({ success: true, message: 'AddSiteToSubscription', result: result });
+                next({ success: true, message: 'AddSiteToSubscription', result: result });
             }
         });
     }
 
-    var checkIfHasNoPaymentMethodByUserId = function (data, callback) {
+    var checkIfHasNoPaymentMethodByUserId = function (data, next) {
         if (data.UserId != undefined) {
             _entity.GetModel().findOne({ "UsersId": { $elemMatch: { $eq: data.UserId } } }).populate("CreditCard").exec(function (err, subscriptionResult) {
                 if (err) {
                     _console.log(err, 'error');
 
-                    callback({ success: false, message: 'Something went wrong while retrieving user', result: null });
+                    next({ success: false, message: 'Something went wrong while retrieving user', result: null });
                 }
                 else {
                     if (subscriptionResult != undefined && subscriptionResult != null) {
                         if (subscriptionResult.CreditCard.CreditCardToken != undefined && subscriptionResult.CreditCard.CreditCardToken != null && subscriptionResult.CreditCard.CreditCardToken.length > 0) {
-                            callback({ success: true, message: 'checkIfHasNoPaymentMethodByUserId', result: true });
+                            next({ success: true, message: 'checkIfHasNoPaymentMethodByUserId', result: true });
                         }
                         else {
-                            callback({ success: true, message: 'checkIfHasNoPaymentMethodByUserId', result: false });
+                            next({ success: true, message: 'checkIfHasNoPaymentMethodByUserId', result: false });
                         }
                     }
                     else {
-                        callback({ success: false, message: 'Something went wrong while retrieving user', result: null });
+                        next({ success: false, message: 'Something went wrong while retrieving user', result: null });
                     }
                 }
             })
         }
         else {
-            callback({ success: false, message: 'You must provide an UserId to use this API function', result: null });
+            next({ success: false, message: 'You must provide an UserId to use this API function', result: null });
         }
     }
 
-    var checkIfCanUseHeatmaps = function (data, callback) {//<------- CHANGE FOR SECURE RESULT
-        callback({ success: true, message: 'CheckIfCanUseHeatmaps', result: true });
+    var checkIfCanUseHeatmaps = function (data, next) {//<------- CHANGE FOR SECURE RESULT
+        next({ success: true, message: 'CheckIfCanUseHeatmaps', result: true });
         /*_entity.GetModel().findOne({ "ApiKey": data.ApiKey }, function (err, siteResult) {
             if (err) {
                 _console.log(err, 'error');
-                callback({ success: false, message: 'Something went wrong when updating insights, try again.', result: null });
+                next({ success: false, message: 'Something went wrong when updating insights, try again.', result: null });
             }
             else {
                 if (siteResult != undefined && siteResult != null) {
@@ -226,27 +226,27 @@ function SubscriptionController(dependencies) {
                             _database.User().GetUserById(siteResult.UsersId[0], function (userResult) {
                                 if (userResult != undefined && userResult != null) {
                                     if (siteResult.Insights.Heatmaps.PageViewsPerMonth <= parseInt(userResult.CurrentPlan.metadata.maxPageviews)) {
-                                        callback({ success: true, message: 'CheckIfCanUseHeatmaps', result: true });
+                                        next({ success: true, message: 'CheckIfCanUseHeatmaps', result: true });
                                     }
                                     else {
-                                        callback({ success: true, message: 'CheckIfCanUseHeatmaps', result: false });
+                                        next({ success: true, message: 'CheckIfCanUseHeatmaps', result: false });
                                     }
                                 }
                                 else {
-                                    callback({ success: false, message: 'Something went wrong while retrieving data', result: null });
+                                    next({ success: false, message: 'Something went wrong while retrieving data', result: null });
                                 }
                             })
                         }
                         else {
-                            callback({ success: false, message: 'Something went wrong while retrieving data', result: null });
+                            next({ success: false, message: 'Something went wrong while retrieving data', result: null });
                         }
                     }
                     else {
-                        callback({ success: false, message: 'Something went wrong while retrieving data', result: null });
+                        next({ success: false, message: 'Something went wrong while retrieving data', result: null });
                     }
                 }
                 else {
-                    callback({ success: false, message: 'Something went wrong while retrieving data', result: null });
+                    next({ success: false, message: 'Something went wrong while retrieving data', result: null });
                 }
             }
         })*/

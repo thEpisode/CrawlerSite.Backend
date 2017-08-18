@@ -15,7 +15,7 @@ function MovementController(dependencies) {
         _entity.Initialize();
     }
 
-    var createMovement = function (data, callback) {
+    var createMovement = function (data, next) {
 
         var movement = new _entity.GetModel()(
             {
@@ -32,47 +32,47 @@ function MovementController(dependencies) {
 
         movement.save().then(function (result) {
             // When database return a result call the return
-            callback();
+            next();
         })
     }
 
-    var deleteMovement = function (data, callback) {
+    var deleteMovement = function (data, next) {
         _entity.GetModel().findOneAndRemove(data, function (err, result) {
-            callback(result);
+            next(result);
         })
     }
 
-    var getMovementById = function (data, callback) {
+    var getMovementById = function (data, next) {
         _entity.GetModel().findOne({ "_id": data }, function (err, result) {
             if (err){
                 _console.log(err, 'error');
             }
 
-            callback(result);
+            next(result);
         })
     }
 
-    var getMovementByApiKey = function (data, callback) {
+    var getMovementByApiKey = function (data, next) {
         _entity.GetModel().findOne({ "ApiKey": data }, function (err, result) {
             if (err){
                 _console.log(err, 'error');
             }
 
-            callback(result);
+            next(result);
         })
     }
 
-    var getAllMovement = function (data, callback) {
+    var getAllMovement = function (data, next) {
         _entity.GetModel().find({}, function (err, result) {
             if (err){
                 _console.log(err, 'error');
             }
 
-            callback(result);
+            next(result);
         })
     }
 
-    var getInsight = function (ApiKey, MinWidth, MaxWidth, MaxTime, Flash, Browser, OperatingSystem, Cookies, Location, Endpoint, callback) {
+    var getInsight = function (ApiKey, MinWidth, MaxWidth, MaxTime, Flash, Browser, OperatingSystem, Cookies, Location, Endpoint, next) {
         var query = {};
 
         if (ApiKey != 'null') { query['ApiKey'] = ApiKey; }
@@ -92,7 +92,7 @@ function MovementController(dependencies) {
                 _console.log(err, 'error');
             }
 
-            callback(result);
+            next(result);
         });
     }
 

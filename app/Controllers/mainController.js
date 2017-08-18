@@ -16,7 +16,7 @@ function FlingerServer(dependencies) {
     var _notificationHubController;
     var _geolocateController;
 
-    var constructor = function (callback) {
+    var constructor = function (next) {
         _app = dependencies.app;
         
         _mailController = require('./mailController')(dependencies);
@@ -74,7 +74,7 @@ function FlingerServer(dependencies) {
 
                         _console.log('Configured Controllers', 'server-success');
 
-                        initializeControllers(callback);
+                        initializeControllers(next);
                     }
                     else {
                         _console.log('Exiting from server app', 'error');
@@ -89,7 +89,7 @@ function FlingerServer(dependencies) {
         });
     }
 
-    var initializeControllers = function (callback) {
+    var initializeControllers = function (next) {
         _insightController.Initialize();
         _fileHandler.Initialize();
         _routesController.Initialize();
@@ -100,7 +100,7 @@ function FlingerServer(dependencies) {
         _notificationHubController.Initialize();
 
         _console.log('Controllers initialized', 'server-success');
-        callback();
+        next();
     }
 
     return {

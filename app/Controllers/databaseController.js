@@ -27,7 +27,7 @@ function Database(dependencies) {
     var _vote;
     var _screenshot;
 
-    var constructor = function (callback) {
+    var constructor = function (next) {
         _mongoose = dependencies.mongoose;
         _cross = dependencies.cross;
         _console = dependencies.console;
@@ -35,11 +35,11 @@ function Database(dependencies) {
         _gridfs = dependencies.gridfs;
 
         databaseConnect(function (result) {
-            callback(result);
+            next(result);
         });
     }
 
-    var databaseConnect = function (callback) {
+    var databaseConnect = function (next) {
         _mongoose.Promise = global.Promise;
         _mongoose.connect(_cross.GetMongoConnectionString());
         _db = _mongoose.connection;
@@ -48,15 +48,15 @@ function Database(dependencies) {
             if (result == true) {
                 _console.log('Database module initialized', 'server-success');
             }
-            callback(result);
+            next(result);
         });
     }
 
-    var databaseHandler = function (callback) {
+    var databaseHandler = function (next) {
         _db.on('error', function (err) {
             _console.log('database failed to initialize' + err, 'error')
             _dbConnected = false;
-            callback(false);
+            next(false);
         });
 
         _db.once('open', function () {
@@ -68,7 +68,7 @@ function Database(dependencies) {
             entitiesControllers(function (result) {
                 createIndexes();
 
-                callback(result);
+                next(result);
             });
 
         });
@@ -90,7 +90,7 @@ function Database(dependencies) {
         return _gridfs;
     }
 
-    var entitiesControllers = function (callback) {
+    var entitiesControllers = function (next) {
         _click = require('./clickController')(dependencies);
         _click.Initialize();
 
@@ -137,7 +137,7 @@ function Database(dependencies) {
         _frontendReview = require('./frontendReviewController')(dependencies);
         _frontendReview.Initialize();
 
-        callback(true);
+        next(true);
     }
 
     var isConnected = function () {

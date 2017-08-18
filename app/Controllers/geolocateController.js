@@ -10,22 +10,22 @@ function GeolocateController(dependencies) {
     /// Properties
 
 
-    var constructor = function (callback) {
+    var constructor = function (next) {
         _database = dependencies.database;
         _geoip = dependencies.geoip;
         _eventEmiter = dependencies.eventEmiter;
         _console = dependencies.console;
 
         databaseConnect(function (result) {
-            callback(result);
+            next(result);
         })
     }
 
-    var databaseConnect = function (callback) {
+    var databaseConnect = function (next) {
         _geoip.open('./geoip_db/GeoLite2-City.mmdb', (err, cityLookup) => {
             if (err) {
                 _console.log('database failed to initialize' + err, 'error');
-                callback(false);
+                next(false);
             }
             else {
 
@@ -33,29 +33,29 @@ function GeolocateController(dependencies) {
 
                 _geolocator = cityLookup;
 
-                callback(true);
+                next(true);
             }
         });
     }
 
-    var locate = function (data, callback) {
+    var locate = function (data, next) {
         if (_geolocator != undefined) {
             if (data.IP != undefined) {
                 var result = _geolocator.get(data.IP);
                 
                 if(result != null){
-                    callback({ success: true, message: 'LocateIP', result: result });
+                    next({ success: true, message: 'LocateIP', result: result });
                 }
                 else{
-                    callback({ success: false, message: 'Something went wrong when try to geolocate your IP, try again.', result: null });
+                    next({ success: false, message: 'Something went wrong when try to geolocate your IP, try again.', result: null });
                 }
             }
             else {
-                callback({ success: false, message: 'Something went wrong when try to geolocate your IP, try again.', result: null });
+                next({ success: false, message: 'Something went wrong when try to geolocate your IP, try again.', result: null });
             }
         }
         else {
-            callback({ success: false, message: 'Something went wrong when try to geolocate your IP, try again.', result: null });
+            next({ success: false, message: 'Something went wrong when try to geolocate your IP, try again.', result: null });
         }
     }
 

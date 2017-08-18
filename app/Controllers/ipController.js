@@ -15,71 +15,72 @@ function IPController(dependencies) {
         _entity.Initialize();
     }
 
-    var createIP = function (data, callback) {
+    var createIP = function (data, next) {
 
         var ip = new _entity.GetModel()(
             {
                 ApiKey: data.ApiKey,
-                IP: data.IP,
+                PublicIP: data.PublicIP,
+                PrivateIPs: data.PrivateIPs,
                 Name: data.Name,
                 State: data.State
             });
 
         ip.save().then(function (result) {
             // When database return a result call the return
-            callback(result);
+            next(result);
         })
     }
 
-    var deleteIP = function (data, callback) {
+    var deleteIP = function (data, next) {
         _entity.GetModel().findOneAndRemove(data, function (err, result) {
             if (err) {
                 _console.log(err, 'error');
-                callback(false);
+                next(false);
             }
             
-            callback(true);
+            next(true);
         })
     }
 
-    var getIPById = function (data, callback) {
+    var getIPById = function (data, next) {
         _entity.GetModel().findOne({ "_id": data }, function (err, result) {
             if (err){
                 _console.log(err, 'error');
             }
 
-            callback(result);
+            next(result);
         })
     }
 
-    var getIPByApiKey = function (data, callback) {
+    var getAllIPByApiKey = function (data, next) {
         _entity.GetModel().find({ "ApiKey": data.ApiKey }, function (err, result) {
             if (err){
                 _console.log(err, 'error');
             }
 
-            callback(result);
+            next(result);
         })
     }
 
-    var getAllIP = function (data, callback) {
+    var getAllIP = function (data, next) {
         _entity.GetModel().find({}, function (err, result) {
             if (err){
                 _console.log(err, 'error');
             }
 
-            callback(result);
+            next(result);
         })
     }
 
-    var editIp = function(data, callback){
+    var editIp = function(data, next){
         _entity.GetModel().findOneAndUpdate({ "_id": data._id }, { $set: { IP: data.IP, Name: data.Name } }, { upsert: false }, function (err, result) {
             if (err) {
                 _console.log(err, 'error');
-                callback(false);
+                next(false);
             }
             
-            callback(true);
+            next(true);
         })
     }
 
@@ -92,7 +93,7 @@ function IPController(dependencies) {
         CreateIP: createIP,
         DeleteIP: deleteIP,
         GetIPById: getIPById,
-        GetIPByApiKey: getIPByApiKey,
+        GetAllIPByApiKey: getAllIPByApiKey,
         GetAllIP: getAllIP,
         EditIp: editIp,
         Entity: getEntity

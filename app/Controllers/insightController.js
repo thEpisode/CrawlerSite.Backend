@@ -16,7 +16,7 @@ function InsightController(dependencies) {
         _console = dependencies.console;
     }
 
-    var heatmapData = function (data, callback) {
+    var heatmapData = function (data, next) {
         var result = []
         switch (data.Type.toLowerCase()) {
             case 'movement':
@@ -33,10 +33,10 @@ function InsightController(dependencies) {
                     data.Endpoint, function (result) {
                         if (result.length > 0) {
                             result = heatmapDataCalculation(result, 50, 10);
-                            callback(result);
+                            next(result);
                         }
                         else {
-                            callback(result);
+                            next(result);
                         }
 
                     });
@@ -55,10 +55,10 @@ function InsightController(dependencies) {
                     data.Endpoint, function (result) {
                         if (result.length > 0) {
                             result = heatmapDataCalculation(result, 50, 10);
-                            callback(result);
+                            next(result);
                         }
                         else {
-                            callback(result);
+                            next(result);
                         }
                     });
                 break;
@@ -76,16 +76,16 @@ function InsightController(dependencies) {
                     data.Endpoint, function (result) {
                         if (result.length > 0) {
                             result = heatmapDataCalculation(result, 50, 10);
-                            callback(result);
+                            next(result);
                         }
                         else {
-                            callback(result);
+                            next(result);
                         }
                     });
                 break;
             default:
                 result = null;
-                callback(result);
+                next(result);
                 break;
         }
     }
@@ -114,23 +114,23 @@ function InsightController(dependencies) {
         return grouped;
     }
 
-    var heatmapScreenshotByPathname = function (ApiKey, Pathname, callback) {
+    var heatmapScreenshotByPathname = function (ApiKey, Pathname, next) {
         _database.Site().GetSiteScreenshotByPathname(ApiKey, Pathname, function (result) {
             var id = result;
             _fileHandler.ReadFileById(result, function (stream) {
-                callback(stream);
+                next(stream);
             })
 
         })
     }
 
-    var heatmapScreenshotById = function (data, callback) {
+    var heatmapScreenshotById = function (data, next) {
         _database.Screenshot().GetScreenshotById(data, function (heatmapResult) {
-            callback(heatmapResult);
+            next(heatmapResult);
         });
     }
 
-    var dashboardInsightsByApiKey = function (data, callback) {
+    var dashboardInsightsByApiKey = function (data, next) {
         if (data.ApiKey != undefined && data.ApiKey != null) {
             _database.Site().GetAvailableChartsByApiKey(data.ApiKey, function (availableResult) {
                 "use strict";
@@ -147,7 +147,7 @@ function InsightController(dependencies) {
                         results: []    // task results
                     };
 
-                    const next = (result) => { // must be called when each task chain completes
+                    const completedTask = (result) => { // must be called when each task chain completes
 
                         if (result != undefined && result != null) { // preserve result of task chain
                             context.results.push(result);
@@ -176,7 +176,7 @@ function InsightController(dependencies) {
                             context.tasks = len;              // total number of tasks
                             context.active = len;             // number of active tasks
 
-                            sm.emit('forEachCharts', charts);    // go to next state
+                            sm.emit('forEachCharts', charts);    // go to completedTask state
                         }
                         else {
                             context.tasks = 0;
@@ -232,7 +232,7 @@ function InsightController(dependencies) {
 
                         //console.log(`  digestContent`);
 
-                        next(content);
+                        completedTask(content);
                     });
 
                     // when processing is complete
@@ -241,10 +241,10 @@ function InsightController(dependencies) {
                         ///console.log(`The total of ${context.tasks}`);
 
                         if (context.tasks > 0 && context.active === 0) {
-                            callback({ success: true, message: 'GetDashboardInsightsByApiKey', result: context.results })
+                            next({ success: true, message: 'GetDashboardInsightsByApiKey', result: context.results })
                         }
                         else {
-                            callback({ success: false, message: 'GetDashboardInsightsByApiKey', result: null })
+                            next({ success: false, message: 'GetDashboardInsightsByApiKey', result: null })
                         }
                     });
 
@@ -257,16 +257,16 @@ function InsightController(dependencies) {
                     sm.emit('start', RequestCharts);
                 }
                 else {
-                    callback({ success: false, message: 'We haven\'t available charts at this moment', result: null });
+                    next({ success: false, message: 'We haven\'t available charts at this moment', result: null });
                 }
             })
         }
         else {
-            callback({ success: false, message: 'DashboardInsightsByApiKey', result: null })
+            next({ success: false, message: 'DashboardInsightsByApiKey', result: null })
         }
     }
 
-    var dashboardInsightsByApiKeys = function (data, callback) {
+    var dashboardInsightsByApiKeys = function (data, next) {
         if (data.ApiKeys != undefined && data.ApiKeys != null) {
             if (data.ApiKeys.length > 0) {
                 _database.Site().GetAvailableChartsByApiKey(data.ApiKeys[0], function (availableResult) {
@@ -284,7 +284,7 @@ function InsightController(dependencies) {
                             results: []    // task results
                         };
 
-                        const next = (result) => { // must be called when each task chain completes
+                        const completedTask = (result) => { // must be called when each task chain completes
 
                             if (result != undefined && result != null) { // preserve result of task chain
                                 context.results.push(result);
@@ -311,7 +311,7 @@ function InsightController(dependencies) {
                                 context.tasks = len;              // total number of tasks
                                 context.active = len;             // number of active tasks
 
-                                sm.emit('forEachCharts', charts);    // go to next state
+                                sm.emit('forEachCharts', charts);    // go to completedTask state
                             }
                             else {
                                 context.tasks = 0;
@@ -358,16 +358,16 @@ function InsightController(dependencies) {
 
                         // compute length of path contents
                         sm.on('digestContent', (content) => {
-                            next(content);
+                            completedTask(content);
                         });
 
                         // when processing is complete
                         sm.on('done', () => {
                             if (context.tasks > 0 && context.active === 0) {
-                                callback({ success: true, message: 'GetDashboardInsightsByApiKey', result: context.results })
+                                next({ success: true, message: 'GetDashboardInsightsByApiKey', result: context.results })
                             }
                             else {
-                                callback({ success: false, message: 'GetDashboardInsightsByApiKey', result: null })
+                                next({ success: false, message: 'GetDashboardInsightsByApiKey', result: null })
                             }
                         });
 
@@ -380,20 +380,20 @@ function InsightController(dependencies) {
                         sm.emit('start', RequestCharts);
                     }
                     else {
-                        callback({ success: false, message: 'We haven\'t available charts at this moment', result: null });
+                        next({ success: false, message: 'We haven\'t available charts at this moment', result: null });
                     }
                 })
             }
             else {
-                callback({ success: false, message: 'DashboardInsightsByApiKeys', result: null })
+                next({ success: false, message: 'DashboardInsightsByApiKeys', result: null })
             }
         }
         else {
-            callback({ success: false, message: 'DashboardInsightsByApiKeys', result: null })
+            next({ success: false, message: 'DashboardInsightsByApiKeys', result: null })
         }
     }
 
-    var dashboardInsightsByUserId = function (data, callback) {
+    var dashboardInsightsByUserId = function (data, next) {
         if (data.UserId != undefined && data.UserId != null) {
             if (data.UserId.length > 0) {
                 _database.Site().GetAllSitesByUserId(data, function (sitesResult) {
@@ -421,7 +421,7 @@ function InsightController(dependencies) {
                                             results: []    // task results
                                         };
 
-                                        const next = (result) => { // must be called when each task chain completes
+                                        const completedTask = (result) => { // must be called when each task chain completes
 
                                             if (result != undefined && result != null) { // preserve result of task chain
                                                 context.results.push(result);
@@ -448,7 +448,7 @@ function InsightController(dependencies) {
                                                 context.tasks = len;              // total number of tasks
                                                 context.active = len;             // number of active tasks
 
-                                                sm.emit('forEachCharts', charts);    // go to next state
+                                                sm.emit('forEachCharts', charts);    // go to completedTask state
                                             }
                                             else {
                                                 context.tasks = 0;
@@ -499,16 +499,16 @@ function InsightController(dependencies) {
 
                                         // compute length of path contents
                                         sm.on('digestContent', (content) => {
-                                            next(content);
+                                            completedTask(content);
                                         });
 
                                         // when processing is complete
                                         sm.on('done', () => {
                                             if (context.tasks > 0 && context.active === 0) {
-                                                callback({ success: true, message: 'GetDashboardInsightsByApiKey', result: context.results })
+                                                next({ success: true, message: 'GetDashboardInsightsByApiKey', result: context.results })
                                             }
                                             else {
-                                                callback({ success: false, message: 'GetDashboardInsightsByApiKey', result: null })
+                                                next({ success: false, message: 'GetDashboardInsightsByApiKey', result: null })
                                             }
                                         });
 
@@ -521,29 +521,29 @@ function InsightController(dependencies) {
                                         sm.emit('start', RequestCharts);
                                     }
                                     else {
-                                        callback({ success: false, message: 'We haven\'t available charts at this moment', result: null });
+                                        next({ success: false, message: 'We haven\'t available charts at this moment', result: null });
                                     }
                                 });
                             }
                             else {
-                                callback({ success: true, message: 'GetDashboardInsightsByApiKey', result: null })
+                                next({ success: true, message: 'GetDashboardInsightsByApiKey', result: null })
                             }
                         }
                         else {
-                            callback(sitesResult)
+                            next(sitesResult)
                         }
                     }
                     else {
-                        callback(sitesResult)
+                        next(sitesResult)
                     }
                 })
             }
             else {
-                callback({ success: false, message: 'DashboardInsightsByApiKeys', result: null })
+                next({ success: false, message: 'DashboardInsightsByApiKeys', result: null })
             }
         }
         else {
-            callback({ success: false, message: 'DashboardInsightsByApiKeys', result: null })
+            next({ success: false, message: 'DashboardInsightsByApiKeys', result: null })
         }
 
     }

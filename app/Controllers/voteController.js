@@ -15,7 +15,7 @@ function VoteController(dependencies) {
         _entity.Initialize();
     }
 
-    var createVote = function (data, callback) {
+    var createVote = function (data, next) {
 
         var vote = new _entity.GetModel()(
             {
@@ -26,46 +26,46 @@ function VoteController(dependencies) {
             });
 
         vote.save().then(function (result) {
-            callback({ success: true, message: 'CreateVote', result: result });
+            next({ success: true, message: 'CreateVote', result: result });
         }, function (err) {
             _console.log(err, 'error');
-            callback({ success: false, message: 'Something went wrong when creating your vote, try again.', result: null });
+            next({ success: false, message: 'Something went wrong when creating your vote, try again.', result: null });
         })
     }
 
-    var deleteVote = function (data, callback) {
+    var deleteVote = function (data, next) {
         _entity.GetModel().findOneAndRemove(data, function (err, result) {
-            callback(result);
+            next(result);
         })
     }
 
-    var getVoteById = function (data, callback) {
+    var getVoteById = function (data, next) {
         _entity.GetModel().findOne({ "_id": data }, function (err, result) {
             if (err){
                 _console.log(err, 'error');
             }
 
-            callback(result);
+            next(result);
         })
     }
 
-    var getVoteByFeature = function (data, callback) {
+    var getVoteByFeature = function (data, next) {
         _entity.GetModel().findOne({ "Feature": data }, function (err, result) {
             if (err){
                 _console.log(err, 'error');
             }
 
-            callback(result);
+            next(result);
         })
     }
 
-    var getAllVote = function (data, callback) {
+    var getAllVote = function (data, next) {
         _entity.GetModel().find({}, function (err, result) {
             if (err){
                 _console.log(err, 'error');
             }
 
-            callback(result);
+            next(result);
         })
     }
 

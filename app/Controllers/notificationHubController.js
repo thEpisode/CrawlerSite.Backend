@@ -15,13 +15,13 @@ function NotificationHubController(dependencies) {
         _console = dependencies.console;
     }
 
-    var sendNotification = function (notificationData, callback) {
+    var sendNotification = function (notificationData, next) {
         send(notificationData);
 
-        callback({ success: true, message: 'SendNotification', result: true });
+        next({ success: true, message: 'SendNotification', result: true });
     }
 
-    var sendToAll = function (notificationData, callback) {
+    var sendToAll = function (notificationData, next) {
         _database.User().GetAllUser(null, function (data) {
             if (data.success == true) {
                 data.result.forEach(function (item, index) {
@@ -33,10 +33,10 @@ function NotificationHubController(dependencies) {
                     }
                     send(notificationData);
                 })
-                callback({ success: true, message: 'SendToAll', result: true });
+                next({ success: true, message: 'SendToAll', result: true });
             }
             else {
-                callback({ success: false, message: 'No users found', result: true });
+                next({ success: false, message: 'No users found', result: true });
             }
         })
     }

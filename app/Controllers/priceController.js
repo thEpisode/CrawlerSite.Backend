@@ -15,7 +15,7 @@ function PriceController(dependencies) {
         _entity.Initialize();
     }
 
-    var createPrice = function (data, callback) {
+    var createPrice = function (data, next) {
 
         var price = new _entity.GetModel()(
             {
@@ -28,43 +28,43 @@ function PriceController(dependencies) {
 
         price.save().then(function (result) {
             // When database return a result call the return
-            callback();
+            next();
         })
     }
 
-    var deletePrice = function (data, callback) {
+    var deletePrice = function (data, next) {
         _entity.GetModel().findOneAndRemove(data, function (err, result) {
-            callback(result);
+            next(result);
         })
     }
 
-    var getPriceById = function (data, callback) {
+    var getPriceById = function (data, next) {
         _entity.GetModel().findOne({ "_id": data }, function (err, result) {
             if (err){
                 _console.log(err, 'error');
             }
 
-            callback(result);
+            next(result);
         })
     }
 
-    var getPriceByFeature = function (data, callback) {
+    var getPriceByFeature = function (data, next) {
         _entity.GetModel().findOne({ "Feature": data }, function (err, result) {
             if (err){
                 _console.log(err, 'error');
             }
 
-            callback(result);
+            next(result);
         })
     }
 
-    var getAllPrice = function (data, callback) {
+    var getAllPrice = function (data, next) {
         _entity.GetModel().find({}, function (err, result) {
             if (err){
                 _console.log(err, 'error');
             }
 
-            callback(result);
+            next(result);
         })
     }
 

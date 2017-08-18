@@ -21,7 +21,7 @@ function VoucherController(dependencies) {
         _entity.Initialize();
     }
 
-    var createVoucher = function (data, callback) {
+    var createVoucher = function (data, next) {
         _stripeController.GenerateDiscountVoucher(data, function (voucherResult) {
             var voucher = new _entity.GetModel()(
                 {
@@ -36,20 +36,20 @@ function VoucherController(dependencies) {
                 sendVoucher(result.StripeData, function (notificationResult) {
                     _database.User().SetHasCouponCode({ Email: result.StripeData.metadata.Email, HasCouponCode: true }, function (changedUserResult) {
                         // When database return a result call the return
-                        callback({ success: true, message: 'CreateVoucher', result: result });
+                        next({ success: true, message: 'CreateVoucher', result: result });
                     })
                 });
 
 
             }, function (err) {
                 _console.log(err, 'error');
-                callback({ success: false, message: 'Something went wrong when creating your voucher, try again.', result: null });
+                next({ success: false, message: 'Something went wrong when creating your voucher, try again.', result: null });
             });
         })
 
     }
 
-    var sendVoucher = function (data, callback) {
+    var sendVoucher = function (data, next) {
         _database.User().GetUserByEmail(data.metadata.Email, function (userResult) {
             if (userResult != undefined && userResult != null) {
                 if (userResult.result != undefined && userResult.result != null) {
@@ -74,7 +74,7 @@ function VoucherController(dependencies) {
                             State: _notificationHubController.GetNotificationStates().Unread,
                         }
                     }, function (result) {
-                        callback(result);
+                        next(result);
                     });
                 }
                 else {
@@ -90,52 +90,52 @@ function VoucherController(dependencies) {
                             ComposedTextAction: 'Open Crawler Site',
                         }
                     }, function (result) {
-                        callback(result);
+                        next(result);
                     });
                 }
             }
             else {
-                callback({ success: false, message: 'Something went wrong while sending your voucher, try again.', result: null });
+                next({ success: false, message: 'Something went wrong while sending your voucher, try again.', result: null });
             }
         });
     }
 
-    var deleteVoucher = function (data, callback) {
+    var deleteVoucher = function (data, next) {
         _entity.GetModel().findOneAndRemove(data, function (err, result) {
             if (err) {
                 _console.log(err, 'error');
-                callback({ success: false, message: 'Something went wrong when deleting your voucher, try again.', result: null });
+                next({ success: false, message: 'Something went wrong when deleting your voucher, try again.', result: null });
             }
             else {
-                callback({ success: true, message: 'DeleteVoucher', result: result });
+                next({ success: true, message: 'DeleteVoucher', result: result });
             }
         })
     }
 
-    var getVoucherById = function (data, callback) {
+    var getVoucherById = function (data, next) {
         _entity.GetModel().findOne({ "_id": data._id }, function (err, result) {
             if (err) {
                 _console.log(err, 'error');
-                callback({ success: false, message: 'Something went wrong when retrieving your voucher, try again.', result: null });
+                next({ success: false, message: 'Something went wrong when retrieving your voucher, try again.', result: null });
             }
             else {
-                callback({ success: true, message: 'GetVoucherById', result: result });
+                next({ success: true, message: 'GetVoucherById', result: result });
             }
         })
     }
 
-    var getVoucherByStripeId = function (data, callback) {
+    var getVoucherByStripeId = function (data, next) {
         /// Verify if exist in database
         _entity.GetModel().findOne({ "StripeData.id": data.id }, function (err, voucherResult) {
             if (err) {
                 _console.log(err, 'error');
-                callback({ success: false, message: 'Something went wrong when retrieving your voucher, try again.', result: null });
+                next({ success: false, message: 'Something went wrong when retrieving your voucher, try again.', result: null });
             }
             else {
                 if (voucherResult !== undefined && voucherResult !== null) {
                     if (voucherResult.StripeData.id !== undefined && voucherResult.StripeData.id !== null) {
                         _stripeController.GetDiscountVoucher(voucherResult.StripeData.id, function (result) {
-                            callback(result);
+                            next(result);
                         });
                     }
                 }
@@ -143,36 +143,36 @@ function VoucherController(dependencies) {
         })
     }
 
-    var getVoucherBySubscriptionId = function (data, callback) {
+    var getVoucherBySubscriptionId = function (data, next) {
         _entity.GetModel().find({ "VoucherId": data.VoucherId }, function (err, result) {
             if (err) {
                 _console.log(err, 'error');
-                callback({ success: false, message: 'Something went wrong when retrieving your voucher, try again.', result: null });
+                next({ success: false, message: 'Something went wrong when retrieving your voucher, try again.', result: null });
             }
             else {
-                callback({ success: true, message: 'GetVoucherById', result: result });
+                next({ success: true, message: 'GetVoucherById', result: result });
             }
         })
     }
 
-    var getAllVoucher = function (data, callback) {
+    var getAllVoucher = function (data, next) {
         _entity.GetModel().find({}, function (err, result) {
             if (err) {
                 _console.log(err, 'error');
-                callback({ success: false, message: 'Something went wrong when retrieving your vouchers, try again.', result: null });
+                next({ success: false, message: 'Something went wrong when retrieving your vouchers, try again.', result: null });
             }
             else {
-                callback({ success: true, message: 'GetAllVoucher', result: result });
+                next({ success: true, message: 'GetAllVoucher', result: result });
             }
         })
     }
 
-    var verifyByStripeId = function (data, callback) {
+    var verifyByStripeId = function (data, next) {
         /// Verify if exist in database
         _entity.GetModel().findOne({ "StripeData.id": data.VoucherId }, function (err, voucherResult) {
             if (err) {
                 _console.log(err, 'error');
-                callback({ success: false, message: 'Something went wrong when retrieving your voucher, try again.', result: null });
+                next({ success: false, message: 'Something went wrong when retrieving your voucher, try again.', result: null });
             }
             else {
                 if (voucherResult !== undefined && voucherResult !== null) {
@@ -180,41 +180,41 @@ function VoucherController(dependencies) {
                     if (voucherResult.State == _entity.GetStates().Unremeeded) {
                         if (voucherResult.StripeData.id !== undefined && voucherResult.StripeData.id !== null) {
                             _stripeController.VerifyDiscountVoucher({ VoucherId: voucherResult.StripeData.id }, function (result) {
-                                callback(result);
+                                next(result);
                             });
                         }
                         else {
                             _console.log('verifyByStripeId: voucherResult.StripeData.id undefined or null', 'error');
-                            callback({ success: false, message: 'Your voucher not exist, just copy and paste from our email.', result: null });
+                            next({ success: false, message: 'Your voucher not exist, just copy and paste from our email.', result: null });
                         }
                     }
                     else if(voucherResult.State == _entity.GetStates().Redeemed){
-                        callback({ success: false, message: 'Your voucher was redeemed.', result: null });
+                        next({ success: false, message: 'Your voucher was redeemed.', result: null });
                     }
                     else{
-                        callback({ success: false, message: 'Your voucher was expired.', result: null });
+                        next({ success: false, message: 'Your voucher was expired.', result: null });
                     }
                 }
                 else {
                     _console.log('verifyByStripeId: voucherResult undefined or null', 'error');
-                    callback({ success: false, message: 'Your voucher not exist, just copy and paste from our email.', result: null });
+                    next({ success: false, message: 'Your voucher not exist, just copy and paste from our email.', result: null });
                 }
             }
         });
     }
 
-    var redeemVoucher = function (data, callback) {
+    var redeemVoucher = function (data, next) {
         if (data.VoucherId != undefined && data.VoucherId != null) {
             _stripeController.RedeemVoucher({ VoucherId: data.VoucherId, SubscriptionId: data.SubscriptionId }, function (result) {
-                callback(result);
+                next(result);
             })
         }
         else {
-            callback({ success: false, message: 'Something was wrong while redeeming your discount voucher', result: null });
+            next({ success: false, message: 'Something was wrong while redeeming your discount voucher', result: null });
         }
     }
 
-    var redeemVoucherByUserId = function (data, callback) {
+    var redeemVoucherByUserId = function (data, next) {
         if (data.VoucherId != undefined && data.VoucherId != null) {
             _database.Subscription().GetSubscriptionByUserId({ UserId: data.UserId }, function (SubscriptionResult) {
                 if (SubscriptionResult != undefined && SubscriptionResult != null) {
@@ -227,31 +227,31 @@ function VoucherController(dependencies) {
                                     });
                                     _database.User().SetHasCouponCode({ Email: redeemVoucherResult.result.metadata.Email, HasCouponCode: false }, function (changedUserResult) {
                                         // When database return a result call the return
-                                        callback({ success: true, message: 'CreateVoucher', result: redeemVoucherResult.result });
+                                        next({ success: true, message: 'CreateVoucher', result: redeemVoucherResult.result });
                                     })
                                 }
                                 else {
-                                    callback({ success: false, message: 'Something was wrong while redeeming your discount voucher', result: null });
+                                    next({ success: false, message: 'Something was wrong while redeeming your discount voucher', result: null });
                                 }
                             }
                             else {
-                                callback({ success: false, message: 'Something was wrong while redeeming your discount voucher', result: null });
+                                next({ success: false, message: 'Something was wrong while redeeming your discount voucher', result: null });
                             }
                         });
                     }
                     else {
-                        callback({ success: false, message: 'Something was wrong while redeeming your discount voucher', result: null });
+                        next({ success: false, message: 'Something was wrong while redeeming your discount voucher', result: null });
                     }
                 }
                 else {
                     _console.log('redeemVoucherByUserId: SubscriptionResult undefined or null', 'error');
-                    callback({ success: false, message: 'Something was wrong while redeeming your discount voucher', result: null });
+                    next({ success: false, message: 'Something was wrong while redeeming your discount voucher', result: null });
                 }
             })
         }
         else {
             _console.log('redeemVoucherByUserId: VoucherId undefined or null', 'error');
-            callback({ success: false, message: 'Something was wrong while redeeming your discount voucher', result: null });
+            next({ success: false, message: 'Something was wrong while redeeming your discount voucher', result: null });
         }
     }
 

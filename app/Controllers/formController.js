@@ -15,7 +15,7 @@ function FormController(dependencies) {
         _entity.Initialize();
     }
 
-    var createForm = function (data, callback) {
+    var createForm = function (data, next) {
 
         var form = new _entity.GetModel()(
             {
@@ -28,43 +28,43 @@ function FormController(dependencies) {
 
         form.save().then(function (result) {
             // When database return a result call the return
-            callback();
+            next();
         })
     }
 
-    var deleteForm = function (data, callback) {
+    var deleteForm = function (data, next) {
         _entity.GetModel().findOneAndRemove(data, function (err, result) {
-            callback(result);
+            next(result);
         })
     }
 
-    var getFormById = function (data, callback) {
+    var getFormById = function (data, next) {
         _entity.GetModel().findOne({ "_id": data }, function (err, result) {
             if (err){
                 _console.log(err, 'error');
             }
 
-            callback(result);
+            next(result);
         })
     }
 
-    var getFormByApiKey = function (data, callback) {
+    var getFormByApiKey = function (data, next) {
         _entity.GetModel().findOne({ "ApiKey": data }, function (err, result) {
             if (err){
                 _console.log(err, 'error');
             }
 
-            callback(result);
+            next(result);
         })
     }
 
-    var getAllForm = function (data, callback) {
+    var getAllForm = function (data, next) {
         _entity.GetModel().find({}, function (err, result) {
             if (err){
                 _console.log(err, 'error');
             }
 
-            callback(result);
+            next(result);
         })
     }
 

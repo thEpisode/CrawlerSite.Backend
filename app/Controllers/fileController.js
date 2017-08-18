@@ -11,7 +11,7 @@ function FileHandler(dependencies) {
         _console = dependencies.console;
     }
 
-    var createScreenshotFile = function (base64Data, fileName, callback) {
+    var createScreenshotFile = function (base64Data, fileName, next) {
         fileName = fileName.toLowerCase();
         fileName = fileName.replace('c:/', '');
         fileName = fileName.replace('/', '');
@@ -30,17 +30,17 @@ function FileHandler(dependencies) {
 
             saveFile(fileName, function (result) {
                 if (result != false) {
-                    callback(result);
+                    next(result);
                 }
                 else {
-                    callback(false);
+                    next(false);
                 }
             })
         });
     }
 
     /// Streaming to GridFS
-    var saveFile = function (filename, callback) {
+    var saveFile = function (filename, next) {
 
         //filename to store in mongodb
         var writestream = _gridfs.createWriteStream({
@@ -52,33 +52,33 @@ function FileHandler(dependencies) {
             removeFile(filename, function (result) {
                 if (result) {
                     _console.log('Deleted temporary file: ' + filename, 'server-success');
-                    callback(file);
+                    next(file);
                 }
                 else {
-                    callback(false);
+                    next(false);
                 }
             })
         });
     }
 
-    var removeFile = function (filename, callback) {
+    var removeFile = function (filename, next) {
         _fs.unlink(filename, (err) => {
             if (err) {
-                callback(false);
+                next(false);
             }
             else {
-                callback(true);
+                next(true);
             }
         });
     }
 
     /// Streaming from GridFS
-    var readFileById = function (id, callback) {
+    var readFileById = function (id, next) {
         var readstream = _gridfs.createReadStream({
             _id: id
         });
 
-        callback(readstream);
+        next(readstream);
     }
 
     return {

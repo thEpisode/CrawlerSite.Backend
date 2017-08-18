@@ -19,7 +19,7 @@ function SiteController(dependencies) {
         _entity.Initialize();
     }
 
-    var createSite = function (data, callback) {
+    var createSite = function (data, next) {
 
         var site = new _entity.GetModel()(
             {
@@ -171,7 +171,8 @@ function SiteController(dependencies) {
                             H23: 0
                         },
                     }
-                }
+                },
+                BlockUserText: "You are blocked!",
             });
 
         site.save().then(function (siteResult) {
@@ -179,90 +180,90 @@ function SiteController(dependencies) {
                 if (subscriptionResult !== undefined && subscriptionResult !== null) {
                     _database.Subscription().AddSiteToSubscription({ SubscriptionId: subscriptionResult.result._id, SiteId: siteResult._id }, function (addUserToSubscriptionResult) {
                         if (addUserToSubscriptionResult !== undefined && addUserToSubscriptionResult !== null) {
-                            callback({ success: true, message: 'CreateSite', result: siteResult });
+                            next({ success: true, message: 'CreateSite', result: siteResult });
                         }
                         else {
-                            callback({ success: false, message: addUserToSubscriptionResult.message, result: null });
+                            next({ success: false, message: addUserToSubscriptionResult.message, result: null });
                         }
                     })
                 }
                 else {
-                    callback({ success: false, message: subscriptionResult.message, result: null });
+                    next({ success: false, message: subscriptionResult.message, result: null });
                 }
             });
 
         })
     }
 
-    var deleteSite = function (data, callback) {
+    var deleteSite = function (data, next) {
         _entity.GetModel().findOneAndRemove(data, function (err, result) {
             if (err) {
                 _console.log(err, 'error');
-                callback(false);
+                next(false);
             }
 
-            callback(true);
+            next(true);
         })
     }
 
-    var getSiteById = function (data, callback) {
+    var getSiteById = function (data, next) {
         _entity.GetModel().findOne({ "_id": data }, function (err, result) {
-            if (err){
+            if (err) {
                 _console.log(err, 'error');
             }
 
-            callback(result);
+            next(result);
         })
     }
 
-    var getSiteByName = function (data, callback) {
+    var getSiteByName = function (data, next) {
         _entity.GetModel().findOne({ "Name": data }, function (err, result) {
-            if (err){
+            if (err) {
                 _console.log(err, 'error');
             }
 
-            callback(result);
+            next(result);
         })
     }
 
-    var getSiteByApiKey = function (data, callback) {
+    var getSiteByApiKey = function (data, next) {
         _entity.GetModel().findOne({ "ApiKey": data.ApiKey }, function (err, result) {
-            if (err){
+            if (err) {
                 _console.log(err, 'error');
             }
 
-            callback({ success: true, message: 'GetSiteByApiKey', result: result });
+            next({ success: true, message: 'GetSiteByApiKey', result: result });
         })
     }
 
-    var getAllSite = function (data, callback) {
+    var getAllSite = function (data, next) {
         _entity.GetModel().find({}, function (err, result) {
-            if (err){
+            if (err) {
                 _console.log(err, 'error');
             }
 
-            callback(result);
+            next(result);
         })
     }
 
-    var getAllSitesByUserId = function (data, callback) {
+    var getAllSitesByUserId = function (data, next) {
         _database.Subscription().GetAllSitesOfSubscriptionByUserId(data, function (result) {
-            callback(result);
+            next(result);
         })
     }
 
-    var editSite = function (data, callback) {
+    var editSite = function (data, next) {
         _entity.GetModel().findOneAndUpdate({ "_id": data._id }, { $set: { Url: data.Url, Name: data.Name, Tags: data.Tags } }, { upsert: false }, function (err, result) {
             if (err) {
                 _console.log(err, 'error');
-                callback(false);
+                next(false);
             }
 
-            callback(true);
+            next(true);
         })
     }
 
-    var addScreenshotToChild = function (apiKey, screenshotId, endpoint, callback) {
+    var addScreenshotToChild = function (apiKey, screenshotId, endpoint, next) {
         var branches = [];
 
         if (endpoint == '/') { branches[0] = "Index" }
@@ -273,7 +274,7 @@ function SiteController(dependencies) {
         }
 
         _entity.GetModel().findOne({ "ApiKey": apiKey }, function (err, site) {
-            if (err){
+            if (err) {
                 _console.log(err, 'error');
             }
 
@@ -285,15 +286,15 @@ function SiteController(dependencies) {
             _entity.GetModel().findOneAndUpdate({ "ApiKey": apiKey }, { $set: { Track: site.Track } }, { upsert: false }, function (err, result) {
                 if (err) {
                     _console.log(err, 'error');
-                    callback(false);
+                    next(false);
                 }
 
-                callback(true);
+                next(true);
             })
         })
     }
 
-    var webCrawling = function (apiKey, endpoint, callback) {
+    var webCrawling = function (apiKey, endpoint, next) {
         var tree = {};
         var hasScreenshot;
         endpoint = endpoint.replace('/', '');
@@ -302,7 +303,7 @@ function SiteController(dependencies) {
         if (branches.length == 1) { branches[0] = "Index" }
 
         _entity.GetModel().findOne({ "ApiKey": apiKey }, function (err, site) {
-            if (err){
+            if (err) {
                 _console.log(err, 'error');
             }
 
@@ -346,10 +347,10 @@ function SiteController(dependencies) {
 
             if (existBranch) {
                 if (lastBranch != null && lastBranch.Screenshot != undefined && lastBranch.Screenshot.length > 0) {
-                    callback(true);
+                    next(true);
                 }
                 else {
-                    callback(false);
+                    next(false);
                 }
             }
             else {
@@ -359,7 +360,7 @@ function SiteController(dependencies) {
                         _console.log(err, 'error');
                     }
 
-                    callback(false);
+                    next(false);
                 })
 
             }
@@ -390,31 +391,31 @@ function SiteController(dependencies) {
         return null;
     }
     /// endpoint = 'Profile-me'
-    var getSiteScreenshotIdByPathname = function (apiKey, endpoint, callback) {
+    var getSiteScreenshotIdByPathname = function (apiKey, endpoint, next) {
 
         var branches = endpoint.split('-');
         if (endpoint == '-') { branches = []; branches[0] = "Index" }
 
         _entity.GetModel().findOne({ "ApiKey": apiKey }, function (err, site) {
-            if (err){
+            if (err) {
                 _console.log(err, 'error');
             }
 
             var branch = searchBranch(site.Track, branches[branches.length - 1]);
             if (branch !== null) {
-                callback(branch.Screenshot);
+                next(branch.Screenshot);
             }
             else {
-                callback(null);
+                next(null);
             }
         });
     }
 
-    var increasePageviewsHeatmaps = function (data, callback) {
+    var increasePageviewsHeatmaps = function (data, next) {
         _entity.GetModel().findOne({ "ApiKey": data.ApiKey }, function (err, result) {
             if (err) {
                 _console.log(err, 'error');
-                callback({ success: false, message: 'Something went wrong when updating insights, try again.', result: null });
+                next({ success: false, message: 'Something went wrong when updating insights, try again.', result: null });
             }
             else {
                 if (result != undefined && result != null) {
@@ -428,21 +429,21 @@ function SiteController(dependencies) {
                         }, { upsert: false }, function (err, result) {
                             if (err) {
                                 _console.log(err, 'error');
-                                callback({ success: false, message: 'Something went wrong when updating insights, try again.', result: null });
+                                next({ success: false, message: 'Something went wrong when updating insights, try again.', result: null });
                             }
-                            
-                            callback({ success: true, message: 'IncreasePageviewsHeatmapsInsights', result: result });
+
+                            next({ success: true, message: 'IncreasePageviewsHeatmapsInsights', result: result });
                         });
                 }
             }
         });
     }
 
-    var increaseMovementHeatmaps = function (data, callback) {
+    var increaseMovementHeatmaps = function (data, next) {
         _entity.GetModel().findOne({ "ApiKey": data.ApiKey }, function (err, siteResult) {
             if (err) {
                 _console.log(err, 'error');
-                callback({ success: false, message: 'Something went wrong when updating insights, try again.', result: null });
+                next({ success: false, message: 'Something went wrong when updating insights, try again.', result: null });
             }
             else {
                 if (siteResult != undefined && siteResult != null) {
@@ -456,24 +457,24 @@ function SiteController(dependencies) {
                         }, { upsert: false }, function (err, result) {
                             if (err) {
                                 _console.log(err, 'error');
-                                callback({ success: false, message: 'Something went wrong when updating insights, try again.', result: null });
+                                next({ success: false, message: 'Something went wrong when updating insights, try again.', result: null });
                             }
-                            
-                            callback({ success: true, message: 'IncreaseMovementHeatmaps', result: result });
+
+                            next({ success: true, message: 'IncreaseMovementHeatmaps', result: result });
                         });
                 }
                 else {
-                    callback({ success: false, message: 'Something went wrong when updating insights, try again.', result: null });
+                    next({ success: false, message: 'Something went wrong when updating insights, try again.', result: null });
                 }
             }
         });
     }
 
-    var increaseClickHeatmaps = function (data, callback) {
+    var increaseClickHeatmaps = function (data, next) {
         _entity.GetModel().findOne({ "ApiKey": data.ApiKey }, function (err, result) {
             if (err) {
                 _console.log(err, 'error');
-                callback({ success: false, message: 'Something went wrong when updating insights, try again.', result: null });
+                next({ success: false, message: 'Something went wrong when updating insights, try again.', result: null });
             }
             else {
                 if (result != undefined && result != null) {
@@ -487,21 +488,21 @@ function SiteController(dependencies) {
                         }, { upsert: false }, function (err, result) {
                             if (err) {
                                 _console.log(err, 'error');
-                                callback({ success: false, message: 'Something went wrong when updating insights, try again.', result: null });
+                                next({ success: false, message: 'Something went wrong when updating insights, try again.', result: null });
                             }
-                            
-                            callback({ success: true, message: 'IncreaseClickHeatmaps', result: result });
+
+                            next({ success: true, message: 'IncreaseClickHeatmaps', result: result });
                         });
                 }
             }
         });
     }
 
-    var increaseScrollHeatmaps = function (data, callback) {
+    var increaseScrollHeatmaps = function (data, next) {
         _entity.GetModel().findOne({ "ApiKey": data.ApiKey }, function (err, result) {
             if (err) {
                 _console.log(err, 'error');
-                callback({ success: false, message: 'Something went wrong when updating insights, try again.', result: null });
+                next({ success: false, message: 'Something went wrong when updating insights, try again.', result: null });
             }
             else {
                 if (result != undefined && result != null) {
@@ -515,17 +516,17 @@ function SiteController(dependencies) {
                         }, { upsert: false }, function (err, result) {
                             if (err) {
                                 _console.log(err, 'error');
-                                callback({ success: false, message: 'Something went wrong when updating insights, try again.', result: null });
+                                next({ success: false, message: 'Something went wrong when updating insights, try again.', result: null });
                             }
-                            
-                            callback({ success: true, message: 'IncreaseScrollHeatmaps', result: result });
+
+                            next({ success: true, message: 'IncreaseScrollHeatmaps', result: result });
                         });
                 }
             }
         });
     }
 
-    var getPageViewsHeatmapsByApiKey = function (data, callback) {
+    var getPageViewsHeatmapsByApiKey = function (data, next) {
         _entity.GetModel().aggregate([
             {
                 $match: {
@@ -541,15 +542,15 @@ function SiteController(dependencies) {
             }], function (err, result) {
                 if (err) {
                     _console.log(err, 'error');
-                    callback({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
+                    next({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
                 }
                 else {
-                    callback({ success: true, message: 'GetPageViewsHeatmapsByApiKey', result: result });
+                    next({ success: true, message: 'GetPageViewsHeatmapsByApiKey', result: result });
                 }
             });
     }
 
-    var getPageViewsHeatmapsByApiKeys = function (data, callback) {
+    var getPageViewsHeatmapsByApiKeys = function (data, next) {
         if (data.ApiKeys != undefined && data.ApiKeys != null) {
             if (Object.prototype.toString.call(data.ApiKeys) === '[object Array]') {
                 //var sitesId = data.ApiKeys.map(function (id) { return _mongoose.Types.ObjectId(id) });
@@ -569,23 +570,23 @@ function SiteController(dependencies) {
                     }], function (err, result) {
                         if (err) {
                             _console.log(err, 'error');
-                            callback({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
+                            next({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
                         }
                         else {
-                            callback({ success: true, message: 'GetPageViewsHeatmapsByApiKeys', result: result });
+                            next({ success: true, message: 'GetPageViewsHeatmapsByApiKeys', result: result });
                         }
                     });
             }
             else {
-                callback({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
+                next({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
             }
         }
         else {
-            callback({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
+            next({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
         }
     }
 
-    var getMovementHeatmapsByApiKey = function (data, callback) {
+    var getMovementHeatmapsByApiKey = function (data, next) {
         _entity.GetModel().aggregate([
             {
                 $match: {
@@ -601,15 +602,15 @@ function SiteController(dependencies) {
             }], function (err, result) {
                 if (err) {
                     _console.log(err, 'error');
-                    callback({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
+                    next({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
                 }
                 else {
-                    callback({ success: true, message: 'GetMovementHeatmapsByApiKey', result: result });
+                    next({ success: true, message: 'GetMovementHeatmapsByApiKey', result: result });
                 }
             });
     }
 
-    var getMovementHeatmapsByApiKeys = function (data, callback) {
+    var getMovementHeatmapsByApiKeys = function (data, next) {
         if (data.ApiKeys != undefined && data.ApiKeys != null) {
             if (Object.prototype.toString.call(data.ApiKeys) === '[object Array]') {
                 //var sitesId = data.ApiKeys.map(function (id) { return _mongoose.Types.ObjectId(id) });
@@ -629,23 +630,23 @@ function SiteController(dependencies) {
                     }], function (err, result) {
                         if (err) {
                             _console.log(err, 'error');
-                            callback({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
+                            next({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
                         }
                         else {
-                            callback({ success: true, message: 'GetMovementHeatmapsByApiKeys', result: result });
+                            next({ success: true, message: 'GetMovementHeatmapsByApiKeys', result: result });
                         }
                     });
             }
             else {
-                callback({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
+                next({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
             }
         }
         else {
-            callback({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
+            next({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
         }
     }
 
-    var getClickHeatmapsByApiKey = function (data, callback) {
+    var getClickHeatmapsByApiKey = function (data, next) {
         _entity.GetModel().aggregate([
             {
                 $match: {
@@ -661,15 +662,15 @@ function SiteController(dependencies) {
             }], function (err, result) {
                 if (err) {
                     _console.log(err, 'error');
-                    callback({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
+                    next({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
                 }
                 else {
-                    callback({ success: true, message: 'GetClickHeatmapsByApiKey', result: result });
+                    next({ success: true, message: 'GetClickHeatmapsByApiKey', result: result });
                 }
             });
     }
 
-    var getClickHeatmapsByApiKeys = function (data, callback) {
+    var getClickHeatmapsByApiKeys = function (data, next) {
         if (data.ApiKeys != undefined && data.ApiKeys != null) {
             if (Object.prototype.toString.call(data.ApiKeys) === '[object Array]') {
                 //var sitesId = data.ApiKeys.map(function (id) { return _mongoose.Types.ObjectId(id) });
@@ -689,23 +690,23 @@ function SiteController(dependencies) {
                     }], function (err, result) {
                         if (err) {
                             _console.log(err, 'error');
-                            callback({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
+                            next({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
                         }
                         else {
-                            callback({ success: true, message: 'GetClickHeatmapsByApiKeys', result: result });
+                            next({ success: true, message: 'GetClickHeatmapsByApiKeys', result: result });
                         }
                     });
             }
             else {
-                callback({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
+                next({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
             }
         }
         else {
-            callback({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
+            next({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
         }
     }
 
-    var getScrollHeatmapsByApiKey = function (data, callback) {
+    var getScrollHeatmapsByApiKey = function (data, next) {
         _entity.GetModel().aggregate([
             {
                 $match: {
@@ -721,15 +722,15 @@ function SiteController(dependencies) {
             }], function (err, result) {
                 if (err) {
                     _console.log(err, 'error');
-                    callback({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
+                    next({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
                 }
                 else {
-                    callback({ success: true, message: 'GetScrollHeatmapsByApiKey', result: result });
+                    next({ success: true, message: 'GetScrollHeatmapsByApiKey', result: result });
                 }
             });
     }
 
-    var getScrollHeatmapsByApiKeys = function (data, callback) {
+    var getScrollHeatmapsByApiKeys = function (data, next) {
         if (data.ApiKeys != undefined && data.ApiKeys != null) {
             if (Object.prototype.toString.call(data.ApiKeys) === '[object Array]') {
                 //var sitesId = data.ApiKeys.map(function (id) { return _mongoose.Types.ObjectId(id) });
@@ -749,27 +750,27 @@ function SiteController(dependencies) {
                     }], function (err, result) {
                         if (err) {
                             _console.log(err, 'error');
-                            callback({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
+                            next({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
                         }
                         else {
-                            callback({ success: true, message: 'GetScrollHeatmapsByApiKeys', result: result });
+                            next({ success: true, message: 'GetScrollHeatmapsByApiKeys', result: result });
                         }
                     });
             }
             else {
-                callback({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
+                next({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
             }
         }
         else {
-            callback({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
+            next({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
         }
     }
 
-    var increaseUsersOnlineRATByApiKey = function (data, callback) {
+    var increaseUsersOnlineRATByApiKey = function (data, next) {
         _entity.GetModel().findOne({ "ApiKey": data.ApiKey }, function (err, result) {
             if (err) {
                 _console.log(err, 'error');
-                callback({ success: false, message: 'Something went wrong when updating insights, try again.', result: null });
+                next({ success: false, message: 'Something went wrong when updating insights, try again.', result: null });
             }
             else {
                 if (result != undefined && result != null) {
@@ -782,21 +783,21 @@ function SiteController(dependencies) {
                         }, { upsert: false }, function (err, result) {
                             if (err) {
                                 _console.log(err, 'error');
-                                callback({ success: false, message: 'Something went wrong when updating insights, try again.', result: null });
+                                next({ success: false, message: 'Something went wrong when updating insights, try again.', result: null });
                             }
-                            
-                            callback({ success: true, message: 'IncreaseUsersOnlineRAT', result: result });
+
+                            next({ success: true, message: 'IncreaseUsersOnlineRAT', result: result });
                         });
                 }
             }
         });
     }
 
-    var decreaseUsersOnlineRATByApiKey = function (data, callback) {
+    var decreaseUsersOnlineRATByApiKey = function (data, next) {
         _entity.GetModel().findOne({ "ApiKey": data.ApiKey }, function (err, result) {
             if (err) {
                 _console.log(err, 'error');
-                callback({ success: false, message: 'Something went wrong when updating insights, try again.', result: null });
+                next({ success: false, message: 'Something went wrong when updating insights, try again.', result: null });
             }
             else {
                 if (result != undefined && result != null) {
@@ -809,21 +810,21 @@ function SiteController(dependencies) {
                         }, { upsert: false }, function (err, result) {
                             if (err) {
                                 _console.log(err, 'error');
-                                callback({ success: false, message: 'Something went wrong when updating insights, try again.', result: null });
+                                next({ success: false, message: 'Something went wrong when updating insights, try again.', result: null });
                             }
-                            
-                            callback({ success: true, message: 'DecreaseUsersOnlineRAT', result: result });
+
+                            next({ success: true, message: 'DecreaseUsersOnlineRAT', result: result });
                         });
                 }
             }
         });
     }
 
-    var increaseRATTimeByApiKey = function (data, callback) {
+    var increaseRATTimeByApiKey = function (data, next) {
         _entity.GetModel().findOne({ "ApiKey": data.ApiKey }, function (err, result) {
             if (err) {
                 _console.log(err, 'error');
-                callback({ success: false, message: 'Something went wrong when updating insights, try again.', result: null });
+                next({ success: false, message: 'Something went wrong when updating insights, try again.', result: null });
             }
             else {
                 if (result != undefined && result != null) {
@@ -837,17 +838,17 @@ function SiteController(dependencies) {
                         }, { upsert: false }, function (err, result) {
                             if (err) {
                                 _console.log(err, 'error');
-                                callback({ success: false, message: 'Something went wrong when updating insights, try again.', result: null });
+                                next({ success: false, message: 'Something went wrong when updating insights, try again.', result: null });
                             }
-                            
-                            callback({ success: true, message: 'IncreaseUsersOnlineRAT', result: result });
+
+                            next({ success: true, message: 'IncreaseUsersOnlineRAT', result: result });
                         });
                 }
             }
         });
     }
 
-    var getRATUsersOnlineByApiKey = function (data, callback) {
+    var getRATUsersOnlineByApiKey = function (data, next) {
         _entity.GetModel().aggregate([
             {
                 $match: {
@@ -862,15 +863,15 @@ function SiteController(dependencies) {
             }], function (err, result) {
                 if (err) {
                     _console.log(err, 'error');
-                    callback({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
+                    next({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
                 }
                 else {
-                    callback({ success: true, message: 'GetRATUsersOnlineByApiKey', result: result });
+                    next({ success: true, message: 'GetRATUsersOnlineByApiKey', result: result });
                 }
             });
     }
 
-    var getRATSecondsUsedByApiKey = function (data, callback) {
+    var getRATSecondsUsedByApiKey = function (data, next) {
         _entity.GetModel().aggregate([
             {
                 $match: {
@@ -886,15 +887,15 @@ function SiteController(dependencies) {
             }], function (err, result) {
                 if (err) {
                     _console.log(err, 'error');
-                    callback({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
+                    next({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
                 }
                 else {
-                    callback({ success: true, message: 'GetRATSecondsUsedByApiKey', result: result });
+                    next({ success: true, message: 'GetRATSecondsUsedByApiKey', result: result });
                 }
             });
     }
 
-    var getRATSucesfulyConnectionsByApiKey = function (data, callback) {
+    var getRATSucesfulyConnectionsByApiKey = function (data, next) {
         _entity.GetModel().aggregate([
             {
                 $match: {
@@ -909,15 +910,15 @@ function SiteController(dependencies) {
             }], function (err, result) {
                 if (err) {
                     _console.log(err, 'error');
-                    callback({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
+                    next({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
                 }
                 else {
-                    callback({ success: true, message: 'GetRATSucesfulyConnectionsByApiKey', result: result });
+                    next({ success: true, message: 'GetRATSucesfulyConnectionsByApiKey', result: result });
                 }
             });
     }
 
-    var getRATUsersOnlineByApiKeys = function (data, callback) {
+    var getRATUsersOnlineByApiKeys = function (data, next) {
         if (data.ApiKeys != undefined && data.ApiKeys != null) {
             if (Object.prototype.toString.call(data.ApiKeys) === '[object Array]') {
                 //var sitesId = data.ApiKeys.map(function (id) { return _mongoose.Types.ObjectId(id) });
@@ -936,23 +937,23 @@ function SiteController(dependencies) {
                     }], function (err, result) {
                         if (err) {
                             _console.log(err, 'error');
-                            callback({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
+                            next({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
                         }
                         else {
-                            callback({ success: true, message: 'GetRATUsersOnlineByApiKeys', result: result });
+                            next({ success: true, message: 'GetRATUsersOnlineByApiKeys', result: result });
                         }
                     });
             }
             else {
-                callback({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
+                next({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
             }
         }
         else {
-            callback({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
+            next({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
         }
     }
 
-    var getRATSecondsUsedByApiKeys = function (data, callback) {
+    var getRATSecondsUsedByApiKeys = function (data, next) {
         if (data.ApiKeys != undefined && data.ApiKeys != null) {
             if (Object.prototype.toString.call(data.ApiKeys) === '[object Array]') {
                 //var sitesId = data.ApiKeys.map(function (id) { return _mongoose.Types.ObjectId(id) });
@@ -972,23 +973,23 @@ function SiteController(dependencies) {
                     }], function (err, result) {
                         if (err) {
                             _console.log(err, 'error');
-                            callback({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
+                            next({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
                         }
                         else {
-                            callback({ success: true, message: 'GetRATSecondsUsedByApiKeys', result: result });
+                            next({ success: true, message: 'GetRATSecondsUsedByApiKeys', result: result });
                         }
                     });
             }
             else {
-                callback({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
+                next({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
             }
         }
         else {
-            callback({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
+            next({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
         }
     }
 
-    var getRATSucesfulyConnectionsByApiKeys = function (data, callback) {
+    var getRATSucesfulyConnectionsByApiKeys = function (data, next) {
         if (data.ApiKeys != undefined && data.ApiKeys != null) {
             if (Object.prototype.toString.call(data.ApiKeys) === '[object Array]') {
                 //var sitesId = data.ApiKeys.map(function (id) { return _mongoose.Types.ObjectId(id) });
@@ -1007,35 +1008,35 @@ function SiteController(dependencies) {
                     }], function (err, result) {
                         if (err) {
                             _console.log(err, 'error');
-                            callback({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
+                            next({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
                         }
                         else {
-                            callback({ success: true, message: 'GetRATSucesfulyConnectionsByApiKeys', result: result });
+                            next({ success: true, message: 'GetRATSucesfulyConnectionsByApiKeys', result: result });
                         }
                     });
             }
             else {
-                callback({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
+                next({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
             }
         }
         else {
-            callback({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
+            next({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
         }
     }
 
-    /*var updateFormsInsights = function (data, callback) {
-        callback({ success: true, message: 'UpdateFormsInsights', result: result });
+    /*var updateFormsInsights = function (data, next) {
+        next({ success: true, message: 'UpdateFormsInsights', result: result });
     }
 
-    var updateRecordsInsights = function (data, callback) {
-        callback({ success: true, message: 'UpdateRecordsInsights', result: result });
+    var updateRecordsInsights = function (data, next) {
+        next({ success: true, message: 'UpdateRecordsInsights', result: result });
     }
 
-    var updateClientsBehavior = function (data, callback) {
-        callback({ success: true, message: 'UpdateClientsBehavior', result: result });
+    var updateClientsBehavior = function (data, next) {
+        next({ success: true, message: 'UpdateClientsBehavior', result: result });
     }*/
 
-    var getFormsAnalyzedByApiKey = function (data, callback) {
+    var getFormsAnalyzedByApiKey = function (data, next) {
         _entity.GetModel().aggregate([
             {
                 $match: {
@@ -1051,15 +1052,15 @@ function SiteController(dependencies) {
             }], function (err, result) {
                 if (err) {
                     _console.log(err, 'error');
-                    callback({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
+                    next({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
                 }
                 else {
-                    callback({ success: true, message: 'GetFormsAnalyzedByApiKey', result: result });
+                    next({ success: true, message: 'GetFormsAnalyzedByApiKey', result: result });
                 }
             });
     }
 
-    var getFormsAnalyzedByApiKeys = function (data, callback) {
+    var getFormsAnalyzedByApiKeys = function (data, next) {
         if (data.ApiKeys != undefined && data.ApiKeys != null) {
             if (Object.prototype.toString.call(data.ApiKeys) === '[object Array]') {
                 //var sitesId = data.ApiKeys.map(function (id) { return _mongoose.Types.ObjectId(id) });
@@ -1079,23 +1080,23 @@ function SiteController(dependencies) {
                     }], function (err, result) {
                         if (err) {
                             _console.log(err, 'error');
-                            callback({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
+                            next({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
                         }
                         else {
-                            callback({ success: true, message: 'GetFormsAnalyzedByApiKeys', result: result });
+                            next({ success: true, message: 'GetFormsAnalyzedByApiKeys', result: result });
                         }
                     });
             }
             else {
-                callback({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
+                next({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
             }
         }
         else {
-            callback({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
+            next({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
         }
     }
 
-    var getFormIssuesByApiKey = function (data, callback) {
+    var getFormIssuesByApiKey = function (data, next) {
         _entity.GetModel().aggregate([
             {
                 $match: {
@@ -1111,15 +1112,15 @@ function SiteController(dependencies) {
             }], function (err, result) {
                 if (err) {
                     _console.log(err, 'error');
-                    callback({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
+                    next({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
                 }
                 else {
-                    callback({ success: true, message: 'GetFormIssuesByApiKey', result: result });
+                    next({ success: true, message: 'GetFormIssuesByApiKey', result: result });
                 }
             });
     }
 
-    var getFormIssuesByApiKeys = function (data, callback) {
+    var getFormIssuesByApiKeys = function (data, next) {
         if (data.ApiKeys != undefined && data.ApiKeys != null) {
             if (Object.prototype.toString.call(data.ApiKeys) === '[object Array]') {
                 //var sitesId = data.ApiKeys.map(function (id) { return _mongoose.Types.ObjectId(id) });
@@ -1139,23 +1140,23 @@ function SiteController(dependencies) {
                     }], function (err, result) {
                         if (err) {
                             _console.log(err, 'error');
-                            callback({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
+                            next({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
                         }
                         else {
-                            callback({ success: true, message: 'GetFormIssuesByApiKeys', result: result });
+                            next({ success: true, message: 'GetFormIssuesByApiKeys', result: result });
                         }
                     });
             }
             else {
-                callback({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
+                next({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
             }
         }
         else {
-            callback({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
+            next({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
         }
     }
 
-    var getFormSuccessByApiKey = function (data, callback) {
+    var getFormSuccessByApiKey = function (data, next) {
         _entity.GetModel().aggregate([
             {
                 $match: {
@@ -1170,16 +1171,16 @@ function SiteController(dependencies) {
             }], function (err, result) {
                 if (err) {
                     _console.log(err, 'error');
-                    callback({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
+                    next({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
                 }
                 else {
-                    callback({ success: true, message: 'GetFormSuccessByApiKey', result: result });
+                    next({ success: true, message: 'GetFormSuccessByApiKey', result: result });
                 }
             });
 
     }
 
-    var getFormSuccessByApiKeys = function (data, callback) {
+    var getFormSuccessByApiKeys = function (data, next) {
         if (data.ApiKeys != undefined && data.ApiKeys != null) {
             if (Object.prototype.toString.call(data.ApiKeys) === '[object Array]') {
                 //var sitesId = data.ApiKeys.map(function (id) { return _mongoose.Types.ObjectId(id) });
@@ -1198,24 +1199,24 @@ function SiteController(dependencies) {
                     }], function (err, result) {
                         if (err) {
                             _console.log(err, 'error');
-                            callback({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
+                            next({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
                         }
                         else {
-                            callback({ success: true, message: 'GetFormSuccessByApiKeys', result: result });
+                            next({ success: true, message: 'GetFormSuccessByApiKeys', result: result });
                         }
                     });
             }
             else {
-                callback({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
+                next({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
             }
         }
         else {
-            callback({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
+            next({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
         }
 
     }
 
-    var getFormNumberOfInputsByApiKey = function (data, callback) {
+    var getFormNumberOfInputsByApiKey = function (data, next) {
         _entity.GetModel().aggregate([
             {
                 $match: {
@@ -1230,15 +1231,15 @@ function SiteController(dependencies) {
             }], function (err, result) {
                 if (err) {
                     _console.log(err, 'error');
-                    callback({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
+                    next({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
                 }
                 else {
-                    callback({ success: true, message: 'GetFormNumberOfInputsByApiKey', result: result });
+                    next({ success: true, message: 'GetFormNumberOfInputsByApiKey', result: result });
                 }
             });
     }
 
-    var getFormNumberOfInputsByApiKeys = function (data, callback) {
+    var getFormNumberOfInputsByApiKeys = function (data, next) {
         if (data.ApiKeys != undefined && data.ApiKeys != null) {
             if (Object.prototype.toString.call(data.ApiKeys) === '[object Array]') {
                 //var sitesId = data.ApiKeys.map(function (id) { return _mongoose.Types.ObjectId(id) });
@@ -1257,23 +1258,23 @@ function SiteController(dependencies) {
                     }], function (err, result) {
                         if (err) {
                             _console.log(err, 'error');
-                            callback({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
+                            next({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
                         }
                         else {
-                            callback({ success: true, message: 'GetFormNumberOfInputsByApiKeys', result: result });
+                            next({ success: true, message: 'GetFormNumberOfInputsByApiKeys', result: result });
                         }
                     });
             }
             else {
-                callback({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
+                next({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
             }
         }
         else {
-            callback({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
+            next({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
         }
     }
 
-    var getTotalSecondsRecordsByApiKey = function (data, callback) {
+    var getTotalSecondsRecordsByApiKey = function (data, next) {
         _entity.GetModel().aggregate([
             {
                 $match: {
@@ -1289,15 +1290,15 @@ function SiteController(dependencies) {
             }], function (err, result) {
                 if (err) {
                     _console.log(err, 'error');
-                    callback({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
+                    next({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
                 }
                 else {
-                    callback({ success: true, message: 'GetTotalSecondsRecordsByApiKey', result: result });
+                    next({ success: true, message: 'GetTotalSecondsRecordsByApiKey', result: result });
                 }
             });
     }
 
-    var getTotalSecondsRecordsByApiKeys = function (data, callback) {
+    var getTotalSecondsRecordsByApiKeys = function (data, next) {
         if (data.ApiKeys != undefined && data.ApiKeys != null) {
             if (Object.prototype.toString.call(data.ApiKeys) === '[object Array]') {
                 //var sitesId = data.ApiKeys.map(function (id) { return _mongoose.Types.ObjectId(id) });
@@ -1317,23 +1318,23 @@ function SiteController(dependencies) {
                     }], function (err, result) {
                         if (err) {
                             _console.log(err, 'error');
-                            callback({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
+                            next({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
                         }
                         else {
-                            callback({ success: true, message: 'GetTotalSecondsRecordsByApiKeys', result: result });
+                            next({ success: true, message: 'GetTotalSecondsRecordsByApiKeys', result: result });
                         }
                     });
             }
             else {
-                callback({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
+                next({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
             }
         }
         else {
-            callback({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
+            next({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
         }
     }
 
-    var getTotalRecordsByApiKey = function (data, callback) {
+    var getTotalRecordsByApiKey = function (data, next) {
         _entity.GetModel().aggregate([
             {
                 $match: {
@@ -1349,16 +1350,16 @@ function SiteController(dependencies) {
             }], function (err, result) {
                 if (err) {
                     _console.log(err, 'error');
-                    callback({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
+                    next({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
                 }
                 else {
-                    callback({ success: true, message: 'GetTotalRecordsByApiKey', result: result });
+                    next({ success: true, message: 'GetTotalRecordsByApiKey', result: result });
                 }
             });
 
     }
 
-    var getTotalRecordsByApiKeys = function (data, callback) {
+    var getTotalRecordsByApiKeys = function (data, next) {
         if (data.ApiKeys != undefined && data.ApiKeys != null) {
             if (Object.prototype.toString.call(data.ApiKeys) === '[object Array]') {
                 //var sitesId = data.ApiKeys.map(function (id) { return _mongoose.Types.ObjectId(id) });
@@ -1378,40 +1379,40 @@ function SiteController(dependencies) {
                     }], function (err, result) {
                         if (err) {
                             _console.log(err, 'error');
-                            callback({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
+                            next({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
                         }
                         else {
-                            callback({ success: true, message: 'GetTotalRecordsByApiKeys', result: result });
+                            next({ success: true, message: 'GetTotalRecordsByApiKeys', result: result });
                         }
                     });
             }
             else {
-                callback({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
+                next({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
             }
         }
         else {
-            callback({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
+            next({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
         }
     }
 
-    var getAvailableChartsByApiKey = function (apiKey, callback) {
+    var getAvailableChartsByApiKey = function (apiKey, next) {
         _entity.GetModel().findOne({ "ApiKey": apiKey }, function (err, result) {
             if (err) {
                 _console.log(err, 'error');
-                callback({ success: false, message: 'Something went error while retreiving available Charts', result: null });
+                next({ success: false, message: 'Something went error while retreiving available Charts', result: null });
             }
 
             if (result != undefined) {
                 if (result != null) {
-                    callback({ success: true, message: 'GetAvailableChartsByApiKey', result: result.Insights.AvailableCharts });
+                    next({ success: true, message: 'GetAvailableChartsByApiKey', result: result.Insights.AvailableCharts });
                 }
                 else {
-                    callback({ success: false, message: 'We haven\'t available charts at this moment', result: null });
+                    next({ success: false, message: 'We haven\'t available charts at this moment', result: null });
                 }
 
             }
             else {
-                callback({ success: false, message: 'Something went error while retreiving available Charts', result: null });
+                next({ success: false, message: 'Something went error while retreiving available Charts', result: null });
             }
         })
     }
@@ -1420,11 +1421,11 @@ function SiteController(dependencies) {
         return (n < 10 ? '0' : '') + n;
     }
 
-    var increaseHeatmapClientsBehaviorByApiKey = function (data, callback) {
+    var increaseHeatmapClientsBehaviorByApiKey = function (data, next) {
         _entity.GetModel().findOne({ "ApiKey": data.ApiKey }, function (err, siteResult) {
             if (err) {
                 _console.log(err, 'error');
-                callback({ success: false, message: 'Something went wrong when updating insights, try again.', result: null });
+                next({ success: false, message: 'Something went wrong when updating insights, try again.', result: null });
             }
             else {
                 if (siteResult != null) {
@@ -1440,24 +1441,24 @@ function SiteController(dependencies) {
                         }, { upsert: false }, function (err, result) {
                             if (err) {
                                 _console.log(err, 'error');
-                                callback({ success: false, message: 'Something went wrong when updating insights, try again.', result: null });
+                                next({ success: false, message: 'Something went wrong when updating insights, try again.', result: null });
                             }
-                            
-                            callback({ success: true, message: 'IncreaseMovementHeatmaps', result: result });
+
+                            next({ success: true, message: 'IncreaseMovementHeatmaps', result: result });
                         });
                 }
                 else {
-                    callback({ success: false, message: 'Something went wrong when updating insights, try again.', result: null });
+                    next({ success: false, message: 'Something went wrong when updating insights, try again.', result: null });
                 }
             }
         });
     }
 
-    var increaseRATClientsBehaviorByApiKey = function (data, callback) {
+    var increaseRATClientsBehaviorByApiKey = function (data, next) {
         _entity.GetModel().findOne({ "ApiKey": data.ApiKey }, function (err, siteResult) {
             if (err) {
                 _console.log(err, 'error');
-                callback({ success: false, message: 'Something went wrong when updating insights, try again.', result: null });
+                next({ success: false, message: 'Something went wrong when updating insights, try again.', result: null });
             }
             else {
                 if (siteResult != null) {
@@ -1473,24 +1474,24 @@ function SiteController(dependencies) {
                         }, { upsert: false }, function (err, result) {
                             if (err) {
                                 _console.log(err, 'error');
-                                callback({ success: false, message: 'Something went wrong when updating insights, try again.', result: null });
+                                next({ success: false, message: 'Something went wrong when updating insights, try again.', result: null });
                             }
-                            
-                            callback({ success: true, message: 'IncreaseMovementHeatmaps', result: result });
+
+                            next({ success: true, message: 'IncreaseMovementHeatmaps', result: result });
                         });
                 }
                 else {
-                    callback({ success: false, message: 'Something went wrong when updating insights, try again.', result: null });
+                    next({ success: false, message: 'Something went wrong when updating insights, try again.', result: null });
                 }
             }
         });
     }
 
-    var increaseFormAnalysisClientsBehaviorByApiKey = function (data, callback) {
+    var increaseFormAnalysisClientsBehaviorByApiKey = function (data, next) {
         _entity.GetModel().findOne({ "ApiKey": data.ApiKey }, function (err, siteResult) {
             if (err) {
                 _console.log(err, 'error');
-                callback({ success: false, message: 'Something went wrong when updating insights, try again.', result: null });
+                next({ success: false, message: 'Something went wrong when updating insights, try again.', result: null });
             }
             else {
                 if (siteResult != null) {
@@ -1506,24 +1507,24 @@ function SiteController(dependencies) {
                         }, { upsert: false }, function (err, result) {
                             if (err) {
                                 _console.log(err, 'error');
-                                callback({ success: false, message: 'Something went wrong when updating insights, try again.', result: null });
+                                next({ success: false, message: 'Something went wrong when updating insights, try again.', result: null });
                             }
-                            
-                            callback({ success: true, message: 'IncreaseMovementHeatmaps', result: result });
+
+                            next({ success: true, message: 'IncreaseMovementHeatmaps', result: result });
                         });
                 }
                 else {
-                    callback({ success: false, message: 'Something went wrong when updating insights, try again.', result: null });
+                    next({ success: false, message: 'Something went wrong when updating insights, try again.', result: null });
                 }
             }
         });
     }
 
-    var increaseRecordsClientsBehaviorByApiKey = function (data, callback) {
+    var increaseRecordsClientsBehaviorByApiKey = function (data, next) {
         _entity.GetModel().findOne({ "ApiKey": data.ApiKey }, function (err, siteResult) {
             if (err) {
                 _console.log(err, 'error');
-                callback({ success: false, message: 'Something went wrong when updating insights, try again.', result: null });
+                next({ success: false, message: 'Something went wrong when updating insights, try again.', result: null });
             }
             else {
                 if (siteResult != null) {
@@ -1539,108 +1540,108 @@ function SiteController(dependencies) {
                         }, { upsert: false }, function (err, result) {
                             if (err) {
                                 _console.log(err, 'error');
-                                callback({ success: false, message: 'Something went wrong when updating insights, try again.', result: null });
+                                next({ success: false, message: 'Something went wrong when updating insights, try again.', result: null });
                             }
-                            
-                            callback({ success: true, message: 'IncreaseMovementHeatmaps', result: result });
+
+                            next({ success: true, message: 'IncreaseMovementHeatmaps', result: result });
                         });
                 }
                 else {
-                    callback({ success: false, message: 'Something went wrong when updating insights, try again.', result: null });
+                    next({ success: false, message: 'Something went wrong when updating insights, try again.', result: null });
                 }
             }
         });
     }
 
-    var getHeatmapClientsBehaviorByApiKey = function (data, callback) {
+    var getHeatmapClientsBehaviorByApiKey = function (data, next) {
         _entity.GetModel().findOne({ "ApiKey": data.ApiKey }, function (err, result) {
             if (err) {
                 _console.log(err, 'error');
-                callback({ success: false, message: 'Something went error while retreiving available Charts', result: null });
+                next({ success: false, message: 'Something went error while retreiving available Charts', result: null });
             }
 
             if (result != undefined) {
                 if (result != null) {
-                    callback({ success: true, message: 'GetHeatmapClientsBehaviorByApiKey', result: result.Insights.Heatmaps.ClientsBehavior });
+                    next({ success: true, message: 'GetHeatmapClientsBehaviorByApiKey', result: result.Insights.Heatmaps.ClientsBehavior });
                 }
                 else {
-                    callback({ success: false, message: 'We haven\'t available data at this moment', result: null });
+                    next({ success: false, message: 'We haven\'t available data at this moment', result: null });
                 }
 
             }
             else {
-                callback({ success: false, message: 'Something went error while retreiving available Charts', result: null });
+                next({ success: false, message: 'Something went error while retreiving available Charts', result: null });
             }
         });
     }
 
-    var getRATClientsBehaviorByApiKey = function (data, callback) {
+    var getRATClientsBehaviorByApiKey = function (data, next) {
         _entity.GetModel().findOne({ "ApiKey": data.ApiKey }, function (err, result) {
             if (err) {
                 _console.log(err, 'error');
-                callback({ success: false, message: 'Something went error while retreiving available Charts', result: null });
+                next({ success: false, message: 'Something went error while retreiving available Charts', result: null });
             }
 
             if (result != undefined) {
                 if (result != null) {
-                    callback({ success: true, message: 'GetHeatmapClientsBehaviorByApiKey', result: result.Insights.RAT.ClientsBehavior });
+                    next({ success: true, message: 'GetHeatmapClientsBehaviorByApiKey', result: result.Insights.RAT.ClientsBehavior });
                 }
                 else {
-                    callback({ success: false, message: 'We haven\'t available data at this moment', result: null });
+                    next({ success: false, message: 'We haven\'t available data at this moment', result: null });
                 }
 
             }
             else {
-                callback({ success: false, message: 'Something went error while retreiving available Charts', result: null });
+                next({ success: false, message: 'Something went error while retreiving available Charts', result: null });
             }
         });
     }
 
-    var getFormAnalysisClientsBehaviorByApiKey = function (data, callback) {
+    var getFormAnalysisClientsBehaviorByApiKey = function (data, next) {
         _entity.GetModel().findOne({ "ApiKey": data.ApiKey }, function (err, result) {
             if (err) {
                 _console.log(err, 'error');
-                callback({ success: false, message: 'Something went error while retreiving available Charts', result: null });
+                next({ success: false, message: 'Something went error while retreiving available Charts', result: null });
             }
 
             if (result != undefined) {
                 if (result != null) {
-                    callback({ success: true, message: 'GetHeatmapClientsBehaviorByApiKey', result: result.Insights.FormAnalysis.ClientsBehavior });
+                    next({ success: true, message: 'GetHeatmapClientsBehaviorByApiKey', result: result.Insights.FormAnalysis.ClientsBehavior });
                 }
                 else {
-                    callback({ success: false, message: 'We haven\'t available data at this moment', result: null });
+                    next({ success: false, message: 'We haven\'t available data at this moment', result: null });
                 }
 
             }
             else {
-                callback({ success: false, message: 'Something went error while retreiving available Charts', result: null });
+                next({ success: false, message: 'Something went error while retreiving available Charts', result: null });
             }
         });
     }
 
-    var getRecordsClientsBehaviorByApiKey = function (data, callback) {
+    var getRecordsClientsBehaviorByApiKey = function (data, next) {
         _entity.GetModel().findOne({ "ApiKey": data.ApiKey }, function (err, result) {
             if (err) {
                 _console.log(err, 'error');
-                callback({ success: false, message: 'Something went error while retreiving available Charts', result: null });
+                next({ success: false, message: 'Something went error while retreiving available Charts', result: null });
             }
 
             if (result != undefined) {
                 if (result != null) {
-                    callback({ success: true, message: 'GetHeatmapClientsBehaviorByApiKey', result: result.Insights.Records.ClientsBehavior });
+                    next({ success: true, message: 'GetHeatmapClientsBehaviorByApiKey', result: result.Insights.Records.ClientsBehavior });
                 }
                 else {
-                    callback({ success: false, message: 'We haven\'t available data at this moment', result: null });
+                    next({ success: false, message: 'We haven\'t available data at this moment', result: null });
                 }
 
             }
             else {
-                callback({ success: false, message: 'Something went error while retreiving available Charts', result: null });
+                next({ success: false, message: 'Something went error while retreiving available Charts', result: null });
             }
         });
     }
 
-    var getHeatmapClientsBehaviorByApiKeys = function (data, callback) {
+    var getHeatmapClientsBehaviorByApiKeys = function (data, next) {
         if (data.ApiKeys != undefined && data.ApiKeys != null) {
             if (Object.prototype.toString.call(data.ApiKeys) === '[object Array]') {
                 //var sitesId = data.ApiKeys.map(function (id) { return _mongoose.Types.ObjectId(id) });
@@ -1659,23 +1660,23 @@ function SiteController(dependencies) {
                     }], function (err, result) {
                         if (err) {
                             _console.log(err, 'error');
-                            callback({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
+                            next({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
                         }
                         else {
-                            callback({ success: true, message: 'GetHeatmapClientsBehaviorByApiKeys', result: result });
+                            next({ success: true, message: 'GetHeatmapClientsBehaviorByApiKeys', result: result });
                         }
                     });
             }
             else {
-                callback({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
+                next({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
             }
         }
         else {
-            callback({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
+            next({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
         }
     }
 
-    var getRATClientsBehaviorByApiKeys = function (data, callback) {
+    var getRATClientsBehaviorByApiKeys = function (data, next) {
         if (data.ApiKeys != undefined && data.ApiKeys != null) {
             if (Object.prototype.toString.call(data.ApiKeys) === '[object Array]') {
                 //var sitesId = data.ApiKeys.map(function (id) { return _mongoose.Types.ObjectId(id) });
@@ -1694,23 +1695,23 @@ function SiteController(dependencies) {
                     }], function (err, result) {
                         if (err) {
                             _console.log(err, 'error');
-                            callback({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
+                            next({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
                         }
                         else {
-                            callback({ success: true, message: 'GetHeatmapClientsBehaviorByApiKeys', result: result });
+                            next({ success: true, message: 'GetHeatmapClientsBehaviorByApiKeys', result: result });
                         }
                     });
             }
             else {
-                callback({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
+                next({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
             }
         }
         else {
-            callback({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
+            next({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
         }
     }
 
-    var getFormAnalysisClientsBehaviorByApiKeys = function (data, callback) {
+    var getFormAnalysisClientsBehaviorByApiKeys = function (data, next) {
         if (data.ApiKeys != undefined && data.ApiKeys != null) {
             if (Object.prototype.toString.call(data.ApiKeys) === '[object Array]') {
                 //var sitesId = data.ApiKeys.map(function (id) { return _mongoose.Types.ObjectId(id) });
@@ -1729,23 +1730,23 @@ function SiteController(dependencies) {
                     }], function (err, result) {
                         if (err) {
                             _console.log(err, 'error');
-                            callback({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
+                            next({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
                         }
                         else {
-                            callback({ success: true, message: 'GetHeatmapClientsBehaviorByApiKeys', result: result });
+                            next({ success: true, message: 'GetHeatmapClientsBehaviorByApiKeys', result: result });
                         }
                     });
             }
             else {
-                callback({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
+                next({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
             }
         }
         else {
-            callback({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
+            next({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
         }
     }
 
-    var getRecordsClientsBehaviorByApiKeys = function (data, callback) {
+    var getRecordsClientsBehaviorByApiKeys = function (data, next) {
         if (data.ApiKeys != undefined && data.ApiKeys != null) {
             if (Object.prototype.toString.call(data.ApiKeys) === '[object Array]') {
                 //var sitesId = data.ApiKeys.map(function (id) { return _mongoose.Types.ObjectId(id) });
@@ -1764,23 +1765,23 @@ function SiteController(dependencies) {
                     }], function (err, result) {
                         if (err) {
                             _console.log(err, 'error');
-                            callback({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
+                            next({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
                         }
                         else {
-                            callback({ success: true, message: 'GetHeatmapClientsBehaviorByApiKeys', result: result });
+                            next({ success: true, message: 'GetHeatmapClientsBehaviorByApiKeys', result: result });
                         }
                     });
             }
             else {
-                callback({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
+                next({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
             }
         }
         else {
-            callback({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
+            next({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
         }
     }
 
-    var getClientsBehaviorByApiKeys = function (data, callback) {
+    var getClientsBehaviorByApiKeys = function (data, next) {
         if (data.ApiKeys != undefined && data.ApiKeys != null) {
             if (Object.prototype.toString.call(data.ApiKeys) === '[object Array]') {
                 //var sitesId = data.ApiKeys.map(function (id) { return _mongoose.Types.ObjectId(id) });
@@ -1806,20 +1807,31 @@ function SiteController(dependencies) {
                     }], function (err, result) {
                         if (err) {
                             _console.log(err, 'error');
-                            callback({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
+                            next({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
                         }
                         else {
-                            callback({ success: true, message: 'GetClientsBehaviorByApiKeys', result: result });
+                            next({ success: true, message: 'GetClientsBehaviorByApiKeys', result: result });
                         }
                     });
             }
             else {
-                callback({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
+                next({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
             }
         }
         else {
-            callback({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
+            next({ success: false, message: 'Something went wrong when retrieving insights, try again.', result: null });
         }
+    }
+
+    var editBlockUserText = function (data, next) {
+        _entity.GetModel().findOneAndUpdate({ "_id": data._id }, { $set: { BlockUserText: data.Text } }, { upsert: false }, function (err, editTextResult) {
+            if (err) {
+                _console.log(err, 'error');
+                next({ success: false, message: `Something went wrong when retrieving site, try again`, result: null });
+            }
+
+            next({ success: true, message: `Text changed succesfuly`, result: editTextResult });
+        })
     }
 
     var getEntity = function () {
@@ -1890,6 +1902,7 @@ function SiteController(dependencies) {
         GetRecordsClientsBehaviorByApiKey: getRecordsClientsBehaviorByApiKey,
         GetRecordsClientsBehaviorByApiKeys: getRecordsClientsBehaviorByApiKeys,
         GetClientsBehaviorByApiKeys: getClientsBehaviorByApiKeys,
+        EditBlockUserText: editBlockUserText,
         Entity: getEntity
     }
 }
