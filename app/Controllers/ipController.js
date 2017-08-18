@@ -142,8 +142,6 @@ function IPController(dependencies) {
     }
 
     var searchIp = function (ip, data) {
-        console.log(`ip: ${ip}`)
-        console.log(`QueryIP: ${data.QueryIP}`)
         if (ip.indexOf('*') >= 0) {
             return {
                 success: true,

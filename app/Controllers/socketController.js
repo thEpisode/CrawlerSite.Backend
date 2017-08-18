@@ -309,10 +309,9 @@ function Socket(dependencies) {
                     if (data.ClientInformation.privateIP !== undefined && data.ClientInformation.privateIP !== null) {
                         _database.Ip().CheckIfIPIsBlockedByApiKey({ ApiKey: data.ApiKey, PublicIP: publicIP, QueryIP: data.ClientInformation.privateIP.IPv4 }, function (checkResult) {
                             _geolocate.Locate({ IP: publicIP }, function (geolocateResponse) {
-                                console.log(geolocateResponse)
                                 if (geolocateResponse !== undefined && geolocateResponse !== null) {
                                     if (geolocateResponse.success === true) {
-                                        data.ClientInformation.Geolocation = geolocateResponse
+                                        data.ClientInformation.Geolocation = geolocateResponse.result
                                     }
                                 }
                                 data.ClientInformation.PublicIP = publicIP;
