@@ -106,14 +106,19 @@ function IPController(dependencies) {
             }
             else {
                 if (IPRresult !== undefined && IPRresult !== null) {
+                    console.log(`PublicIP: ${data.PublicIP}`);
+                    console.log(`IPResult: ${IPRresult}`)
                     for (var i = 0; i < IPRresult.length; i++) {
                         var ip = IPRresult[i];
                         if (ip.PrivateIPs.length == 1) {
+                            console.log('if (ip.PrivateIPs.length == 1)');
                             if (data.PublicIP === ip.PrivateIPs[0]) {
+                                console.log('if (data.PublicIP === ip.PrivateIPs[0])');
                                 next(searchIp(ip.PrivateIPs[0], data))
                             }
                         }
                         else {
+                            console.log('not (ip.PrivateIPs.length == 1)');
                             var searchIpResult = {};
                             for (var i = 0; i < ip.PrivateIPs.length; i++) {
                                 if (data.PublicIP === ip.PrivateIPs[i]) {
@@ -141,6 +146,8 @@ function IPController(dependencies) {
     }
 
     var searchIp = function (ip, data) {
+        console.log(`ip: ${ip}`)
+        console.log(`QueryIP: ${data.QueryIP}`)
         if (ip.indexOf('*') >= 0) {
             return {
                 success: true,
