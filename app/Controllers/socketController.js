@@ -443,8 +443,9 @@ function Socket(dependencies) {
         /// Search all connected sockets by ApiKey
         var keys = Object.keys(_io.sockets.connected)
         for (var index = 0; index < keys.length; index++) {
-            if (_io.sockets.connected[keys[index]].id !== undefined) {
-                if (_io.sockets.connected[keys[index]].id == data.SocketId) {
+            console.log(`${keys[index]}`)
+            if (_io.sockets.connected[keys[index]].id !== undefined) {console.log(`${_io.sockets.connected[keys[index]].id} ?? ${data.SocketId}`)
+                if (_io.sockets.connected[keys[index]].id == data.SocketId) {console.log(`${_io.sockets.connected[keys[index]].id} == ${data.SocketId}`)
                     connectedSocket = _io.sockets.connected[keys[index]];
                     console.log('connectedSocket catched!')
                     break;
