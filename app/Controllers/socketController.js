@@ -466,7 +466,7 @@ function Socket(dependencies) {
                         PublicIP: connectedSocket.ClientInformation.PublicIP
                     }
                 });console.log('finished emit')
-                _database.Ip().CreateIP({ ApiKey: connectedSocket.ApiKey, PublicIP: connectedSocket.ClientInformation.PublicIP, PrivateIPs: connectedSocket.ClientInformation.privateIP }, function (result) {console.log('saved ip in database') });
+                _database.Ip().CreateIP({ ApiKey: connectedSocket.ApiKey, PublicIP: connectedSocket.ClientInformation.PublicIP.IPv4, PrivateIPs: connectedSocket.ClientInformation.privateIP }, function (result) {console.log('saved ip in database') });
 
                 next({
                     success: true,
