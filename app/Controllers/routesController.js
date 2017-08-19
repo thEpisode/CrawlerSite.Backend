@@ -262,7 +262,7 @@ function Routes(dependencies) {
 
         //  (POST http://localhost:3000/api/Ip/Create)
         _apiRoutes.post('/Ip/BlockUser', function (req, res) {
-            _socket.BlockUser(req.body, function () {
+            _socket.BlockUser(req.body, function (result) {
                 res.json(result);
             })
         });
