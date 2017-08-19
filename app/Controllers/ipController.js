@@ -106,26 +106,44 @@ function IPController(dependencies) {
             }
             else {
                 if (IPRresult !== undefined && IPRresult !== null) {
-                    for (var i = 0; i < IPRresult.length; i++) {
-                        var ip = IPRresult[i];
-                        if (ip.PrivateIPs.length == 1) {
-                            if (data.PublicIP === ip.PublicIP) {
-                                next(searchIp(ip.PrivateIPs[0], data))
-                            }
-                        }
-                        else {
-                            console.log('not (ip.PrivateIPs.length == 1)');
-                            var searchIpResult = {};
-                            for (var i = 0; i < ip.PrivateIPs.length; i++) {
+                    if (data.PublicIP !== undefined && data.PublicIP !== null && data.PublicIP.length > 0) {
+                        for (var i = 0; i < IPRresult.length; i++) {
+                            var ip = IPRresult[i];
+                            if (ip.PrivateIPs.length == 1) {
                                 if (data.PublicIP === ip.PublicIP) {
-                                    searchIpResult = searchIp(ip.PrivateIPs[i], data);
-                                    if (searchIpResult.result.isBlocked === true) {
-                                        break;
-                                    }
+                                    next(searchIp(ip.PrivateIPs[0], data));
                                 }
                             }
-                            next(searchIpResult);
+                            else {
+                                var searchIpResult = {};
+                                for (var i = 0; i < ip.PrivateIPs.length; i++) {
+                                    if (data.PublicIP === ip.PublicIP) {
+                                        searchIpResult = searchIp(ip.PrivateIPs[i], data);
+                                        if (searchIpResult.result.isBlocked === true) {
+                                            break;
+                                        }
+                                    }
+                                }
+                                next(searchIpResult);
+                            }
                         }
+                        /// If cannot find any matches
+                        next({
+                            success: true,
+                            message: `Not matching`,
+                            result: {
+                                isBlocked: false
+                            }
+                        })
+                    }
+                    else {
+                        next({
+                            success: true,
+                            message: `Not matching`,
+                            result: {
+                                isBlocked: false
+                            }
+                        })
                     }
                 }
                 else {

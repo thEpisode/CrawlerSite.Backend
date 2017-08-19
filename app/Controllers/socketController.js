@@ -307,44 +307,49 @@ function Socket(dependencies) {
                 if (data.ApiKey != undefined) {
                     var publicIP = socket.handshake.address.slice(7, 20)
                     if (data.ClientInformation.privateIP !== undefined && data.ClientInformation.privateIP !== null) {
-                        _database.Ip().CheckIfIPIsBlockedByApiKey({ ApiKey: data.ApiKey, PublicIP: publicIP, QueryIP: data.ClientInformation.privateIP.IPv4 }, function (checkResult) {
-                            _geolocate.Locate({ IP: publicIP }, function (geolocateResponse) {
-                                if (geolocateResponse !== undefined && geolocateResponse !== null) {
-                                    if (geolocateResponse.success === true) {
-                                        data.ClientInformation.Geolocation = geolocateResponse.result
+                        _database.Ip().CheckIfIPIsBlockedByApiKey({
+                            ApiKey: data.ApiKey,
+                            PublicIP: publicIP,
+                            QueryIP: data.ClientInformation.privateIP.IPv4
+                        },
+                            function (checkResult) {
+                                _geolocate.Locate({ IP: publicIP }, function (geolocateResponse) {
+                                    if (geolocateResponse !== undefined && geolocateResponse !== null) {
+                                        if (geolocateResponse.success === true) {
+                                            data.ClientInformation.Geolocation = geolocateResponse.result
+                                        }
                                     }
-                                }
-                                data.ClientInformation.PublicIP = publicIP;
+                                    data.ClientInformation.PublicIP = publicIP;
 
-                                /// Set data to socket
-                                var connectedSocket = _io.sockets.connected[socket.id.split('#')[1]];
-                                connectedSocket.ApiKey = data.ApiKey;
-                                connectedSocket.ClientInformation = data.ClientInformation;
+                                    /// Set data to socket
+                                    var connectedSocket = _io.sockets.connected[socket.id.split('#')[1]];
+                                    connectedSocket.ApiKey = data.ApiKey;
+                                    connectedSocket.ClientInformation = data.ClientInformation;
 
-                                if (checkResult !== undefined && checkResult !== null) {
-                                    if (checkResult.success === true) {
-                                        /// Check if IP is blocked
-                                        if (checkResult.result.isBlocked === true) {
-                                            _database.Site().GetSiteByApiKey({ ApiKey: data.ApiKey }, function (siteResult) {
-                                                socket.emit('Coplest.Flinger.ServerEvent', {
-                                                    Command: 'BlockedUser', Values: {
-                                                        Message: siteResult.result.BlockUserText,
-                                                        Location: data.ClientInformation.Geolocation,
-                                                        PrivateIP: data.ClientInformation.privateIP.IPv4,
-                                                        PublicIP: data.ClientInformation.PublicIP
-                                                    }
+                                    if (checkResult !== undefined && checkResult !== null) {
+                                        if (checkResult.success === true) {
+                                            /// Check if IP is blocked
+                                            if (checkResult.result.isBlocked === true) {
+                                                _database.Site().GetSiteByApiKey({ ApiKey: data.ApiKey }, function (siteResult) {
+                                                    socket.emit('Coplest.Flinger.ServerEvent', {
+                                                        Command: 'BlockedUser', Values: {
+                                                            Message: siteResult.result.BlockUserText,
+                                                            Location: data.ClientInformation.Geolocation,
+                                                            PrivateIP: data.ClientInformation.privateIP.IPv4,
+                                                            PublicIP: data.ClientInformation.PublicIP
+                                                        }
+                                                    });
                                                 });
-                                            });
-                                        }
-                                        else {
-                                            adminPoolNamespace.emit('Coplest.Flinger.RAT', { Command: 'SubscribeSocketToApiKey#Request', Values: { SocketId: socket.id.split('#')[1], ApiKey: data.ApiKey, ClientInformation: data.ClientInformation } });
+                                            }
+                                            else {
+                                                adminPoolNamespace.emit('Coplest.Flinger.RAT', { Command: 'SubscribeSocketToApiKey#Request', Values: { SocketId: socket.id.split('#')[1], ApiKey: data.ApiKey, ClientInformation: data.ClientInformation } });
+                                            }
                                         }
                                     }
-                                }
+
+                                });
 
                             });
-
-                        });
                     }
                     else {
                         adminPoolNamespace.emit('Coplest.Flinger.RAT', { Command: 'SubscribeSocketToApiKey#Request', Values: { SocketId: socket.id.split('#')[1], ApiKey: data.ApiKey, ClientInformation: data.ClientInformation } });
