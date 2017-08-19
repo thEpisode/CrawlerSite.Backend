@@ -438,7 +438,7 @@ function Socket(dependencies) {
         });
     }
 
-    var blockUser = function (data, next) {
+    var blockUser = function (data, next) {console.log('blockUser catched')
         var connectedSocket = null;
         /// Search all connected sockets by ApiKey
         var keys = Object.keys(_io.sockets.connected)
@@ -446,13 +446,14 @@ function Socket(dependencies) {
             if (_io.sockets.connected[keys[index]].id !== undefined) {
                 if (_io.sockets.connected[keys[index]].id == data.SocketId) {
                     connectedSocket = _io.sockets.connected[keys[index]];
+                    console.log('connectedSocket catched!')
                     break;
                 }
             }
         }
 
-        if (connectedSocket !== null) {
-            _database.Site().GetSiteByApiKey({ ApiKey: connectedSocket.ApiKey }, function (siteResult) {
+        if (connectedSocket !== null) {console.log('connectedSocket != null')
+            _database.Site().GetSiteByApiKey({ ApiKey: connectedSocket.ApiKey }, function (siteResult) {console.log('GetSiteByApiKey')
                 userPoolNamespace.emit('Coplest.Flinger.ServerEvent', {
                     Command: 'BlockedUser',
                     Values: {
@@ -462,8 +463,8 @@ function Socket(dependencies) {
                         PrivateIP: connectedSocket.ClientInformation.privateIP.IPv4,
                         PublicIP: connectedSocket.ClientInformation.PublicIP
                     }
-                });
-                _database.Ip().CreateIP({ ApiKey: connectedSocket.ApiKey, PublicIP: connectedSocket.ClientInformation.PublicIP, PrivateIPs: connectedSocket.ClientInformation.privateIP }, function (result) { });
+                });console.log('finished emit')
+                _database.Ip().CreateIP({ ApiKey: connectedSocket.ApiKey, PublicIP: connectedSocket.ClientInformation.PublicIP, PrivateIPs: connectedSocket.ClientInformation.privateIP }, function (result) {console.log('saved ip in database') });
 
                 next({
                     success: true,
