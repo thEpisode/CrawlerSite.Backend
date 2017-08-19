@@ -337,6 +337,7 @@ function Socket(dependencies) {
                                                 _database.Site().GetSiteByApiKey({ ApiKey: data.ApiKey }, function (siteResult) {
                                                     socket.emit('Coplest.Flinger.ServerEvent', {
                                                         Command: 'BlockedUser', Values: {
+                                                            SocketId: connectedSocket.id,
                                                             Message: siteResult.result.BlockUserText,
                                                             Location: data.ClientInformation.Geolocation,
                                                             PrivateIP: data.ClientInformation.privateIP.IPv4,
@@ -437,34 +438,21 @@ function Socket(dependencies) {
         });
     }
 
-    var blockUser = function (data) {
+    var blockUser = function (data, next) {
         var connectedSocket = null;
         /// Search all connected sockets by ApiKey
         var keys = Object.keys(_io.sockets.connected)
         for (var index = 0; index < keys.length; index++) {
-
-            if (_io.sockets.connected[keys[index]].ApiKey !== undefined) {
-                if (_io.sockets.connected[keys[index]].ApiKey == data.ApiKey) {
-                    if (_io.sockets.connected[keys[index]].ClientInformation.PublicIP == data.PublicIP) {
-                        if (data.PrivateIP.indexOf('*') >= 0) {
-                            connectedSocket = _io.sockets.connected[keys[index]];
-                        }
-                        else {
-                            if (_io.sockets.connected[keys[index]].ClientInformation.privateIP.IPv4 == data.PrivateIP) {
-                                connectedSocket = _io.sockets.connected[keys[index]];
-                            }
-                        }
-                    }
+            if (_io.sockets.connected[keys[index]].id !== undefined) {
+                if (_io.sockets.connected[keys[index]].id == data.SocketId) {
+                    connectedSocket = _io.sockets.connected[keys[index]];
+                    break;
                 }
             }
         }
 
         if (connectedSocket !== null) {
-            _database.Site().GetSiteByApiKey({ ApiKey: data.ApiKey }, function (siteResult) {
-                for (var i = 0; i < connectedSockets.length; i++) {
-                    var element = connectedSockets[i];
-
-                }
+            _database.Site().GetSiteByApiKey({ ApiKey: connectedSocket.ApiKey }, function (siteResult) {
                 userPoolNamespace.emit('Coplest.Flinger.ServerEvent', {
                     Command: 'BlockedUser',
                     Values: {
@@ -474,6 +462,13 @@ function Socket(dependencies) {
                         PrivateIP: connectedSocket.ClientInformation.privateIP.IPv4,
                         PublicIP: connectedSocket.ClientInformation.PublicIP
                     }
+                });
+                _database.Ip().CreateIP({ ApiKey: connectedSocket.ApiKey, PublicIP: connectedSocket.ClientInformation.PublicIP, PrivateIPs: connectedSocket.ClientInformation.privateIP }, function (result) { });
+
+                next({
+                    success: true,
+                    message: 'User blocked',
+                    result: null
                 });
             });
         }

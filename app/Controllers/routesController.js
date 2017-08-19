@@ -61,13 +61,13 @@ function Routes(dependencies) {
                 res.json(result);
             })
         });
-        
+
 
         //
-        _apiRoutes.post('/Payment/Voucher/VerifyVoucher', function(req, res){
-           _database.Voucher().VerifyByStripeId(req.body, function(result){
-               res.json(result)
-           });
+        _apiRoutes.post('/Payment/Voucher/VerifyVoucher', function (req, res) {
+            _database.Voucher().VerifyByStripeId(req.body, function (result) {
+                res.json(result)
+            });
         });
 
         //  (GET http://localhost:3000/api/Site/DiscoveryMode/[KEY])
@@ -82,11 +82,11 @@ function Routes(dependencies) {
             _database.Site().WebCrawling(req.body.ApiKey, req.body.Endpoint, function (result) {
                 // if hasn't a screenshot
                 if (result == false) {
-                    _database.Screenshot().CreateScreenshot(req.body, function(createScreenshotResult){
-                        if(createScreenshotResult.result === true){
+                    _database.Screenshot().CreateScreenshot(req.body, function (createScreenshotResult) {
+                        if (createScreenshotResult.result === true) {
                             res.json({ success: true, message: 'AddScreenshot', result: true });
                         }
-                        else{
+                        else {
                             res.json(createScreenshotResult);
                         }
                     });
@@ -156,7 +156,7 @@ function Routes(dependencies) {
         _apiRoutes.get('/Welcome', function (req, res) {
             res.json({ success: true, message: 'Welcome to the coolest API on earth!' });
         });
-        
+
         /// Middleware
         /// -------------------------
         //  To verify a token
@@ -190,7 +190,7 @@ function Routes(dependencies) {
 
             }
         });
-                
+
         /// Click api routes
         /// -------------------------
         //  (POST http://localhost:3000/api/Click/Create)
@@ -262,10 +262,8 @@ function Routes(dependencies) {
 
         //  (POST http://localhost:3000/api/Ip/Create)
         _apiRoutes.post('/Ip/BlockUser', function (req, res) {
-            _database.Ip().CreateIP(req.body, function (result) {
-                _socket.BlockUser(req.body, function(){
-                    res.json(result);
-                })
+            _socket.BlockUser(req.body, function () {
+                res.json(result);
             })
         });
 
@@ -453,7 +451,7 @@ function Routes(dependencies) {
                 res.json({ success: true, message: 'GetAllSite', result: result });
             })
         });
-        
+
         //  (GET http://localhost:3000/api/Site/UserId)
         _apiRoutes.get('/Site/AddUserToSite/Site/:SiteId/User/:UserId', function (req, res) {
             _database.Subscription().AddUserToSubscription({ SubscriptionId: req.params.SubscriptionId, UserId: req.params.UserId }, function (result) {
@@ -469,8 +467,8 @@ function Routes(dependencies) {
         });
 
         // (GET http://localhost:3000/api/ApiKey/)
-        _apiRoutes.get('/Site/ApiKey/:ApiKey', function(req, res){
-            _database.Site().GetSiteByApiKey(req.params, function(result){
+        _apiRoutes.get('/Site/ApiKey/:ApiKey', function (req, res) {
+            _database.Site().GetSiteByApiKey(req.params, function (result) {
                 res.json(result);
             })
         })
@@ -489,8 +487,8 @@ function Routes(dependencies) {
             })
         });
 
-        _apiRoutes.post('/Site/EditBlockUserText', function(req, res){
-            _database.Site().EditBlockUserText(req.body, function(result){
+        _apiRoutes.post('/Site/EditBlockUserText', function (req, res) {
+            _database.Site().EditBlockUserText(req.body, function (result) {
                 res.json(result);
             })
         })
@@ -762,38 +760,38 @@ function Routes(dependencies) {
             })
         });
 
-        _apiRoutes.post('/Payment/GetSubscriptionByUserId', function(req, res){
-            _database.Subscription().GetSubscriptionByUserId(req.body, function(result){
+        _apiRoutes.post('/Payment/GetSubscriptionByUserId', function (req, res) {
+            _database.Subscription().GetSubscriptionByUserId(req.body, function (result) {
                 res.json(result);
             })
         })
 
-        _apiRoutes.post('/Payment/Voucher/Generate', function(req, res){
-           _database.Voucher().CreateVoucher(req.body, function(result){
-               res.json(result)
-           });
+        _apiRoutes.post('/Payment/Voucher/Generate', function (req, res) {
+            _database.Voucher().CreateVoucher(req.body, function (result) {
+                res.json(result)
+            });
         })
 
-        _apiRoutes.post('/Payment/Voucher/GetByStripeId', function(req, res){
-           _database.Voucher().GetVoucherByStripeId(req.body, function(result){
-               res.json(result)
-           });
+        _apiRoutes.post('/Payment/Voucher/GetByStripeId', function (req, res) {
+            _database.Voucher().GetVoucherByStripeId(req.body, function (result) {
+                res.json(result)
+            });
         })
 
-        _apiRoutes.post('/Payment/Voucher/Redeem', function(req, res){
-            _database.Voucher().RedeemVoucher(req.body, function(result){
+        _apiRoutes.post('/Payment/Voucher/Redeem', function (req, res) {
+            _database.Voucher().RedeemVoucher(req.body, function (result) {
                 res.json(result);
             })
         })
 
-        _apiRoutes.post('/Payment/Voucher/RedeemByUserId', function(req, res){
-            _database.Voucher().RedeemVoucherByUserId(req.body, function(result){
+        _apiRoutes.post('/Payment/Voucher/RedeemByUserId', function (req, res) {
+            _database.Voucher().RedeemVoucherByUserId(req.body, function (result) {
                 res.json(result);
             })
         })
 
-        _apiRoutes.post('/Vote/Up', function(req, res){
-            _database.Vote().CreateVote(req.body, function(result){
+        _apiRoutes.post('/Vote/Up', function (req, res) {
+            _database.Vote().CreateVote(req.body, function (result) {
                 res.json(result);
             })
         })
@@ -845,8 +843,8 @@ function Routes(dependencies) {
         });
 
         _apiRoutes.get('/GeoLocate/Locate/', function (req, res) {
-            var ip =  req.ip;debugger;
-            _geolocate.Locate({IP: ip}, function (result) {
+            var ip = req.ip; debugger;
+            _geolocate.Locate({ IP: ip }, function (result) {
                 res.json(result);
             })
         });
