@@ -438,7 +438,8 @@ function Socket(dependencies) {
         });
     }
 
-    var blockUser = function (data, next) {console.log('blockUser catched')
+    var blockUser = function (data, next) {console.log('blockUser catched');
+    console.log(data);
         var connectedSocket = null;
         /// Search all connected sockets by ApiKey
         var keys = Object.keys(_io.sockets.connected)
