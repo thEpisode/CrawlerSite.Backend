@@ -470,9 +470,9 @@ function Socket(dependencies) {
                     Values: {
                         SocketId: connectedSocket.id,
                         Message: siteResult.result.BlockUserText,
-                        Location: data.ClientInformation.Geolocation,
-                        PrivateIP: data.ClientInformation.privateIP.IPv4,
-                        PublicIP: data.ClientInformation.PublicIP
+                        Location: connectedSocket.ClientInformation.Geolocation,
+                        PrivateIP: connectedSocket.ClientInformation.privateIP.IPv4,
+                        PublicIP: connectedSocket.ClientInformation.PublicIP
                     }
                 });
             });
