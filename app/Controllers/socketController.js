@@ -288,7 +288,7 @@ function Socket(dependencies) {
 
             /// Catch when this connection is closed
             socket.on('disconnect', function () {
-                _console.log('Client disconnected: ' + socket.id, 'socket-message');
+                _console.log(`${socket.handshake.address} disconnected from ${socket.handshake.query.ApiKey}`, 'socket-message');
 
                 _database.Site().DecreaseUsersOnlineRATByApiKey({ ApiKey: socket.handshake.query.ApiKey }, function (response) {
                     _usersconnectedClients.push({ SocketId: socket.id, ApiKey: socket.handshake.query.ApiKey })
