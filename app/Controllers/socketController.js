@@ -309,7 +309,7 @@ function Socket(dependencies) {
             //Set Api Key and geolocation to connected socket
             socket.on('Coplest.Flinger.SubscribeSocketToApiKey', function (data) {
                 if (data.ApiKey != undefined) {
-                    var publicIP = socket.handshake.address.slice(7, 20)
+                    var publicIP = socket.handshake.address.slice(7, 25)
                     if (data.ClientInformation.privateIP !== undefined && data.ClientInformation.privateIP !== null) {
                         _database.Ip().CheckIfIPIsBlockedByApiKey({
                             ApiKey: data.ApiKey,
