@@ -18,6 +18,7 @@ function Routes(dependencies) {
     var _stripe;
     var _mail;
     var _notificationHub;
+    var _socket;
 
     var _apiRoutes;
 
@@ -36,6 +37,7 @@ function Routes(dependencies) {
         _mail = dependencies.mailController;
         _geolocate = dependencies.geolocateController;
         _notificationHub = dependencies.notificationHub;
+        _socket = dependencies.socketController;
 
         createAPI();
 
@@ -255,6 +257,15 @@ function Routes(dependencies) {
         _apiRoutes.post('/Ip/Create', function (req, res) {
             _database.Ip().CreateIP(req.body, function (result) {
                 res.json(result);
+            })
+        });
+
+        //  (POST http://localhost:3000/api/Ip/Create)
+        _apiRoutes.post('/Ip/BlockUser', function (req, res) {
+            _database.Ip().CreateIP(req.body, function (result) {
+                _socket.BlockUser(req.body, function(){
+                    res.json(result);
+                })
             })
         });
 

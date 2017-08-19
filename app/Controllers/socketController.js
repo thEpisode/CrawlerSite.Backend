@@ -14,6 +14,10 @@ function Socket(dependencies) {
     var _siteNamespaces = [];
     var _usersconnectedClients = [];
 
+    var userPoolNamespace;
+    var adminPoolNamespace;
+    var ratPoolNamespace;
+
     var constructor = function () {
         _io = dependencies.io;
         _database = dependencies.database;
@@ -46,9 +50,9 @@ function Socket(dependencies) {
     }
 
     var socketImplementation = function () {
-        var userPoolNamespace = _io.of('/user-pool-namespace');
-        var adminPoolNamespace = _io.of('/admin-pool-namespace');
-        var ratPoolNamespace = _io.of('/rat-pool-namespace');
+        userPoolNamespace = _io.of('/user-pool-namespace');
+        adminPoolNamespace = _io.of('/admin-pool-namespace');
+        ratPoolNamespace = _io.of('/rat-pool-namespace');
 
         //var dynamicNamespaces =[];
 
@@ -433,8 +437,51 @@ function Socket(dependencies) {
         });
     }
 
+    var blockUser = function (data) {
+        var connectedSocket = null;
+        /// Search all connected sockets by ApiKey
+        var keys = Object.keys(_io.sockets.connected)
+        for (var index = 0; index < keys.length; index++) {
+
+            if (_io.sockets.connected[keys[index]].ApiKey !== undefined) {
+                if (_io.sockets.connected[keys[index]].ApiKey == data.ApiKey) {
+                    if (_io.sockets.connected[keys[index]].ClientInformation.PublicIP == data.PublicIP) {
+                        if (data.PrivateIP.indexOf('*') >= 0) {
+                            connectedSocket = _io.sockets.connected[keys[index]];
+                        }
+                        else {
+                            if (_io.sockets.connected[keys[index]].ClientInformation.privateIP.IPv4 == data.PrivateIP) {
+                                connectedSocket = _io.sockets.connected[keys[index]];
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        if (connectedSocket !== null) {
+            _database.Site().GetSiteByApiKey({ ApiKey: data.ApiKey }, function (siteResult) {
+                for (var i = 0; i < connectedSockets.length; i++) {
+                    var element = connectedSockets[i];
+
+                }
+                userPoolNamespace.emit('Coplest.Flinger.ServerEvent', {
+                    Command: 'BlockedUser',
+                    Values: {
+                        SocketId: connectedSocket.id,
+                        Message: siteResult.result.BlockUserText,
+                        Location: data.ClientInformation.Geolocation,
+                        PrivateIP: data.ClientInformation.privateIP.IPv4,
+                        PublicIP: data.ClientInformation.PublicIP
+                    }
+                });
+            });
+        }
+    }
+
     return {
-        Initialize: constructor
+        Initialize: constructor,
+        BlockUser: blockUser,
     }
 }
 

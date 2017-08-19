@@ -16,28 +16,101 @@ function IPController(dependencies) {
     }
 
     var createIP = function (data, next) {
-
-        var ip = new _entity.GetModel()(
-            {
-                ApiKey: data.ApiKey,
-                PublicIP: data.PublicIP,
-                PrivateIPs: data.PrivateIPs,
-                Name: data.Name,
-                State: data.State
-            });
-
-        ip.save().then(function (result) {
-            // When database return a result call the return
-            if (result !== undefined && result !== null) {
-                next({ success: true, message: 'CreateIP', result: result });
+        _entity.GetModel().findOne({ "ApiKey": data.ApiKey, "PublicIP": data.PublicIP }, function (err, getByPublicIPResult) {
+            if (err) {
+                _console.log(err, 'error');
             }
             else {
-                next({ success: false, message: 'Something went wrong while creating new IP', result: null });
+                /// If exist public ip
+                if (getByPublicIPResult !== undefined && getByPublicIPResult !== null) {
+                    /// If exist only one private IP
+                    if (getByPublicIPResult.PrivateIPs.length == 1) {
+                        /// If IP has a comodin
+                        if (getByPublicIPResult.PrivateIPs[0].indexOf('*') >= 0) {
+                            next({ success: false, message: 'Public IP already exist and is configured to block subnet', result: null });
+                        }
+                        /// If is a regular IP
+                        else {
+                            if (data.PrivateIPs.length > 0) {
+                                /// Find if exist private IPs
+                                for (var i = 0; i < data.PrivateIPs.length; i++) {
+                                    if (getByPublicIPResult.PrivateIPs[0] === data.PrivateIPs[i]) {
+                                        next({ success: false, message: 'Public IP already exist and is configured to block subnet', result: null });
+                                    }
+                                }
+                                /// If new IPs not exist, insert in database
+                                _entity.GetModel().findOneAndUpdate({"ApiKey": data.ApiKey, "PublicIP": data.PublicIP }, { $push: { "PrivateIPs": data.PrivateIPs } }, { safe: true, upsert: false }, function (err, result) {
+                                    next({ success: true, message: 'CreateIP', result: result });
+                                });
+                            }
+                            else if (data.PrivateIPs.length == 0) {
+                                /// Find if exist private IPs
+                                if (getByPublicIPResult.PrivateIPs[0] === data.PrivateIPs[0]) {
+                                    next({ success: false, message: 'Public IP already exist and is configured to block subnet', result: null });
+                                }
+                                /// If new IPs not exist, insert in database
+                                else {
+                                    _entity.GetModel().findOneAndUpdate({"ApiKey": data.ApiKey, "PublicIP": data.PublicIP }, { $push: { "PrivateIPs": data.PrivateIPs } }, { safe: true, upsert: false }, function (err, result) {
+                                        next({ success: true, message: 'CreateIP', result: result });
+                                    });
+                                }
+                            }
+                        }
+                    }
+                    else {
+                        if (data.PrivateIPs.length > 0) {
+                            /// Find if exist private IPs
+                            for (var i = 0; i < data.PrivateIPs.length; i++) {
+                                if (getByPublicIPResult.PrivateIPs[0] === data.PrivateIPs[i]) {
+                                    next({ success: false, message: 'Public IP already exist and is configured to block subnet', result: null });
+                                }
+                            }
+                            /// If new IPs not exist, insert in database
+                            _entity.GetModel().findOneAndUpdate({"ApiKey": data.ApiKey, "PublicIP": data.PublicIP }, { $push: { "PrivateIPs": data.PrivateIPs } }, { safe: true, upsert: false }, function (err, result) {
+                                next({ success: true, message: 'CreateIP', result: result });
+                            });
+                        }
+                        else if (data.PrivateIPs.length == 0) {
+                            /// Find if exist private IPs
+                            if (getByPublicIPResult.PrivateIPs[0] === data.PrivateIPs[0]) {
+                                next({ success: false, message: 'Public IP already exist and is configured to block subnet', result: null });
+                            }
+                            /// If new IPs not exist, insert in database
+                            else {
+                                _entity.GetModel().findOneAndUpdate({"ApiKey": data.ApiKey, "PublicIP": data.PublicIP }, { $push: { "PrivateIPs": data.PrivateIPs } }, { safe: true, upsert: false }, function (err, result) {
+                                    next({ success: true, message: 'CreateIP', result: result });
+                                });
+                            }
+                        }
+                    }
+                }
+                /// Not exist public IP
+                else {
+                    var ip = new _entity.GetModel()(
+                        {
+                            ApiKey: data.ApiKey,
+                            PublicIP: data.PublicIP,
+                            PrivateIPs: data.PrivateIPs,
+                            Name: data.Name,
+                            State: data.State
+                        });
+
+                    ip.save().then(function (result) {
+                        // When database return a result call the return
+                        if (result !== undefined && result !== null) {
+                            next({ success: true, message: 'CreateIP', result: result });
+                        }
+                        else {
+                            next({ success: false, message: 'Something went wrong while creating new IP', result: null });
+                        }
+                    }, function (err) {
+                        _console.log(err, 'error');
+                        next({ success: false, message: 'Something was wrong while creating new IP', result: null });
+                    })
+                }
             }
-        }, function (err) {
-            _console.log(err, 'error');
-            next({ success: false, message: 'Something was wrong while creating new IP', result: null });
         })
+
     }
 
     var deleteIP = function (data, next) {

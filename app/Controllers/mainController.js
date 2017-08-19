@@ -65,12 +65,14 @@ function FlingerServer(dependencies) {
 
                         /// Frontend declaration
                         _frontendController = require('./frontendController')(dependencies);
+                        
+                        /// Socket declaration
+                        _socketController = require('./socketController')(dependencies);
+                        dependencies.socketController = _socketController;
 
                         /// Routes declaration
                         _routesController = require('./routesController')(dependencies);
 
-                        /// Socket declaration
-                        _socketController = require('./socketController')(dependencies);
 
                         _console.log('Configured Controllers', 'server-success');
 
