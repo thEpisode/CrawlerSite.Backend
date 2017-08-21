@@ -20,6 +20,7 @@ function FlingerServer(dependencies) {
         _app = dependencies.app;
         
         _mailController = require('./mailController')(dependencies);
+        _mailController.Initialize();
         dependencies.mailController = _mailController;
 
         /// Own Console declaration
@@ -98,7 +99,6 @@ function FlingerServer(dependencies) {
         _frontendController.Initialize();
         _socketController.Initialize();
         _stripeController.Initialize();
-        _mailController.Initialize();
         _notificationHubController.Initialize();
 
         _console.log('Controllers initialized', 'server-success');
