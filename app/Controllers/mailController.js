@@ -4,6 +4,7 @@ function MailController(dependencies) {
     var _console; 
     var _mail;
     var _cross;
+    var _path;
 
     /// Configuration
     var _fs;
