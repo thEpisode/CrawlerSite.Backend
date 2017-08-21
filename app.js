@@ -87,7 +87,7 @@ app.use(helmet.xssFilter());  // set X-XSS-Protection header
 app.disable('x-powered-by');
 
 // max size accepted for the content-length 
-app.use(contentLength.validateMax({max: 9999, status: 400, message: "max size accepted for the content-length"}));
+app.use(contentLength.validateMax({max: 999, status: 400, message: "max size accepted for the content-length"}));
 
 /// Support JSON encoded bodies
 app.use(bodyParser.json());
