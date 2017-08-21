@@ -85,30 +85,23 @@ function MailController(dependencies) {
     }
 
     var composeWithBasicTemplate = function (emailData, next) {
-        console.log(dependencies.path);
-        console.log(_path)
-        if (_path !== undefined) {
-            var path = _path.join(dependencies.root, "email_templates/");
-            _fs.readFile(path + 'basic.html', 'utf8', function (err, data) {
-                if (err) {
-                    _console.log(err, 'error');
+        var path = _path.join(dependencies.root, "email_templates/");
+        _fs.readFile(path + 'basic.html', 'utf8', function (err, data) {
+            if (err) {
+                _console.log(err, 'error');
 
-                    return null;
-                };
+                return null;
+            };
 
-                data = data.replace('{TITLE}', emailData.ComposedTitle);
-                data = data.replace('{TITLE}', emailData.ComposedTitle);
-                data = data.replace('{BODY}', emailData.ComposedBody);
-                data = data.replace('{URLACTION}', emailData.ComposedUrlAction);
-                data = data.replace('{TEXTACTION}', emailData.ComposedTextAction);
-                data = data.replace('{COPYRIGHTDATE}', (new Date()).getFullYear());
+            data = data.replace('{TITLE}', emailData.ComposedTitle);
+            data = data.replace('{TITLE}', emailData.ComposedTitle);
+            data = data.replace('{BODY}', emailData.ComposedBody);
+            data = data.replace('{URLACTION}', emailData.ComposedUrlAction);
+            data = data.replace('{TEXTACTION}', emailData.ComposedTextAction);
+            data = data.replace('{COPYRIGHTDATE}', (new Date()).getFullYear());
 
-                next(data);
-            });
-        }
-        else{
-            console.log(emailData)
-        }
+            next(data);
+        });
     }
 
     return {
