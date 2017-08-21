@@ -85,7 +85,7 @@ function MailController(dependencies) {
     }
 
     var composeWithBasicTemplate = function (emailData, next) {
-        console.log(dependencies);
+        console.log(dependencies.path);
         console.log(_path)
         if (_path !== undefined) {
             var path = _path.join(dependencies.root, "email_templates/");
